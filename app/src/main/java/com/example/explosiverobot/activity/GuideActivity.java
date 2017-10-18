@@ -1,6 +1,5 @@
 package com.example.explosiverobot.activity;
 
-import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,11 +126,6 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener{
         int position = (Integer) v.getTag();
         setCurView(position);
         setCurDot(position);
-    }
-
-    @Override
-    public void handleMessage(Message msg) {
-
     }
 
 

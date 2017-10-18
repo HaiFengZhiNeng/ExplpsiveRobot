@@ -64,11 +64,10 @@ public class UdpControl {
         client.sendTextMessageByUdp("255.255.255.255", mUdpPort,"Please get me your IP.");
     }
 
-    public void sendUdpByteMessage(byte[] value, ExplpsiveApplication application, NetClient client) {
-        this.mContext = application;
+    public void sendUdpByteMessage(byte[] value, NetClient client) {
 
         if (client == null)
-            client = application.getNetClient();
+            client = NetClient.getInstance(ExplpsiveApplication.getInstance());
 
         if (mHandler == null)
             initHandler();
@@ -93,7 +92,7 @@ public class UdpControl {
                     case 1:
                         if (TextUtils.isEmpty(mUdpIP)) {
                             if (client == null)
-                                client = ExplpsiveApplication.getInstance().getNetClient();
+                                client = NetClient.getInstance(ExplpsiveApplication.getInstance());
                             client.sendTextMessageByUdp(TextUtils.isEmpty(mUdpIP) ? "255.255.255.255" : mUdpIP, mUdpPort, "Please get me your IP.");
                             mHandler.sendEmptyMessageDelayed(1, 1000);
                         }

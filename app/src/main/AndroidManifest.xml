@@ -54,6 +54,8 @@
         <!-- 引导页 -->
         <activity android:name=".activity.GuideActivity" />
         <activity android:name=".activity.MainActivity" />
+
+        <service android:name=".service.UdpService" />
     </application>
 
 </manifest>

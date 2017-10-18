@@ -8,19 +8,15 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.explosiverobot.config.BaseHandler;
-
 import butterknife.ButterKnife;
 
 /**
  * Created by zhangyuanyuan on 2017/10/18.
  */
 
-public abstract class BaseActivity extends AppCompatActivity implements BaseHandler.HandleMessage{
+public abstract class BaseActivity extends AppCompatActivity {
 
     public String TAG = this.getClass().getSimpleName();
-
-    private BaseHandler mBaseHandler;
 
     protected Context mContext;
     protected Handler mHandler = new Handler();
@@ -58,22 +54,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseHand
     protected abstract int getContentViewId();
     protected abstract void init();
 
-    /**
-     * 初始化一个Handler，如果需要使用Handler，先调用此方法，
-     * 然后可以使用postRunnable(Runnable runnable)，
-     * sendMessage在handleMessage（Message msg）中接收msg
-     */
-    public void initHandler() {
-        mBaseHandler = new BaseHandler(this);
-    }
-
-    /**
-     * 返回Handler，在此之前确定已经调用initHandler（）
-     * @return Handler
-     */
-    public Handler getHandler() {
-        return mBaseHandler;
-    }
 
     /**
      * 显示toast

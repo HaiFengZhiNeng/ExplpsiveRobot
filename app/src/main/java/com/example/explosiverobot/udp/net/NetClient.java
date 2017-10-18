@@ -52,6 +52,8 @@ public class NetClient {
 
     private final static String TAG = "NetClient";
 
+    private volatile static NetClient client;
+
     public static final int ERROR_CODE_UNKNOWN = -1;
     public static final int ERROR_CODE_SUCCESS = 0;
     public static final int ERROR_CODE_NO_NETWORK = -21;
@@ -74,7 +76,7 @@ public class NetClient {
     //默认不支持Https
     private boolean mSupportHttps = false;
     private boolean mSupportCookie = false;
-    private static NetClient client;
+
     private DownLoadManager mDownLoadInstance;
     private Call mCall;
     private CookieHandler mCookieHandler;
