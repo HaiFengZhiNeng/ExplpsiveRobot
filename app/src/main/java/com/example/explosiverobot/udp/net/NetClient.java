@@ -156,6 +156,15 @@ public class NetClient {
     }
 
     /**
+     * 烦注册本地端口（Udp方式监听）
+     */
+    public void unRegisterUdpServer() {
+        if (socketClient == null)
+            socketClient = SocketManager.getInstance(mContext);
+        socketClient.unRegisterUdpServer();
+    }
+
+    /**
      * 监听本地的端口（Udp方式监听）
      *
      * @param listener 被连接的监听
@@ -178,15 +187,6 @@ public class NetClient {
                     udpServerRequestListener.onFail(e);
             }
         });
-    }
-
-    /**
-     * 烦注册本地端口（Udp方式监听）
-     */
-    public void unRegisterUdpServer() {
-        if (socketClient == null)
-            socketClient = SocketManager.getInstance(mContext);
-        socketClient.unRegisterUdpServer();
     }
 
     public void connectSocketByTcp(String mAddress, int mPort, SocketManager.TcpConnListener mListener) {

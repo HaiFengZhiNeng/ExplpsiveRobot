@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ExplosiveRobot.iml" filepath="$PROJECT_DIR$/ExplosiveRobot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ExplpsiveRobot.iml" filepath="$PROJECT_DIR$/ExplpsiveRobot.iml" />
+      <module fileurl="file://D:\WorkSpace\explosive\ExplpsiveRobot.iml" filepath="D:\WorkSpace\explosive\ExplpsiveRobot.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/explosive.iml" filepath="$PROJECT_DIR$/explosive.iml" />
       <module fileurl="file://$PROJECT_DIR$/mvp_modle/mvp_modle.iml" filepath="$PROJECT_DIR$/mvp_modle/mvp_modle.iml" />
     </modules>
   </component>

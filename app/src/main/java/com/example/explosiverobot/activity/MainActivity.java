@@ -182,10 +182,5 @@ public class MainActivity extends BaseActivity {
         mLbmManager.sendBroadcast(intent);
     }
 
-    public interface OnListenerUDPServer {
-        void receiver(String receiver);
-
-        void acquireIp(boolean isAcquire);
-    }
 
 }
