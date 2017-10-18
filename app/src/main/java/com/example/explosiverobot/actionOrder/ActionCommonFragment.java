@@ -1,37 +1,40 @@
 package com.example.explosiverobot.actionOrder;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.explosiverobot.R;
-import com.example.explosiverobot.base.BaseFragment;
-import com.ocean.mvp.library.presenter.BasePresenter;
 
-import java.util.ArrayList;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-import butterknife.Bind;
 
-public class ActionCommonFragment extends BaseFragment<ActionCommonPresenter> implements IActionCommonView {
+public class ActionCommonFragment extends Fragment {
 
-    @Bind(R.id.rv_action)
-    RecyclerView mRvAction;
 
-    //    private List<LiveCommon> commonList = new ArrayList<>();
-//    private LiveCommonAdapter commonAdapter;
-    private String theme_id = "";
+    @BindView(R.id.rv_action)
+    RecyclerView rvAction;
+    Unbinder unbinder;
 
+    @Nullable
     @Override
-    public int getContentViewResource() {
-        return R.layout.layout_action_common;
-    }
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.layout_action_common, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
-    @Override
-    public ActionCommonPresenter createPresenter() {
-        return new ActionCommonPresenter(this);
+        return view;
     }
 
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }

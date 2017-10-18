@@ -1,8 +1,9 @@
 package com.example.explosiverobot.udp;
 
-import com.example.explosiverobot.control.ControlPresenter;
-import com.ocean.mvp.library.net.UdpRegisterRequestListener;
-import com.ocean.mvp.library.utils.L;
+import android.util.Log;
+
+import com.example.explosiverobot.activity.MainActivity;
+import com.example.explosiverobot.udp.net.UdpRegisterRequestListener;
 
 import static android.content.ContentValues.TAG;
 
@@ -13,9 +14,9 @@ import static android.content.ContentValues.TAG;
 
 public class UdpReceiver extends UdpRegisterRequestListener {
 
-    ControlPresenter.OnListenerUDPServer onListenerUDPServer;
+    MainActivity.OnListenerUDPServer onListenerUDPServer;
 
-    public UdpReceiver(ControlPresenter.OnListenerUDPServer onListenerUDPServer) {
+    public UdpReceiver(MainActivity.OnListenerUDPServer onListenerUDPServer) {
         this.onListenerUDPServer = onListenerUDPServer;
     }
 
@@ -34,7 +35,7 @@ public class UdpReceiver extends UdpRegisterRequestListener {
                 String[] split = result.split(",");
                 String mUdpIP = split[0].substring(5, split[0].length());
                 int mUdpPort = Integer.parseInt(split[1].substring(5, split[1].length()));
-                L.e(TAG, "通过UDP获取到的ip--->" + mUdpIP + "   port-->" + mUdpPort);
+                Log.e(TAG, "通过UDP获取到的ip--->" + mUdpIP + "   port-->" + mUdpPort);
                 UdpControl.getInstance().setUdpIp(mUdpIP, mUdpPort);
 //                isConnectLastIp = false;
                 if (onListenerUDPServer != null)

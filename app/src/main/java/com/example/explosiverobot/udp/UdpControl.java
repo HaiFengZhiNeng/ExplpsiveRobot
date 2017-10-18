@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.example.explosiverobot.ExplpsiveApplication;
-import com.ocean.mvp.library.net.NetClient;
-import com.ocean.mvp.library.utils.PreferencesUtils;
+import com.example.explosiverobot.udp.net.NetClient;
+import com.example.explosiverobot.util.PreferencesUtils;
 
 /**
  * UDP控制类
@@ -85,7 +85,7 @@ public class UdpControl {
     private Handler mHandler = null;
 
     private void initHandler() {
-        mHandler = new Handler(ExplpsiveApplication.from(mContext).getMainLooper()) {
+        mHandler = new Handler(ExplpsiveApplication.getInstance().getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -93,7 +93,7 @@ public class UdpControl {
                     case 1:
                         if (TextUtils.isEmpty(mUdpIP)) {
                             if (client == null)
-                                client = ExplpsiveApplication.from(mContext).getNetClient();
+                                client = ExplpsiveApplication.getInstance().getNetClient();
                             client.sendTextMessageByUdp(TextUtils.isEmpty(mUdpIP) ? "255.255.255.255" : mUdpIP, mUdpPort, "Please get me your IP.");
                             mHandler.sendEmptyMessageDelayed(1, 1000);
                         }

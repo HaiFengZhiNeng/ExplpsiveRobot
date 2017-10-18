@@ -12,4 +12,5 @@
         android:contentDescription="@null"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_startpage" />
+
 </LinearLayout>

@@ -1,33 +1,35 @@
 package com.example.explosiverobot.activity;
 
-import android.content.Intent;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.explosiverobot.MainActivity;
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.adapter.GuideViewPagerAdapter;
 import com.example.explosiverobot.config.AppConstants;
-import com.example.explosiverobot.control.ControlView;
 import com.example.explosiverobot.util.JumpItent;
-import com.example.explosiverobot.util.SpUtils;
-import com.ocean.mvp.library.view.BaseActivity;
+import com.example.explosiverobot.util.PreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuideActivity extends BaseActivity implements View.OnClickListener {
+import butterknife.BindView;
 
-    private ViewPager vp;
+public class GuideActivity extends BaseActivity implements View.OnClickListener{
+
+    @BindView(R.id.vp_guide)
+    ViewPager vpGuide;
+    @BindView(R.id.btn_enter)
+    Button btnEnter;
+    @BindView(R.id.ll)
+    LinearLayout ll;
+
     private GuideViewPagerAdapter adapter;
     private List<View> views = new ArrayList<>();
-    private Button startBtn;
 
     // 引导页图片资源
     private static final int[] pics = {R.layout.guid_view1,
@@ -40,13 +42,12 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
     private int currentIndex;
 
     @Override
-    protected int getContentViewResource() {
+    protected int getContentViewId() {
         return R.layout.activity_guide;
     }
 
     @Override
-    protected void onViewCreated() {
-        super.onViewInit();
+    protected void init() {
         views = new ArrayList<View>();
 
         // 初始化引导页视图列表
@@ -54,26 +55,24 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
             View view = LayoutInflater.from(this).inflate(pics[i], null);
 
             if (i == pics.length - 1) {
-                startBtn = (Button) view.findViewById(R.id.btn_login);
-                startBtn.setTag("enter");
-                startBtn.setOnClickListener(this);
+                btnEnter = (Button) view.findViewById(R.id.btn_login);
+                btnEnter.setTag("enter");
+                btnEnter.setOnClickListener(this);
             }
 
             views.add(view);
-
         }
 
-        vp = (ViewPager) findViewById(R.id.vp_guide);
         // 初始化adapter
         adapter = new GuideViewPagerAdapter(views);
-        vp.setAdapter(adapter);
-        vp.setOnPageChangeListener(new PageChangeListener());
+        vpGuide.setAdapter(adapter);
+        vpGuide.setOnPageChangeListener(new PageChangeListener());
 
         initDots();
     }
 
+
     private void initDots() {
-        LinearLayout ll = (LinearLayout) findViewById(R.id.ll);
         dots = new ImageView[pics.length];
 
         // 循环取得小点图片
@@ -81,8 +80,8 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
             // 得到一个LinearLayout下面的每一个子元素
             dots[i] = (ImageView) ll.getChildAt(i);
             dots[i].setEnabled(false);// 都设为灰色
-            dots[i].setOnClickListener(this);
             dots[i].setTag(i);// 设置位置tag，方便取出与当前位置对应
+            dots[i].setOnClickListener(this);
         }
 
         currentIndex = 0;
@@ -99,7 +98,7 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
         if (position < 0 || position >= pics.length) {
             return;
         }
-        vp.setCurrentItem(position);
+        vpGuide.setCurrentItem(position);
     }
 
     /**
@@ -119,7 +118,9 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         if (v.getTag().equals("enter")) {
-            enterMainActivity();
+            PreferencesUtils.putBoolean(GuideActivity.this, AppConstants.FIRST_OPEN, true);
+            JumpItent.jump(GuideActivity.this, MainActivity.class, true);
+            finish();
             return;
         }
 
@@ -128,12 +129,11 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
         setCurDot(position);
     }
 
+    @Override
+    public void handleMessage(Message msg) {
 
-    private void enterMainActivity() {
-        JumpItent.jump(GuideActivity.this,
-                ControlView.class, true);
-        SpUtils.putBoolean(GuideActivity.this, AppConstants.FIRST_OPEN, true);
     }
+
 
     private class PageChangeListener implements ViewPager.OnPageChangeListener {
         // 当滑动状态改变时调用
@@ -161,12 +161,5 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener 
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // 如果切换到后台，就设置下次不进入功能引导页
-        SpUtils.putBoolean(GuideActivity.this, AppConstants.FIRST_OPEN, true);
-        finish();
-    }
 
 }

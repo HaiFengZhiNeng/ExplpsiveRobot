@@ -2,10 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_black"
     tools:context="com.example.explosiverobot.actionOrder.ActionCommonFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_action"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none" />

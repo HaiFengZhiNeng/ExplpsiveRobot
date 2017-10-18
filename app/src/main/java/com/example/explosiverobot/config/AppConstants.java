@@ -5,5 +5,9 @@ package com.example.explosiverobot.config;
  */
 
 public class AppConstants {
+
+    public static int displayWidth;
+    public static int displayHeight;
+
     public static final String FIRST_OPEN = "first_open";
 }
