@@ -1,6 +1,7 @@
 package com.example.explosiverobot.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
@@ -16,11 +17,13 @@ import com.example.explosiverobot.R;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.base.config.BaseHandler;
+import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.PermissionsChecker;
 import com.example.explosiverobot.util.PreferencesUtils;
 
 import butterknife.BindView;
+import vstc2.nativecaller.NativeCaller;
 
 public class SplashActivity extends BaseActivity implements BaseHandler.HandleMessage {
 
@@ -85,15 +88,23 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
      * 启动动画
      */
     private void startAnim() {
+        AlphaAnimation alpha = getAlphaAnimation();
+
+        startThread();
+        ivSplash.startAnimation(alpha);
+    }
+
+    @NonNull
+    private AlphaAnimation getAlphaAnimation() {
         AnimationSet set = new AnimationSet(false); //设置动画集合；
         //缩放动画；
         ScaleAnimation scale = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(1000);
+        scale.setDuration(2000);
         scale.setFillAfter(true);
 
         //淡入淡出动画；
         AlphaAnimation alpha = new AlphaAnimation(0, 1);
-        alpha.setDuration(1000);
+        alpha.setDuration(2000);
         alpha.setFillAfter(true);
 
         set.addAnimation(scale);
@@ -114,8 +125,19 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
                 jumpNextPage();
             }
         });
+        return alpha;
+    }
 
-        ivSplash.startAnimation(alpha);
+    private void startThread() {
+        Intent intent = new Intent(SplashActivity.this, BridgeService.class);
+        startService(intent);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                NativeCaller.PPPPInitialOther("ADCBBFAOPPJAHGJGBBGLFLAGDBJJHNJGGMBFBKHIBBNKOKLDHOBHCBOEHOKJJJKJBPMFLGCPPJMJAPDOIPNL");
+            }
+        }).start();
     }
 
     private void jumpNextPage() {
@@ -130,6 +152,7 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
 
     /**
      * 含有全部的权限
+     *
      * @param grantResults
      * @return
      */
@@ -145,7 +168,7 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
 
     @Override
     public void handleMessage(Message msg) {
-        switch (msg.what){
+        switch (msg.what) {
             case REFRESH_COMPLETE:
                 finish();
                 break;

@@ -1,12 +1,19 @@
 package com.example.explosiverobot.base.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
+
+import com.example.explosiverobot.base.config.AppConstants;
+import com.example.explosiverobot.service.BridgeService;
+import com.example.explosiverobot.service.UdpService;
 
 import butterknife.ButterKnife;
 
@@ -29,6 +36,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getContentViewId());
         ButterKnife.bind(this);
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AppConstants.NET_LOONGGG_EXITAPP);
+        this.registerReceiver(this.finishAppReceiver, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(this.finishAppReceiver);
     }
 
     /**
@@ -83,5 +104,19 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * 关闭Activity的广播，放在自定义的基类中，让其他的Activity继承这个Activity就行
+     */
+    protected BroadcastReceiver finishAppReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent intentBridge = new Intent(BaseActivity.this, BridgeService.class);
+            stopService(intentBridge);
+            Intent intentUdp = new Intent(BaseActivity.this, UdpService.class);
+            stopService(intentUdp);
+            finish();
+        }
+    };
 
 }
