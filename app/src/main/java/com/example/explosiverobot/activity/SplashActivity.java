@@ -54,6 +54,8 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
 
     @Override
     protected void init() {
+        AppConstants.displayWidth = getWindowManager().getDefaultDisplay().getWidth();
+        AppConstants.displayHeight = getWindowManager().getDefaultDisplay().getHeight();
         mPermissionsChecker = new PermissionsChecker(this);
     }
 

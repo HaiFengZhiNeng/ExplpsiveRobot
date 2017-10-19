@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.explosiverobot.R;
@@ -23,6 +24,7 @@ import com.example.explosiverobot.fragment.ActionCommonFragment;
 import com.example.explosiverobot.modle.ActionTab;
 import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.service.UdpService;
+import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
@@ -46,6 +48,8 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     ViewPager actionViewPager;
     @BindView(R.id.tv_add_group)
     TextView tvAddGroup;
+    @BindView(R.id.iv_robot_bg)
+    ImageView ivRobotBg;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -183,7 +187,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         sendBroadcast(new Intent(AppConstants.NET_LOONGGG_EXITAPP));
     }
 
-    @OnClick({R.id.tv_add_group})
+    @OnClick({R.id.tv_add_group, R.id.iv_robot_bg})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_add_group:
@@ -194,6 +198,13 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
 //                sendLocal(bytes);
 
 //                connectIpcamera("admin", "haifeng567", "VSTA347062EGDGD");
+                break;
+            case R.id.iv_robot_bg:
+                if(tag == 1) {
+                    startTasgAvtivity();
+                }else{
+                    Log.e(TAG, "tag : " + tag);
+                }
                 break;
         }
     }
@@ -378,6 +389,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     }
 
 
+
     public class UDPAcceptReceiver extends BroadcastReceiver {
 
         @Override
@@ -421,6 +433,10 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         Intent intent = new Intent(AppConstants.UDP_SEND_ACTION);
         intent.putExtra("bytes", bytes);
         mLbmManager.sendBroadcast(intent);
+    }
+
+    private void startTasgAvtivity() {
+        JumpItent.jump(MainActivity.this, TaskActivity.class);
     }
 
 
