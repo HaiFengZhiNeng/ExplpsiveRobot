@@ -13,8 +13,9 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 
 import com.example.explosiverobot.R;
-import com.example.explosiverobot.config.AppConstants;
-import com.example.explosiverobot.config.BaseHandler;
+import com.example.explosiverobot.base.activity.BaseActivity;
+import com.example.explosiverobot.base.config.AppConstants;
+import com.example.explosiverobot.base.config.BaseHandler;
 import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.PermissionsChecker;
 import com.example.explosiverobot.util.PreferencesUtils;

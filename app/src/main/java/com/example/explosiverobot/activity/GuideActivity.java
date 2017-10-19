@@ -9,7 +9,8 @@ import android.widget.LinearLayout;
 
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.adapter.GuideViewPagerAdapter;
-import com.example.explosiverobot.config.AppConstants;
+import com.example.explosiverobot.base.activity.BaseActivity;
+import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.PreferencesUtils;
 

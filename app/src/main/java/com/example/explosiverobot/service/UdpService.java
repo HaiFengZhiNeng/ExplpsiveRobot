@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.explosiverobot.ExplpsiveApplication;
 import com.example.explosiverobot.activity.MainActivity;
-import com.example.explosiverobot.config.AppConstants;
+import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.udp.UdpControl;
 import com.example.explosiverobot.udp.UdpReceiver;
 import com.example.explosiverobot.udp.net.NetClient;
