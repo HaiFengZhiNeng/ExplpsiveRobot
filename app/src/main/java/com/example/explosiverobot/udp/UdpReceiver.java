@@ -3,6 +3,7 @@ package com.example.explosiverobot.udp;
 import android.util.Log;
 
 import com.example.explosiverobot.activity.MainActivity;
+import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.udp.net.UdpRegisterRequestListener;
 
 import static android.content.ContentValues.TAG;
@@ -14,9 +15,9 @@ import static android.content.ContentValues.TAG;
 
 public class UdpReceiver extends UdpRegisterRequestListener {
 
-    MainActivity.OnListenerUDPServer onListenerUDPServer;
+    UdpService.OnListenerUDPServer onListenerUDPServer;
 
-    public UdpReceiver(MainActivity.OnListenerUDPServer onListenerUDPServer) {
+    public UdpReceiver(UdpService.OnListenerUDPServer onListenerUDPServer) {
         this.onListenerUDPServer = onListenerUDPServer;
     }
 

@@ -130,7 +130,7 @@ public class UdpService extends Service {
     }
 
     private void registerUdp() {
-        client.registerUdpServer(new UdpReceiver(new MainActivity.OnListenerUDPServer() {
+        client.registerUdpServer(new UdpReceiver(new OnListenerUDPServer() {
             @Override
             public void receiver(String receiver) {
                 Log.e("registerUdpServer", "接收到UDP返回的数据--->" + receiver);
@@ -264,5 +264,13 @@ public class UdpService extends Service {
         Intent intent = new Intent(AppConstants.UDP_ACCEPT_ACTION);
         intent.putExtra("content", content);
         mLbmManager.sendBroadcast(intent);
+    }
+
+
+
+    public interface OnListenerUDPServer {
+        void receiver(String receiver);
+
+        void acquireIp(boolean isAcquire);
     }
 }
