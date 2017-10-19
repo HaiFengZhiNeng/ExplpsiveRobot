@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.example.explosiverobot.weidget.PagerSlidingTabStrip
+                <com.example.explosiverobot.view.weiget.PagerSlidingTabStrip
                     android:id="@+id/pager_sliding_tabstrip"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
