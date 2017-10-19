@@ -1,7 +1,5 @@
 package com.example.explosiverobot.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -22,6 +20,7 @@ import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.base.config.ContentCommon;
 import com.example.explosiverobot.fragment.ActionCommonFragment;
 import com.example.explosiverobot.modle.ActionTab;
+import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.util.JumpItent;
@@ -35,7 +34,7 @@ import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
 
 public class MainActivity extends BaseActivity implements BridgeService.AddCameraInterface, BridgeService.CallBackMessageInterface,
-        BridgeService.IpcamClientInterface {
+        BridgeService.IpcamClientInterface, UDPAcceptReceiver.UDPAcceptInterface {
 
     public String TAG = this.getClass().getSimpleName();
 
@@ -140,6 +139,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
 
     private void promptUser(String string) {
         Log.e(TAG, string);
+        showToast(string);
     }
 
 
@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
 
         mLbmManager = LocalBroadcastManager.getInstance(this);
         Intent startIntent = new Intent(this, UdpService.class);
-//        startService(startIntent);
+        startService(startIntent);
 
         initCamera();
 
@@ -162,12 +162,22 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         connectIpcamera("admin", "haifeng567", "VSTA347062EGDGD");
     }
 
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void setListener() {
+
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         isAccept = true;
-        mUdpAcceptReceiver = new UDPAcceptReceiver();
+        mUdpAcceptReceiver = new UDPAcceptReceiver(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.UDP_ACCEPT_ACTION);
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
     }
@@ -388,21 +398,13 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         Log.e(TAG, "CameraStatus");
     }
 
-
-
-    public class UDPAcceptReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!isAccept) {
-                return;
-            }
-            String content = intent.getStringExtra("content");
-            if (content != null) {
-                Log.e(TAG, "服务发过来的数据 :" + content);
-            }
+    @Override
+    public void UDPAcceptMessage(String content) {
+        if(isAccept){
+            showToast(content);
         }
     }
+
 
     class StartPPPPThread implements Runnable {
         @Override

@@ -71,6 +71,16 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener{
         initDots();
     }
 
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void setListener() {
+
+    }
+
 
     private void initDots() {
         dots = new ImageView[pics.length];

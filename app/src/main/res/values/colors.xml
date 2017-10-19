@@ -10,4 +10,9 @@
     <color name="color_lieft_background">#313131</color>
     <color name="color_translate">#88000000</color>
     <color name="color_tab_unselect">#6A6A6A</color>
+
+    <color name="task_bg">#F2F2F2</color>
+    <color name="task_while">#FFFFFF</color>
+    <color name="task_deep">#414750</color>55 107 197
+    <color name="task_deepblue">#376BC5</color>
 </resources>

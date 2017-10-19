@@ -60,6 +60,16 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
     }
 
     @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void setListener() {
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {

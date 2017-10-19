@@ -36,6 +36,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getContentViewId());
         ButterKnife.bind(this);
         init();
+        initData();
+        setListener();
     }
 
     @Override
@@ -73,8 +75,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     protected abstract int getContentViewId();
+    /**
+     * 此方法描述的是： 初始化所有
+     */
     protected abstract void init();
+    /**
+     * 此方法描述的是： 初始化所有数据的方法
+     */
+    protected abstract void initData();
 
+    /**
+     * 此方法描述的是： 设置所有事件监听
+     */
+    protected abstract void setListener();
 
     /**
      * 显示toast

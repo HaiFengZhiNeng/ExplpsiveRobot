@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.example.explosiverobot.base.config.ContentCommon;
 import com.example.explosiverobot.util.StringUtils;
@@ -331,7 +330,6 @@ public class BridgeService extends Service {
 
     public void CallBack_CameraParams(String did, int resolution, int brightness, int contrast, int hue, int saturation, int flip,
                                       int fram, int mode) {
-        Log.e("BridgeService", "CallBack_CameraParams");
         if (playInterface != null) {
             playInterface.callBackCameraParamNotify(did, resolution, brightness, contrast, hue, saturation, flip, mode);
         }
