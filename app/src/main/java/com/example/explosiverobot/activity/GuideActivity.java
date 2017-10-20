@@ -1,5 +1,6 @@
 package com.example.explosiverobot.activity;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class GuideActivity extends BaseActivity implements View.OnClickListener{
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         views = new ArrayList<View>();
 
         // 初始化引导页视图列表

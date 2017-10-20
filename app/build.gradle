@@ -98,7 +98,7 @@ android {
         //新增渠道staging，表示调试阶段的发布
         staging {
             minSdkVersion 19
-            applicationId 'com.seabreeze.delivery'
+            applicationId 'com.example.explosiverobot'
             signingConfig signingConfigs.release
             targetSdkVersion 25
             testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'

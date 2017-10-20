@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
 
         mLbmManager = LocalBroadcastManager.getInstance(this);
         Intent startIntent = new Intent(this, UdpService.class);

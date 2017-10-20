@@ -3,6 +3,7 @@ package com.example.explosiverobot.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -53,7 +54,7 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         AppConstants.displayWidth = getWindowManager().getDefaultDisplay().getWidth();
         AppConstants.displayHeight = getWindowManager().getDefaultDisplay().getHeight();
         mPermissionsChecker = new PermissionsChecker(this);
