@@ -36,7 +36,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-
             android:orientation="vertical">
 
             <LinearLayout
@@ -123,10 +122,10 @@
                         android:layout_weight="1"
                         android:text="地图" />
                 </LinearLayout>
+
                 <View style="@style/task_line" />
-                <include
-                    layout="@layout/include_drive"
-                    />
+
+                <include layout="@layout/include_drive" />
 
                 <RelativeLayout
                     android:id="@+id/re_control"
