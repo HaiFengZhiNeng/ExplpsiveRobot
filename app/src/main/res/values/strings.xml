@@ -7,4 +7,56 @@
     <string name="help">帮助</string>
     <string name="string_help_text">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。\n\n最后点击两次后退按钮，即可返回。</string>
     <string name="quit">退出</string>
+
+    <string name="login_stuta_camer">相机状态</string>
+    <string name="camera_id">设备ID</string>
+    <string name="camera_user">用户名</string>
+    <string name="camera_pwd">密码</string>
+
+    <string name="searching_tip">正在搜索，请稍候...</string>
+    <string name="input_camera_id">请输入设备ID</string>
+    <string name="input_camera_user">请输入用户名</string>
+
+    <string name="pppp_status_connecting">正在连接</string>
+    <string name="pppp_status_online">在线</string>
+    <string name="pppp_status_disconnect">断线</string>
+    <string name="pppp_status_connect_failed">连接失败</string>
+    <string name="pppp_status_pwd_error">密码错误</string>
+    <string name="pppp_status_initialing">已连接, 正在初始化</string>
+    <string name="pppp_status_invalid_id">ID号无效</string>
+    <string name="device_not_on_line">摄像机不在线</string>
+    <string name="pppp_status_connect_timeout">连接超时</string>
+    <string name="pppp_status_unknown">未知状态</string>
+
+    <string name="alerm_motion_alarm">移动侦测报警</string>
+    <string name="alerm_gpio_alarm">IO联动报警</string>
+
+    <string name="ptz_takepic_ok">拍照成功</string>
+    <string name="ptz_takepic_fail">拍照失败</string>
+    <string name="ptz_control">请按菜单键,进行云台控制</string>
+
+    <string name="connecting">正在连接...</string>
+    <string name="videoing">录像中...</string>
+    <string name="eixt_show_toast">本地录像中，请先停止再退出！</string>
+    <string name="exit_show">   提示：</string>
+    <string name="exit_play_show">确认退出播放?</string>
+    <string name="exit_chenxu_show">确认退出程序?</string>
+    <string name="str_ok">确定</string>
+    <string name="str_cancel">取消</string>
+    <string name="ptz_default_vedio_params">视频参数恢复默认值</string>
+    <string name="ptz_takepic_save_fail">该设备没有SDCard,照片保存失败</string>
+    <string name="ptz_takevideo_begin">开始录像</string>
+    <string name="ptz_takevideo_end">录像结束</string>
+
+    <string name="vga">普清</string>
+    <string name="qvga">高清</string>
+    <string name="mobile">手机</string>
+    <string name="min">最低</string>
+    <string name="low">低</string>
+    <string name="middle">中</string>
+    <string name="high">高</string>
+    <string name="max">最高</string>
+
+    <string name="preset_set">预置位设置</string>
+    <string name="preset_call">预置位调用</string>
 </resources>

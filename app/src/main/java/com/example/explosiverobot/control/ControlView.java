@@ -8,11 +8,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.example.explosiverobot.R;
-import com.example.explosiverobot.actionOrder.ActionCommonFragment;
-import com.example.explosiverobot.activity.BaseActivity;
+import com.example.explosiverobot.base.activity.BaseActivity;
+import com.example.explosiverobot.fragment.ActionCommonFragment;
 import com.example.explosiverobot.modle.ActionTab;
 import com.example.explosiverobot.udp.UdpControl;
-import com.example.explosiverobot.weidget.PagerSlidingTabStrip;
+import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,29 +34,26 @@ public class ControlView extends BaseActivity implements IControlView, android.v
     private List<String> mTitle = new ArrayList<>();
     private List<Fragment> mFragmentList = new ArrayList<>();
 
+
     @Override
-    protected int getContentViewResource() {
+    protected int getContentViewId() {
         return R.layout.activity_control_view;
     }
 
-
     @Override
-    public Context getContext() {
-        return this;
-    }
-
-    @Override
-    public ControlPresenter createPresenter() {
-        return new ControlPresenter(this);
-    }
-
-    @Override
-    protected void onViewInit() {
-        ButterKnife.bind(this);
+    protected void init() {
         initTopTab();
-        super.onViewInit();
     }
 
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void setListener() {
+
+    }
     /**
      * 顶部Tab
      */
@@ -112,6 +109,8 @@ public class ControlView extends BaseActivity implements IControlView, android.v
     public void onClick(android.view.View v) {
 
     }
+
+
 
     class MyAdapter extends FragmentPagerAdapter {
 

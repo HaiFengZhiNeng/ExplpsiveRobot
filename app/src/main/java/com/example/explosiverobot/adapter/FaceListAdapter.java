@@ -2,6 +2,9 @@ package com.example.explosiverobot.adapter;
 
 import android.content.Context;
 
+import com.example.explosiverobot.base.adapter.BaseRecyclerViewHolder;
+import com.example.explosiverobot.base.adapter.SimpleAdapter;
+
 import java.util.List;
 
 /**
