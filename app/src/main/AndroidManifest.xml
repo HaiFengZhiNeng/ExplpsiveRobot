@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.explosiverobot">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -39,9 +40,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,12 +52,29 @@
         </activity>
         <!-- 引导页 -->
         <activity android:name=".activity.GuideActivity" />
-        <activity android:name=".activity.MainActivity" />
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="landscape" />
 
         <service android:name=".service.UdpService" />
         <service android:name=".service.BridgeService" />
 
-        <activity android:name=".activity.TaskActivity"></activity>
+        <activity android:name=".activity.TaskActivity" />
+        <!-- 添加动作信息 -->
+        <activity
+            android:name=".activity.AddActionActivity"
+            android:theme="@style/dialog_activity" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="cn.guanluocang.fileprovider.explosive"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/myfilepath" />
+        </provider>
     </application>
 
 </manifest>

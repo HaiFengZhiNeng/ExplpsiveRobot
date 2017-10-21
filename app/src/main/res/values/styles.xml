@@ -9,6 +9,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
     <style name="TranslucentTheme" parent="AppTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
@@ -27,6 +28,7 @@
         <item name="android:background">@color/task_while</item>
         <item name="android:textColor">@color/color_black</item>
     </style>
+
     <style name="task_top_tv_unselector" parent="task_top_tv">
         <item name="android:background">@color/task_deep</item>
         <item name="android:textColor">@color/color_white</item>
@@ -41,11 +43,12 @@
         <item name="android:background">@color/task_deepblue</item>
         <item name="android:textColor">@color/color_white</item>
     </style>
+
     <style name="task_bottom_tv_unselector" parent="task_bottom_tv">
         <item name="android:background">@color/task_deep</item>
         <item name="android:textColor">@color/color_white</item>
     </style>
-    
+
     <style name="task_vertical_line">
         <item name="android:layout_width">1dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -76,5 +79,23 @@
         <item name="android:colorForeground">@color/task_deepblue</item>
     </style>
 
+    <!-- dialog Activity -->
+    <style name="dialog_activity" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>//将背景设置成透明的
+        <item name="android:windowCloseOnTouchOutside">true</item>//设置窗体外面允不允许点击
+    </style>
 
+
+    <style name="line_setting">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/task_deepblue</item>
+    </style>
 </resources>

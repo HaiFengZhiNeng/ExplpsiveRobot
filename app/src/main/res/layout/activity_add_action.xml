@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_white"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context="com.example.explosiverobot.activity.AddActionActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_90"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/dimen_30"
+        android:paddingRight="@dimen/dimen_30">
+
+        <EditText
+            android:id="@+id/et_actionName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:drawablePadding="@dimen/dimen_15"
+            android:hint="动作名称"
+            android:inputType="text"
+            android:textColorHint="@color/color_top_background" />
+
+    </RelativeLayout>
+
+    <View style="@style/line_setting" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_90"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/dimen_30"
+        android:paddingRight="@dimen/dimen_30">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择图片："
+            android:textColor="@color/color_top_background"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_actionPic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_90"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/dimen_30"
+        android:paddingRight="@dimen/dimen_30">
+
+        <TextView
+            android:id="@+id/tv_save"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_98"
+            android:background="@color/color_submit_back"
+            android:gravity="center"
+            android:text="保存"
+            android:textColor="@color/color_top_background"
+            android:textSize="17sp" />
+    </LinearLayout>
+</LinearLayout>

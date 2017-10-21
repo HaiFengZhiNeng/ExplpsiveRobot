@@ -6,6 +6,7 @@
 package com.example.explosiverobot.util;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +43,11 @@ public class JumpItent {
         intent.putExtra(REQUEST_CODE, requestCode);
         activity.startActivityForResult(intent, requestCode);
     }
+    public static void jump(Fragment fragment,Activity activity, Class<?> cls, int requestCode){
+        Intent intent = new Intent(activity, cls);
+        intent.putExtra(REQUEST_CODE, requestCode);
+        fragment.startActivityForResult(intent, requestCode);
+    }
 
     public static void jump(Activity activity, Class<?> cls, Bundle bundle, int requestCode) {
         Intent intent = new Intent(activity, cls);
@@ -71,6 +77,7 @@ public class JumpItent {
             activity.finish();
         }
     }
+
 
     public static void jump(Activity activity, Class<?> cls, boolean isFinish, Bundle bundle, int requestCode) {
         Intent intent = new Intent(activity, cls);

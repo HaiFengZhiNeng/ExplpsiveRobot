@@ -2,6 +2,7 @@ package com.example.explosiverobot;
 
 import android.app.Application;
 
+import com.example.explosiverobot.db.base.BaseManager;
 import com.example.explosiverobot.udp.net.NetClient;
 
 /**
@@ -23,6 +24,8 @@ public class ExplpsiveApplication extends Application {
         super.onCreate();
 
         instance = this;
+
+        BaseManager.initOpenHelper(this);
 
     }
 

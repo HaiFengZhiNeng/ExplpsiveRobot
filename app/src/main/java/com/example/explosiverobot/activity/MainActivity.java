@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.example.explosiverobot.adapter.ActionViewPagerAdapter;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.base.config.ContentCommon;
+import com.example.explosiverobot.db.manager.ActionTabDbManager;
 import com.example.explosiverobot.fragment.ActionCommonFragment;
 import com.example.explosiverobot.modle.ActionTab;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
 
@@ -49,6 +52,8 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     TextView tvAddGroup;
     @BindView(R.id.iv_robot_bg)
     ImageView ivRobotBg;
+    @BindView(R.id.et_inputGroupName)
+    EditText etInputGroupName;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -65,6 +70,12 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     private int option = ContentCommon.INVALID_OPTION;
     private int CameraType = ContentCommon.CAMERA_TYPE_MJPEG;
     private Intent intentbrod = null;
+
+    private int mGroupNum = 0;//分组id
+    //Tab本地数据
+    private ActionTabDbManager mActionDbManager;
+    private long actionId = 0;
+
 
     private Handler PPPPMsgHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -151,6 +162,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     @Override
     protected void init() {
 
+        mActionDbManager = new ActionTabDbManager();
         mLbmManager = LocalBroadcastManager.getInstance(this);
         Intent startIntent = new Intent(this, UdpService.class);
         startService(startIntent);
@@ -200,34 +212,26 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     @OnClick({R.id.tv_add_group, R.id.iv_robot_bg})
     public void onClick(View view) {
         switch (view.getId()) {
+            //添加分组
             case R.id.tv_add_group:
-//                byte[] bytes = new byte[3];
-//                bytes[0] = (byte) 0xAA;
-//                bytes[1] = (byte) 0x03;
-//                bytes[2] = (byte) 0xBB;
-//                sendLocal(bytes);
-
-//                connectIpcamera("admin", "haifeng567", "VSTA347062EGDGD");
+                addGroup();
                 break;
             case R.id.iv_robot_bg:
-                if(tag == 1) {
+                if (tag == 1) {
                     startTasgAvtivity();
-                }else{
+                } else {
                     Log.e(TAG, "tag : " + tag);
                 }
                 break;
         }
     }
 
+
     /**
      * 顶部Tab
      */
     private void initTopTab() {
         addActionTab();
-        addTitle();
-        addFragmentList();
-
-        setPageTitle();
     }
 
     /**
@@ -274,35 +278,72 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         new Thread(new StartPPPPThread()).start();
     }
 
+    /**
+     * 添加分组
+     */
+    private void addGroup() {
+        String mTabName = etInputGroupName.getText().toString().trim();
+        if (!"".equals(mTabName)) {
+
+            List<ActionTab> actionTabs = mActionDbManager.queryByTabName(mTabName);
+            if (!actionTabs.isEmpty()) {
+                showToast("请不要添加相同的问题！");
+                return;
+            }
+
+            ++mGroupNum;
+            mActionTabsList.add(new ActionTab(mGroupNum + "", mTabName, actionId));
+
+            mTitleList.add(mTabName);
+
+            ActionCommonFragment actionCommonFragment_new = new ActionCommonFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("theme_name", mTabName);
+            actionCommonFragment_new.setArguments(bundle);
+            mFragmentList.add(actionCommonFragment_new);
+            setPageTitle();
+
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", mTabName));
+            showToast("添加成功");
+        } else {
+            showToast("输入不能为空！");
+        }
+    }
+
 
     /**
      * 添加数据
      */
     private void addActionTab() {
-        mActionTabsList.add(new ActionTab("0", "全部"));
-        mActionTabsList.add(new ActionTab("1", "前进"));
-        mActionTabsList.add(new ActionTab("2", "后退"));
-        mActionTabsList.add(new ActionTab("3", "左移"));
-        mActionTabsList.add(new ActionTab("4", "右移"));
+        if (mFragmentList != null && mFragmentList.size() > 0) {
+            return;
+        }
+        mActionTabsList = mActionDbManager.loadAll();
+        ++mGroupNum;
+
+        if (mActionTabsList == null || mActionTabsList.size() == 0) {
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", "全部", actionId));
+            mActionTabsList.add(new ActionTab(mGroupNum + "", "全部", actionId));
+        }
+        addTitle();
     }
 
     private void addTitle() {
         for (int i = 0; i < mActionTabsList.size(); i++) {
-            mTitleList.add(mActionTabsList.get(i).getName());
+            mTitleList.add(mActionTabsList.get(i).getTab_name());
         }
+        addFragmentList();
     }
 
     private void addFragmentList() {
-//        if (mFragmentList != null && mFragmentList.size() > 0) {
-//            return;
-//        }
-        for (int i = 0; i < mTitleList.size(); i++) {
+        for (int i = 0; i < mActionTabsList.size(); i++) {
             ActionCommonFragment actionCommonFragment_new = new ActionCommonFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("theme_id", mActionTabsList.get(i).getId());
+            bundle.putString("theme_name", mActionTabsList.get(i).getTab_name());
             actionCommonFragment_new.setArguments(bundle);
             mFragmentList.add(actionCommonFragment_new);
         }
+        setPageTitle();
     }
 
     /*
@@ -324,6 +365,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         pagerSlidingTabstrip.setTextSize(getResources().getDimensionPixelSize(R.dimen.dimen_20));//字体大小
         pagerSlidingTabstrip.setShouldExpand(true);
         pagerSlidingTabstrip.setTabBackground(R.drawable.background_tab);
+        etInputGroupName.setText("");
 
     }
 
@@ -400,9 +442,16 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
 
     @Override
     public void UDPAcceptMessage(String content) {
-        if(isAccept){
+        if (isAccept) {
             showToast(content);
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 
 
@@ -441,5 +490,9 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         JumpItent.jump(MainActivity.this, TaskActivity.class);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+    }
 }
