@@ -43,6 +43,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="228d59a2838fda823ac92bc9e3d4a23c" />
+
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,11 +62,12 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="landscape" />
+        <activity android:name=".activity.TaskActivity" />
 
         <service android:name=".service.UdpService" />
         <service android:name=".service.BridgeService" />
+        <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name=".activity.TaskActivity" />
         <!-- 添加动作信息 -->
         <activity
             android:name=".activity.AddActionActivity"

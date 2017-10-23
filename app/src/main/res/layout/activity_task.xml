@@ -75,11 +75,12 @@
                     android:layout_height="match_parent"
                     android:background="@color/color_black" />
 
-                <ImageView
-                    android:id="@+id/iv_map"
+                <com.amap.api.maps.MapView
+                    android:id="@+id/map_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone" />
+                    />
+
             </LinearLayout>
 
             <LinearLayout

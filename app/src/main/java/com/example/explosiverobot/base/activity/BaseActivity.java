@@ -35,7 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mContext = this;
         setContentView(getContentViewId());
         ButterKnife.bind(this);
-        init();
+        init(savedInstanceState);
         initData();
         setListener();
     }
@@ -78,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 此方法描述的是： 初始化所有
      */
-    protected abstract void init();
+    protected abstract void init(Bundle savedInstanceState);
     /**
      * 此方法描述的是： 初始化所有数据的方法
      */

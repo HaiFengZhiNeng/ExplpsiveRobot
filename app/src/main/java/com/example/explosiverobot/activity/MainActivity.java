@@ -160,7 +160,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
 
         mActionDbManager = new ActionTabDbManager();
         mLbmManager = LocalBroadcastManager.getInstance(this);

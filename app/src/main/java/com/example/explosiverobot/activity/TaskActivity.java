@@ -2,7 +2,9 @@ package com.example.explosiverobot.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
@@ -14,6 +16,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.LocationSource;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
@@ -21,12 +34,13 @@ import com.example.explosiverobot.base.config.ContentCommon;
 import com.example.explosiverobot.ipcamera.MyRender;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
+import com.example.explosiverobot.util.GpsUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
 
-public class TaskActivity extends BaseActivity implements BridgeService.PlayInterface, UDPAcceptReceiver.UDPAcceptInterface {
+public class TaskActivity extends BaseActivity implements AMapLocationListener, LocationSource, BridgeService.PlayInterface, UDPAcceptReceiver.UDPAcceptInterface {
 
     @BindView(R.id.gl_surface_view)
     GLSurfaceView glSurfaceView;
@@ -36,8 +50,8 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
     TextView tvMap;
     @BindView(R.id.iv_model)
     ImageView ivModel;
-    @BindView(R.id.iv_map)
-    ImageView ivMap;
+    @BindView(R.id.map_view)
+    MapView mapView;
     @BindView(R.id.tv_drive)
     TextView tvDrive;
     @BindView(R.id.tv_control)
@@ -81,6 +95,17 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
+    //map
+    private AMap aMap;
+    public static final int ZOOM = 15;
+
+    private LocationSource.OnLocationChangedListener mListener;
+    private AMapLocationClient mLocationClient;
+    private AMapLocationClientOption mLocationOption;
+
+    private boolean isFirstIn = true;
+
+    private LatLng lastLatLng;
     //udp
     private UDPAcceptReceiver mUdpAcceptReceiver;
     //数据视频流回掉
@@ -117,7 +142,7 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
 
         strDID = AppConstants.deviceId;
 
@@ -130,7 +155,13 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
         myRender = new MyRender(glSurfaceView);
         glSurfaceView.setRenderer(myRender);
 
+        if(!GpsUtils.isOPen(this)) {
+            GpsUtils.openGPS(this);
+        }
+        initMap(savedInstanceState);
     }
+
+
 
     @Override
     protected void initData() {
@@ -154,6 +185,7 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
     @Override
     protected void onResume() {
         super.onResume();
+        mapView.onResume();
         isAccept = true;
         mUdpAcceptReceiver = new UDPAcceptReceiver(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.UDP_ACCEPT_ACTION);
@@ -163,13 +195,44 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
     @Override
     protected void onStop() {
         super.onStop();
+        mapView.onPause();
         isAccept = false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mapView.onDestroy();
         mLbmManager.unregisterReceiver(mUdpAcceptReceiver);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    private void initMap(Bundle savedInstanceState) {
+        mapView.onCreate(savedInstanceState);
+        if (aMap == null) {
+            aMap = mapView.getMap();
+
+            aMap.setLocationSource(this);
+            MyLocationStyle myLocationStyle = new MyLocationStyle();
+            myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
+            myLocationStyle.strokeColor(Color.BLUE);
+            myLocationStyle.strokeWidth(2);
+            aMap.setMyLocationStyle(myLocationStyle);
+            UiSettings settings = aMap.getUiSettings();
+            settings.setMyLocationButtonEnabled(true);
+            settings.setCompassEnabled(false);
+
+            aMap.setMyLocationType(AMap.LOCATION_TYPE_MAP_FOLLOW);
+            aMap.setMyLocationEnabled(true);
+            aMap.moveCamera(CameraUpdateFactory.zoomTo(ZOOM));
+
+            aMap.setMyLocationStyle(myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE));
+        }
     }
 
     @OnClick({R.id.tv_model, R.id.tv_map, R.id.tv_drive, R.id.tv_control, R.id.tv_inspect,
@@ -246,13 +309,68 @@ public class TaskActivity extends BaseActivity implements BridgeService.PlayInte
         ivModel.setVisibility(b ? View.VISIBLE : View.GONE);
         tvMap.setTextColor(!b ? getResources().getColor(R.color.color_black) : getResources().getColor(R.color.color_white));
         tvMap.setBackgroundColor(!b ? getResources().getColor(R.color.task_while) : getResources().getColor(R.color.task_deep));
-        ivMap.setVisibility(!b ? View.VISIBLE : View.GONE);
+        mapView.setVisibility(!b ? View.VISIBLE : View.GONE);
     }
 
     private void sendLocal(byte[] bytes) {
         Intent intent = new Intent(AppConstants.UDP_SEND_ACTION);
         intent.putExtra("bytes", bytes);
         mLbmManager.sendBroadcast(intent);
+    }
+
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (mListener != null) {
+            if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
+                double latitude = aMapLocation.getLatitude();
+                double longitude = aMapLocation.getLongitude();
+                String address = aMapLocation.getAddress();
+
+                if (isFirstIn) {
+                    lastLatLng = new LatLng(latitude, longitude);
+                    aMap.moveCamera(CameraUpdateFactory.zoomTo(ZOOM));
+                    aMap.moveCamera(CameraUpdateFactory.changeLatLng(lastLatLng));
+                    mListener.onLocationChanged(aMapLocation);
+                    isFirstIn = false;
+
+                }
+            } else {
+                String errText = "定位失败," + aMapLocation.getErrorCode() + ": " + aMapLocation.getErrorInfo();
+                Log.e(TAG, errText);
+            }
+        }
+    }
+
+    @Override
+    public void activate(LocationSource.OnLocationChangedListener onLocationChangedListener) {
+        mListener = onLocationChangedListener;
+        if (mLocationClient == null) {
+            setLocationClient();
+        }
+    }
+
+    private void setLocationClient() {
+        mLocationClient = new AMapLocationClient(this);
+        mLocationClient.setLocationListener(this);
+        mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        mLocationOption.setNeedAddress(true);
+        mLocationOption.setOnceLocation(false);
+        mLocationOption.setWifiActiveScan(true);
+        mLocationOption.setMockEnable(false);
+        mLocationOption.setInterval(2000);
+        mLocationClient.setLocationOption(mLocationOption);
+        mLocationClient.startLocation();
+    }
+
+    @Override
+    public void deactivate() {
+        mListener = null;
+        if (mLocationClient != null) {
+            mLocationClient.stopLocation();
+            mLocationClient.onDestroy();
+        }
+        mLocationClient = null;
     }
 
     @Override
