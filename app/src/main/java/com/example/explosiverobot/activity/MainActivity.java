@@ -12,7 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.adapter.ActionViewPagerAdapter;
@@ -54,6 +57,27 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
     ImageView ivRobotBg;
     @BindView(R.id.et_inputGroupName)
     EditText etInputGroupName;
+    //复位
+    @BindView(R.id.ll_recovery)
+    LinearLayout llRecovery;
+    //照明灯前
+    @BindView(R.id.tog_front)
+    ToggleButton togFront;
+    //照明灯后
+    @BindView(R.id.tog_back)
+    ToggleButton togBack;
+    //脚掌前向上
+    @BindView(R.id.tv_foot_front_top)
+    TextView tvFootFrontTop;
+    //脚掌前向下
+    @BindView(R.id.tv_foot_front_bottom)
+    TextView tvFootFrontBottom;
+    //脚掌后向上
+    @BindView(R.id.tv_foot_back_top)
+    TextView tvFootBackTop;
+    //脚掌后向下
+    @BindView(R.id.tv_foot_back_bottom)
+    TextView tvFootBackBottom;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -209,7 +233,7 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
         sendBroadcast(new Intent(AppConstants.NET_LOONGGG_EXITAPP));
     }
 
-    @OnClick({R.id.tv_add_group, R.id.iv_robot_bg})
+    @OnClick({R.id.tv_add_group, R.id.iv_robot_bg, R.id.tog_back, R.id.tog_front, R.id.ll_recovery})
     public void onClick(View view) {
         switch (view.getId()) {
             //添加分组
@@ -223,6 +247,43 @@ public class MainActivity extends BaseActivity implements BridgeService.AddCamer
                     Log.e(TAG, "tag : " + tag);
                 }
                 break;
+            case R.id.tog_back:
+                // 当按钮第一次被点击时候响应的事件
+                if (togBack.isChecked()) {
+                    showToast("照明灯后开");
+                }
+                // 当按钮再次被点击时候响应的事件
+                else {
+                    showToast("照明灯后关");
+                }
+                break;
+            case R.id.tog_front:
+                // 当按钮第一次被点击时候响应的事件
+                if (togFront.isChecked()) {
+                    showToast("照明灯前开");
+                }
+                // 当按钮再次被点击时候响应的事件
+                else {
+                    showToast("照明灯前关");
+                }
+                break;
+            case R.id.tv_foot_back_bottom:
+                showToast("脚掌后下");
+                break;
+            case R.id.tv_foot_back_top:
+                showToast("脚掌后上");
+                break;
+            case R.id.tv_foot_front_bottom:
+                showToast("脚掌前下");
+                break;
+            case R.id.tv_foot_front_top:
+                showToast("脚掌前上");
+                break;
+            //复位
+            case R.id.ll_recovery:
+                showToast("复位");
+                break;
+
         }
     }
 

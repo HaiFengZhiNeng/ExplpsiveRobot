@@ -17,4 +17,8 @@
     <color name="task_deepblue">#376BC5</color>
     <color name="color_transparent">#00ffffff</color>
     <color name="color_submit_back">#4D000000</color>
+    <color name="color_main_right_line">#eaeaea</color>
+    <color name="color_main_right_foot">#ACB6C7</color>
+    <color name="color_recovery">#404650</color>
+    <color name="color_back_addgroup">#313131</color>
 </resources>
