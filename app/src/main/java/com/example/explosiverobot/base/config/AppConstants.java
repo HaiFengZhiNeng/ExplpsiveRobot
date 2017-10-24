@@ -17,7 +17,7 @@ public class AppConstants {
     public static final String FIRST_OPEN = "first_open";
 
     //ipc
-    public static String deviceName = null;
-    public static String devicePass = null;
-    public static String deviceId = null;
+//    public static String deviceName = null;
+//    public static String devicePass = null;
+//    public static String deviceId = null;
 }

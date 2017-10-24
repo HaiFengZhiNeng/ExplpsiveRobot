@@ -43,13 +43,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="228d59a2838fda823ac92bc9e3d4a23c" />
 
-        <activity android:name=".activity.SplashActivity">
+        <activity
+            android:name=".activity.SplashActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,12 +59,20 @@
             </intent-filter>
         </activity>
         <!-- 引导页 -->
-        <activity android:name=".activity.GuideActivity" />
+        <activity
+            android:name=".activity.GuideActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape" />
 
         <activity
             android:name=".activity.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name=".activity.TaskActivity" />
+
+        <activity
+            android:name=".activity.TaskActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape" />
 
         <service android:name=".service.UdpService" />
         <service android:name=".service.BridgeService" />

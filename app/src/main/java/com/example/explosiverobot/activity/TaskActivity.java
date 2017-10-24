@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -35,12 +34,22 @@ import com.example.explosiverobot.ipcamera.MyRender;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.util.GpsUtils;
+import com.seabreeze.log.Print;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
 
-public class TaskActivity extends BaseActivity implements AMapLocationListener, LocationSource, BridgeService.PlayInterface, UDPAcceptReceiver.UDPAcceptInterface {
+public class TaskActivity extends BaseActivity implements AMapLocationListener,
+        BridgeService.AddCameraInterface,
+        BridgeService.CallBackMessageInterface,
+        BridgeService.IpcamClientInterface,
+        LocationSource,
+        BridgeService.PlayInterface,
+        UDPAcceptReceiver.UDPAcceptInterface {
+
+    private static final String STR_MSG_PARAM = "msgparam";
+    private static final String STR_DID = "did";
 
     @BindView(R.id.gl_surface_view)
     GLSurfaceView glSurfaceView;
@@ -89,8 +98,6 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
     @BindView(R.id.sc_dodge)
     SwitchCompat scDodge;
 
-    private String strDID;
-
     private MyRender myRender;
 
     private LocalBroadcastManager mLbmManager;
@@ -136,6 +143,91 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
         }
     };
 
+    private String strUser, strPwd, strDID;
+    //连接状态
+    private int tag = 0;
+
+    private Handler PPPPMsgHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            Bundle bd = msg.getData();
+            int msgParam = bd.getInt(STR_MSG_PARAM);
+            int msgType = msg.what;
+            String did = bd.getString(STR_DID);
+            switch (msgType) {
+                case ContentCommon.PPPP_MSG_TYPE_PPPP_STATUS:
+                    switch (msgParam) {
+                        case ContentCommon.PPPP_STATUS_CONNECTING://0
+                            Print.e(getString(R.string.pppp_status_connecting));
+                            showToast(getString(R.string.pppp_status_connecting));
+                            tag = 2;
+                            break;
+                        case ContentCommon.PPPP_STATUS_CONNECT_FAILED://3
+                            Print.e(getString(R.string.pppp_status_connect_failed));
+                            showToast(getString(R.string.pppp_status_connect_failed));
+                            tag = 0;
+                            break;
+                        case ContentCommon.PPPP_STATUS_DISCONNECT://4
+                            Print.e(getString(R.string.pppp_status_disconnect));
+                            showToast(getString(R.string.pppp_status_disconnect));
+                            tag = 0;
+                            break;
+                        case ContentCommon.PPPP_STATUS_INITIALING://1
+                            Print.e(getString(R.string.pppp_status_initialing));
+                            showToast(getString(R.string.pppp_status_initialing));
+                            tag = 2;
+                            break;
+                        case ContentCommon.PPPP_STATUS_INVALID_ID://5
+                            Print.e(getString(R.string.pppp_status_invalid_id));
+                            showToast(getString(R.string.pppp_status_invalid_id));
+                            tag = 0;
+                            break;
+                        case ContentCommon.PPPP_STATUS_ON_LINE://2 在线状态
+                            //摄像机在线之后读取摄像机类型
+                            String cmd = "get_status.cgi?loginuse=admin&loginpas=" + strPwd + "&user=admin&pwd=" + strPwd;
+                            NativeCaller.TransferMessage(did, cmd, 1);
+                            Print.e(getString(R.string.pppp_status_online));
+                            showToast(getString(R.string.pppp_status_online));
+                            tag = 1;
+                            priviewIpcamera();
+                            break;
+                        case ContentCommon.PPPP_STATUS_DEVICE_NOT_ON_LINE://6
+                            Print.e(getString(R.string.device_not_on_line));
+                            showToast(getString(R.string.device_not_on_line));
+                            tag = 0;
+                            break;
+                        case ContentCommon.PPPP_STATUS_CONNECT_TIMEOUT://7
+                            Print.e(getString(R.string.pppp_status_connect_timeout));
+                            showToast(getString(R.string.pppp_status_connect_timeout));
+                            tag = 0;
+                            break;
+                        case ContentCommon.PPPP_STATUS_CONNECT_ERRER://8
+                            Print.e(getString(R.string.pppp_status_pwd_error));
+                            showToast(getString(R.string.pppp_status_pwd_error));
+                            tag = 0;
+                            break;
+                        default:
+                            Print.e(getString(R.string.pppp_status_unknown));
+                            showToast(getString(R.string.pppp_status_unknown));
+                    }
+                    if (msgParam == ContentCommon.PPPP_STATUS_ON_LINE) {
+                        NativeCaller.PPPPGetSystemParams(did, ContentCommon.MSG_TYPE_GET_PARAMS);
+                    }
+                    if (msgParam == ContentCommon.PPPP_STATUS_INVALID_ID
+                            || msgParam == ContentCommon.PPPP_STATUS_CONNECT_FAILED
+                            || msgParam == ContentCommon.PPPP_STATUS_DEVICE_NOT_ON_LINE
+                            || msgParam == ContentCommon.PPPP_STATUS_CONNECT_TIMEOUT
+                            || msgParam == ContentCommon.PPPP_STATUS_CONNECT_ERRER) {
+                        NativeCaller.StopPPPP(did);
+                    }
+                    break;
+                case ContentCommon.PPPP_MSG_TYPE_PPPP_MODE:
+                    break;
+
+            }
+
+        }
+    };
+
     @Override
     protected int getContentViewId() {
         return R.layout.activity_task;
@@ -144,28 +236,25 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
     @Override
     protected void init(Bundle savedInstanceState) {
 
-        strDID = AppConstants.deviceId;
-
         mLbmManager = LocalBroadcastManager.getInstance(this);
 
-        BridgeService.setPlayInterface(this);
-        NativeCaller.StartPPPPLivestream(strDID, 10, 1);//确保不能重复start
-        NativeCaller.PPPPGetSystemParams(strDID, ContentCommon.MSG_TYPE_GET_CAMERA_PARAMS);
+        initCamera();
 
         myRender = new MyRender(glSurfaceView);
         glSurfaceView.setRenderer(myRender);
 
-        if(!GpsUtils.isOPen(this)) {
+        if (!GpsUtils.isOPen(this)) {
             GpsUtils.openGPS(this);
         }
         initMap(savedInstanceState);
     }
 
 
-
     @Override
     protected void initData() {
-
+        strUser = "admin";
+        strPwd = "12345678";
+        strDID = "VSTC900392EUSVZ";
     }
 
     @Override
@@ -190,6 +279,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
         mUdpAcceptReceiver = new UDPAcceptReceiver(this);
         IntentFilter intentFilter = new IntentFilter(AppConstants.UDP_ACCEPT_ACTION);
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
+
+        connectIpcamera();
     }
 
     @Override
@@ -201,6 +292,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
 
     @Override
     protected void onDestroy() {
+        stopIpcamera();
         super.onDestroy();
         mapView.onDestroy();
         mLbmManager.unregisterReceiver(mUdpAcceptReceiver);
@@ -210,6 +302,33 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+    /**
+     * 初始化camera
+     */
+    private void initCamera() {
+        BridgeService.setAddCameraInterface(this);
+        BridgeService.setCallBackMessage(this);
+        BridgeService.setIpcamClientInterface(this);
+        NativeCaller.Init();
+    }
+
+    private void connectIpcamera() {
+        Print.e("连接");
+        new Thread(new StartPPPPThread(strUser, strPwd, strDID)).start();
+    }
+
+    private void priviewIpcamera() {
+        Print.e("预览相机");
+        BridgeService.setPlayInterface(this);
+        NativeCaller.StartPPPPLivestream(strDID, 10, 1);//确保不能重复start
+        NativeCaller.PPPPGetSystemParams(strDID, ContentCommon.MSG_TYPE_GET_CAMERA_PARAMS);
+    }
+
+    private void stopIpcamera(){
+        Print.e("stop相机");
+        NativeCaller.StopPPPPLivestream(strDID);
     }
 
     private void initMap(Bundle savedInstanceState) {
@@ -242,9 +361,23 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
         switch (view.getId()) {
             case R.id.tv_model:
                 choiceTop(true);
+
+                strUser = "admin";
+                strPwd = "12345678";
+                strDID = "VSTC900392EUSVZ";
+                connectIpcamera();
+
                 break;
             case R.id.tv_map:
                 choiceTop(false);
+
+                stopIpcamera();
+
+                strUser = "admin";
+                strPwd = "haifeng567";
+                strDID = "VSTA347062EGDGD";
+                connectIpcamera();
+
                 break;
             case R.id.tv_drive:
                 tvDrive.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
@@ -336,7 +469,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
                 }
             } else {
                 String errText = "定位失败," + aMapLocation.getErrorCode() + ": " + aMapLocation.getErrorInfo();
-                Log.e(TAG, errText);
+                Print.e(errText);
             }
         }
     }
@@ -373,17 +506,18 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
         mLocationClient = null;
     }
 
+    //******************************相机连接后回调*******************
     @Override
     public void callBackCameraParamNotify(String did, int resolution, int brightness, int contrast, int hue, int saturation, int flip, int mode) {
-//        Log.e(TAG, "callBackCameraParamNotify");
-//        Log.e(TAG, "设备返回的参数" + resolution + "," + brightness + "," + contrast + "," + hue + "," + saturation + "," + flip + "," + mode);
+//        Print.e("设备返回的参数" + resolution + "," + brightness + "," + contrast + "," + hue + "," + saturation + "," + flip + "," + mode);
+
     }
 
 
     @Override
     public void callBackVideoData(byte[] videobuf, int h264Data, int len, int width, int height) {
-//        Log.e(TAG, "callBackVideoData 视频数据流回调");
-//        Log.e(TAG, "底层返回数据" + "videobuf:" + videobuf + "--" + "h264Data" + h264Data + "len" + len + "width" + width + "height" + height);
+//        Print.e("callBackVideoData 视频数据流回调");
+//        Print.e("底层返回数据" + "videobuf:" + videobuf + "--" + "h264Data" + h264Data + "len" + len + "width" + width + "height" + height);
         if (!bDisplayFinished)
             return;
         bDisplayFinished = false;
@@ -402,26 +536,101 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener, 
 
     @Override
     public void callBackMessageNotify(String did, int msgType, int param) {
-        Log.e(TAG, "callBackMessageNotify");
-        Log.e(TAG, "MessageNotify did: " + did + " msgType: " + msgType + " param: " + param);
+
+        Print.e("连接通知 did: " + did + " msgType: " + msgType + " param: " + param);
     }
 
     @Override
     public void callBackAudioData(byte[] pcm, int len) {
-        Log.e(TAG, "callBackAudioData");
-        Log.e(TAG, "AudioData: len :+ " + len);
+        Print.e("callBackAudioData");
+        Print.e("AudioData: len :+ " + len);
     }
 
     @Override
     public void callBackH264Data(byte[] h264, int type, int size) {
-        Log.e(TAG, "callBackH264Data");
-        Log.e(TAG, "CallBack_H264Data" + " type:" + type + " size:" + size);
+        Print.e("callBackH264Data");
+        Print.e("CallBack_H264Data" + " type:" + type + " size:" + size);
     }
 
     @Override
     public void UDPAcceptMessage(String content) {
-        if(isAccept){
+        if (isAccept) {
             showToast(content);
+        }
+    }
+
+    //**************************连接*********************
+    @Override
+    public void BSMsgNotifyData(String did, int type, int param) {
+        Print.e("连接状态回调... type : " + type);
+        Bundle bd = new Bundle();
+        Message msg = PPPPMsgHandler.obtainMessage();
+        msg.what = type;
+        bd.putInt(STR_MSG_PARAM, param);
+        bd.putString(STR_DID, did);
+        msg.setData(bd);
+        PPPPMsgHandler.sendMessage(msg);
+    }
+
+    @Override
+    public void BSSnapshotNotify(String did, byte[] bImage, int len) {
+        Print.e("相机连接后 did : " + did);
+    }
+
+    @Override
+    public void callBackUserParams(String did, String user1, String pwd1, String user2, String pwd2, String user3, String pwd3) {
+        Print.e("did : " + did + " ,user1 : " + user1 + " ,pwd1 : " + pwd1 + " ,user2 : " + user2 + " ,pwd : " + pwd2 +
+                " ,user3 : " + user3 + " ,pwd3 : " + pwd3);
+    }
+
+    @Override
+    public void CameraStatus(String did, int status) {
+        Print.e("相机连接状态 did ： " + did + " status : " + status);
+    }
+
+    @Override
+    public void callBackSearchResultData(int cameraType, String strMac, String strName, String strDeviceID, String strIpAddr, int port) {
+        Print.e("callBackSearchResultData strDeviceID : " + strDeviceID);
+    }
+
+    //*********************************setCallBackMessage***************
+    @Override
+    public void CallBackGetStatus(String did, String resultPbuf, int cmd) {
+        Print.e("setCallBackMessage的回调 did : " + did + " 连接相机的信息参数 ");
+    }
+
+
+    class StartPPPPThread implements Runnable {
+
+        private String mStrUser, mStrPwd, mStrDID;
+
+        public StartPPPPThread(String strUser, String strPwd, String strDID) {
+            this.mStrUser = strUser;
+            this.mStrPwd = strPwd;
+            this.mStrDID = strDID;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(100);
+
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (mStrDID.toLowerCase().startsWith("vsta")) {
+                    NativeCaller.StartPPPPExt(mStrDID, mStrUser, mStrPwd, 1, "",
+                            "EFGFFBBOKAIEGHJAEDHJFEEOHMNGDCNJCDFKAKHLEBJHKEKMCAFCDLLLHAOCJPPMBHMNOMCJKGJEBGGHJHIOMFBDNPKNFEGCEGCBGCALMFOHBCGMFK");
+                } else {
+                    NativeCaller.StartPPPP(mStrDID, mStrUser, mStrPwd, 1, "");
+                }
+
+            } catch (Exception e) {
+
+            }
         }
     }
 

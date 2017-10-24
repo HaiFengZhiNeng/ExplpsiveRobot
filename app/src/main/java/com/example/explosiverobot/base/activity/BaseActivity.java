@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +23,6 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
-
-    public String TAG = this.getClass().getSimpleName();
 
     protected Context mContext;
     protected Handler mHandler = new Handler();
@@ -71,6 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
 

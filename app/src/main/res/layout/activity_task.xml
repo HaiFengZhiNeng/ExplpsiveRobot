@@ -111,7 +111,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="地图" />
+                        android:text="操纵" />
 
                     <View style="@style/task_vertical_line" />
 
@@ -121,7 +121,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="地图" />
+                        android:text="检查" />
                 </LinearLayout>
 
                 <View style="@style/task_line" />

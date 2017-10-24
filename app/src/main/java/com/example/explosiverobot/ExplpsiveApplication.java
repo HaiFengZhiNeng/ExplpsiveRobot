@@ -3,7 +3,10 @@ package com.example.explosiverobot;
 import android.app.Application;
 
 import com.example.explosiverobot.db.base.BaseManager;
-import com.example.explosiverobot.udp.net.NetClient;
+import com.seabreeze.log.Print;
+import com.seabreeze.log.inner.ConsoleTree;
+import com.seabreeze.log.inner.FileTree;
+import com.seabreeze.log.inner.LogcatTree;
 
 /**
  * Created by dell on 2017/10/16.
@@ -17,8 +20,6 @@ public class ExplpsiveApplication extends Application {
         return instance;
     }
 
-    private NetClient client;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -26,6 +27,14 @@ public class ExplpsiveApplication extends Application {
         instance = this;
 
         BaseManager.initOpenHelper(this);
+
+        if(BuildConfig.DEBUG){
+            Print.getLogConfig().configAllowLog(true)
+                    .configShowBorders(false);
+            Print.plant(new FileTree(this, "Log"));
+            Print.plant(new ConsoleTree());
+            Print.plant(new LogcatTree());
+        }
 
     }
 
