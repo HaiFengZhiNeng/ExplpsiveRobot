@@ -7,11 +7,15 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IdRes;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,8 +35,11 @@ import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.base.config.ContentCommon;
 import com.example.explosiverobot.ipcamera.MyRender;
+import com.example.explosiverobot.modle.Tele;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
+import com.example.explosiverobot.threed.DrawInterface;
+import com.example.explosiverobot.threed.DrawSurfaceView;
 import com.example.explosiverobot.util.GpsUtils;
 import com.seabreeze.log.Print;
 
@@ -46,7 +53,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         BridgeService.IpcamClientInterface,
         LocationSource,
         BridgeService.PlayInterface,
-        UDPAcceptReceiver.UDPAcceptInterface {
+        UDPAcceptReceiver.UDPAcceptInterface,
+        DrawInterface {
 
     private static final String STR_MSG_PARAM = "msgparam";
     private static final String STR_DID = "did";
@@ -57,8 +65,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     TextView tvModel;
     @BindView(R.id.tv_map)
     TextView tvMap;
-    @BindView(R.id.iv_model)
-    ImageView ivModel;
+    @BindView(R.id.re_model)
+    RelativeLayout reModel;
     @BindView(R.id.map_view)
     MapView mapView;
     @BindView(R.id.tv_drive)
@@ -97,6 +105,20 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     ImageView ivArm;
     @BindView(R.id.sc_dodge)
     SwitchCompat scDodge;
+    @BindView(R.id.draw_suface_view)
+    DrawSurfaceView mDrawSurfaceView;
+    @BindView(R.id.rb_tele1)
+    RadioButton rbTele1;
+    @BindView(R.id.rb_tele2)
+    RadioButton rbTele2;
+    @BindView(R.id.rb_tele3)
+    RadioButton rbTele3;
+    @BindView(R.id.rb_tele4)
+    RadioButton rbTele4;
+    @BindView(R.id.rg_tele)
+    RadioGroup rgTele;
+    @BindView(R.id.drive_sole)
+    LinearLayout driveSole;
 
     private MyRender myRender;
 
@@ -106,7 +128,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     private AMap aMap;
     public static final int ZOOM = 15;
 
-    private LocationSource.OnLocationChangedListener mListener;
+    private OnLocationChangedListener mListener;
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
 
@@ -129,7 +151,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                NativeCaller.PPPPGetSystemParams(strDID, ContentCommon.MSG_TYPE_GET_CAMERA_PARAMS);
+                NativeCaller.PPPPGetSystemParams(Tele.getInstance().getDid(), ContentCommon.MSG_TYPE_GET_CAMERA_PARAMS);
             }
 
             switch (msg.what) {
@@ -143,7 +165,6 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
     };
 
-    private String strUser, strPwd, strDID;
     //连接状态
     private int tag = 0;
 
@@ -183,7 +204,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                             break;
                         case ContentCommon.PPPP_STATUS_ON_LINE://2 在线状态
                             //摄像机在线之后读取摄像机类型
-                            String cmd = "get_status.cgi?loginuse=admin&loginpas=" + strPwd + "&user=admin&pwd=" + strPwd;
+                            String cmd = "get_status.cgi?loginuse=admin&loginpas=" + Tele.getInstance().getPwd() + "&user=admin&pwd=" + Tele.getInstance().getPwd();
                             NativeCaller.TransferMessage(did, cmd, 1);
                             Print.e(getString(R.string.pppp_status_online));
                             showToast(getString(R.string.pppp_status_online));
@@ -247,14 +268,13 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             GpsUtils.openGPS(this);
         }
         initMap(savedInstanceState);
+        mDrawSurfaceView.setDrawInterface(this);
     }
 
 
     @Override
     protected void initData() {
-        strUser = "admin";
-        strPwd = "12345678";
-        strDID = "VSTC900392EUSVZ";
+
     }
 
     @Override
@@ -266,6 +286,33 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                     isDodge = true;
                 } else {
                     isDodge = false;
+                }
+            }
+        });
+        rgTele.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i){
+                    case R.id.rb_tele1:
+                        stopIpcamera();
+                        Tele.getInstance().setTele1();
+                        connectIpcamera();
+                        break;
+                    case R.id.rb_tele2:
+                        stopIpcamera();
+                        Tele.getInstance().setTele2();
+                        connectIpcamera();
+                        break;
+                    case R.id.rb_tele3:
+                        stopIpcamera();
+                        Tele.getInstance().setTele3();
+                        connectIpcamera();
+                        break;
+                    case R.id.rb_tele4:
+                        stopIpcamera();
+                        Tele.getInstance().setTele4();
+                        connectIpcamera();
+                        break;
                 }
             }
         });
@@ -315,20 +362,21 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     }
 
     private void connectIpcamera() {
-        Print.e("连接");
-        new Thread(new StartPPPPThread(strUser, strPwd, strDID)).start();
+        Print.e("连接 " + Tele.getInstance().getPwd());
+        new Thread(new StartPPPPThread(Tele.getInstance().getUser(), Tele.getInstance().getPwd(), Tele.getInstance().getDid())).start();
     }
 
     private void priviewIpcamera() {
         Print.e("预览相机");
         BridgeService.setPlayInterface(this);
-        NativeCaller.StartPPPPLivestream(strDID, 10, 1);//确保不能重复start
-        NativeCaller.PPPPGetSystemParams(strDID, ContentCommon.MSG_TYPE_GET_CAMERA_PARAMS);
+        NativeCaller.StartPPPPLivestream(Tele.getInstance().getDid(), 10, 1);//确保不能重复start
+        NativeCaller.PPPPGetSystemParams(Tele.getInstance().getDid(), ContentCommon.MSG_TYPE_GET_CAMERA_PARAMS);
     }
 
-    private void stopIpcamera(){
+    private void stopIpcamera() {
         Print.e("stop相机");
-        NativeCaller.StopPPPPLivestream(strDID);
+        NativeCaller.StopPPPPLivestream(Tele.getInstance().getDid());
+        NativeCaller.StopPPPP(Tele.getInstance().getDid());
     }
 
     private void initMap(Bundle savedInstanceState) {
@@ -362,21 +410,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             case R.id.tv_model:
                 choiceTop(true);
 
-                strUser = "admin";
-                strPwd = "12345678";
-                strDID = "VSTC900392EUSVZ";
-                connectIpcamera();
-
                 break;
             case R.id.tv_map:
                 choiceTop(false);
-
-                stopIpcamera();
-
-                strUser = "admin";
-                strPwd = "haifeng567";
-                strDID = "VSTA347062EGDGD";
-                connectIpcamera();
 
                 break;
             case R.id.tv_drive:
@@ -439,7 +475,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     private void choiceTop(boolean b) {
         tvModel.setTextColor(b ? getResources().getColor(R.color.color_black) : getResources().getColor(R.color.color_white));
         tvModel.setBackgroundColor(b ? getResources().getColor(R.color.task_while) : getResources().getColor(R.color.task_deep));
-        ivModel.setVisibility(b ? View.VISIBLE : View.GONE);
+        reModel.setVisibility(b ? View.VISIBLE : View.GONE);
         tvMap.setTextColor(!b ? getResources().getColor(R.color.color_black) : getResources().getColor(R.color.color_white));
         tvMap.setBackgroundColor(!b ? getResources().getColor(R.color.task_while) : getResources().getColor(R.color.task_deep));
         mapView.setVisibility(!b ? View.VISIBLE : View.GONE);
@@ -475,7 +511,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     }
 
     @Override
-    public void activate(LocationSource.OnLocationChangedListener onLocationChangedListener) {
+    public void activate(OnLocationChangedListener onLocationChangedListener) {
         mListener = onLocationChangedListener;
         if (mLocationClient == null) {
             setLocationClient();
@@ -599,6 +635,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         Print.e("setCallBackMessage的回调 did : " + did + " 连接相机的信息参数 ");
     }
 
+    @Override
+    public void rotatioCallbackn(double rotation1, double rotation2, double rotation3) {
+        Print.e("(" + rotation1 + ", " + rotation2 + ", " + rotation3 + ")");
+    }
+
 
     class StartPPPPThread implements Runnable {
 
@@ -616,7 +657,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 Thread.sleep(100);
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

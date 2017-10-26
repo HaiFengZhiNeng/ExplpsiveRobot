@@ -3,6 +3,7 @@ package com.example.explosiverobot;
 import android.app.Application;
 
 import com.example.explosiverobot.db.base.BaseManager;
+import com.example.explosiverobot.modle.Tele;
 import com.seabreeze.log.Print;
 import com.seabreeze.log.inner.ConsoleTree;
 import com.seabreeze.log.inner.FileTree;
@@ -27,6 +28,8 @@ public class ExplpsiveApplication extends Application {
         instance = this;
 
         BaseManager.initOpenHelper(this);
+
+        Tele.getInstance().setTele1();
 
         if(BuildConfig.DEBUG){
             Print.getLogConfig().configAllowLog(true)

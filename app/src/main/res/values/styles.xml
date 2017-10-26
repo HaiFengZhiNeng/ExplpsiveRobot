@@ -98,4 +98,15 @@
         <item name="android:layout_height">0.5dp</item>
         <item name="android:background">@color/task_deepblue</item>
     </style>
+
+    <style name="CustomRadioBtn">
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:background">@drawable/radiobutton_background</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/radiobutton_textcolor</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

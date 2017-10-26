@@ -1,5 +1,6 @@
 package com.example.explosiverobot.ipcamera;
 
+import android.graphics.PixelFormat;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
@@ -49,6 +50,7 @@ public class MyRender implements GLSurfaceView.Renderer {
         this.positionBufferData = setPositionBufferData();
 
         paramGLSurfaceView.setEGLContextClientVersion(2);
+        paramGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
     }
 
 
@@ -96,7 +98,8 @@ public class MyRender implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-        GLES20.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+//        GLES20.glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+        GLES20.glClearColor(0,0,0,0);
         GLES20.glGenTextures(3, this.texture, 0);
         createShaders();
         loadVBOs();
@@ -118,7 +121,6 @@ public class MyRender implements GLSurfaceView.Renderer {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
