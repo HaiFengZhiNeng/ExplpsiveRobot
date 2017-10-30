@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -35,12 +36,12 @@ import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.base.config.ContentCommon;
 import com.example.explosiverobot.ipcamera.MyRender;
+import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Tele;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
-import com.example.explosiverobot.threed.DrawInterface;
-import com.example.explosiverobot.threed.DrawSurfaceView;
 import com.example.explosiverobot.util.GpsUtils;
+import com.example.explosiverobot.view.surface.DrawSurfaceView;
 import com.seabreeze.log.Print;
 
 import butterknife.BindView;
@@ -119,6 +120,12 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     RadioGroup rgTele;
     @BindView(R.id.drive_sole)
     LinearLayout driveSole;
+    @BindView(R.id.ib_hori_tour)
+    ImageButton ibHoriTour;
+    @BindView(R.id.ib_vert_tour)
+    ImageButton ibVertTour;
+    @BindView(R.id.rl_ip_control)
+    RelativeLayout rlIpControl;
 
     private MyRender myRender;
 
@@ -145,6 +152,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     public boolean isH264 = false;//是否是H264格式标志
 
     private boolean isDodge;//自动避让
+
+    private boolean isLeftRight;
+    private boolean isUpDown;
 
     private Handler mDrawHandler = new Handler() {
         @Override
@@ -274,7 +284,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @Override
     protected void initData() {
-
+        Tele.getInstance().setTele1();
     }
 
     @Override
@@ -292,26 +302,30 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         rgTele.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                switch (i){
+                switch (i) {
                     case R.id.rb_tele1:
                         stopIpcamera();
                         Tele.getInstance().setTele1();
                         connectIpcamera();
+                        rlIpControl.setVisibility(View.VISIBLE);
                         break;
                     case R.id.rb_tele2:
                         stopIpcamera();
                         Tele.getInstance().setTele2();
                         connectIpcamera();
+                        rlIpControl.setVisibility(View.GONE);
                         break;
                     case R.id.rb_tele3:
                         stopIpcamera();
                         Tele.getInstance().setTele3();
                         connectIpcamera();
+                        rlIpControl.setVisibility(View.GONE);
                         break;
                     case R.id.rb_tele4:
                         stopIpcamera();
                         Tele.getInstance().setTele4();
                         connectIpcamera();
+                        rlIpControl.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -404,7 +418,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @OnClick({R.id.tv_model, R.id.tv_map, R.id.tv_drive, R.id.tv_control, R.id.tv_inspect,
             R.id.ic_front_upper, R.id.ic_front_lower, R.id.ic_after_upper, R.id.ic_after_lower,
-            R.id.tv_speed_high, R.id.tv_speed_medium, R.id.tv_speed_low})
+            R.id.tv_speed_high, R.id.tv_speed_medium, R.id.tv_speed_low,
+            R.id.ib_hori_tour, R.id.ib_vert_tour})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_model:
@@ -468,6 +483,28 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.VISIBLE);
                 showToast("低速");
+                break;
+            case R.id.ib_hori_tour:
+                if (isLeftRight) {
+                    ibHoriTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
+                    isLeftRight = false;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT_STOP);
+                } else {
+                    ibHoriTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
+                    isLeftRight = true;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT);
+                }
+                break;
+            case R.id.ib_vert_tour:
+                if (isUpDown) {
+                    ibVertTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
+                    isUpDown = false;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(),ContentCommon.CMD_PTZ_UP_DOWN_STOP);
+                } else {
+                    ibVertTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
+                    isUpDown = true;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(),ContentCommon.CMD_PTZ_UP_DOWN);
+                }
                 break;
         }
     }
@@ -637,7 +674,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @Override
     public void rotatioCallbackn(double rotation1, double rotation2, double rotation3) {
-        Print.e("(" + rotation1 + ", " + rotation2 + ", " + rotation3 + ")");
+//        Print.e("(" + rotation1 + ", " + rotation2 + ", " + rotation3 + ")");
+
     }
 
 

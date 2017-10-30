@@ -1,4 +1,4 @@
-package com.example.explosiverobot.threed;
+package com.example.explosiverobot.view.surface;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -6,6 +6,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.example.explosiverobot.listener.DrawInterface;
+import com.example.explosiverobot.modle.Spot;
+import com.example.explosiverobot.service.DrawingThread;
 
 
 public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -59,7 +63,7 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         screenW = getWidth();
         screenH = getHeight();
 
-        mDrawingThread = new DrawingThread(mHolder, screenW, screenH);
+        mDrawingThread = new DrawingThread(this, mHolder, screenW, screenH);
         mDrawingThread.start(); // 启动线程
         mDrawingThread.setDrawInterface(mDrawInterface);
     }
