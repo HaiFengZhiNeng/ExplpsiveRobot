@@ -1,5 +1,6 @@
 package com.example.explosiverobot.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -44,6 +45,8 @@ import com.example.explosiverobot.util.GpsUtils;
 import com.example.explosiverobot.view.surface.DrawSurfaceView;
 import com.seabreeze.log.Print;
 
+import android_serialport_api.presenter.SerialPresenter;
+import android_serialport_api.presenter.ipresenter.ISerialPresenter;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
@@ -55,7 +58,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         LocationSource,
         BridgeService.PlayInterface,
         UDPAcceptReceiver.UDPAcceptInterface,
-        DrawInterface {
+        DrawInterface,
+        ISerialPresenter.ISerialView{
 
     private static final String STR_MSG_PARAM = "msgparam";
     private static final String STR_DID = "did";
@@ -128,6 +132,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     RelativeLayout rlIpControl;
 
     private MyRender myRender;
+
+    private SerialPresenter mSerialPresenter;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -266,6 +272,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @Override
     protected void init(Bundle savedInstanceState) {
+
+        mSerialPresenter = new SerialPresenter(this);
 
         mLbmManager = LocalBroadcastManager.getInstance(this);
 
@@ -676,6 +684,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     public void rotatioCallbackn(double changeCistance, double rotation2, double rotation3) {
 //        Print.e("(" + rotation1 + ", " + rotation2 + ", " + rotation3 + ")");
 
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
 
