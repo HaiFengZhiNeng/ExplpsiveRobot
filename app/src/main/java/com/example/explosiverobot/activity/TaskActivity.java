@@ -673,7 +673,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     }
 
     @Override
-    public void rotatioCallbackn(double rotation1, double rotation2, double rotation3) {
+    public void rotatioCallbackn(double changeCistance, double rotation2, double rotation3) {
 //        Print.e("(" + rotation1 + ", " + rotation2 + ", " + rotation3 + ")");
 
     }

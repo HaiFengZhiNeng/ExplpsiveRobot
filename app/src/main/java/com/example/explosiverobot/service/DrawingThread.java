@@ -11,7 +11,6 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -49,6 +48,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     private int groundY;
 
+    private double shortProportion;
+    private double longProportion;
+
     private int carHeight;
     private int carWidth;
     private Bitmap armBaseBitmap;
@@ -71,6 +73,10 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private float mRotation3;
     private double endDegreeMax;
     private double endDegreeMin;
+
+    private Spot braceSpot;
+    private Spot triangleSpot;
+    private double originalBraceDistance;
 
     private double myRotation;
     /**
@@ -134,7 +140,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         mPaint.setTextAlign(Paint.Align.LEFT);
 
         carWidth = 400;
-        carHeight = 80;
+        carHeight = 100;
         basePosX = (int) (screenW * 0.3);
         basePosY = (int) (screenH * 0.7);
 
@@ -182,15 +188,110 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
                 firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
 
-//        myRotation = Math.PI / 2;
         mySpot = new Spot(0, 0);
-//        mySpot.setX(endingSpot.getX());
-//        mySpot.setY(endingSpot.getY() - r2);
-//        mySpot = angleAcquisitionPoint(endingSpot, mySpot, myRotation);
 
         touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
+
+        shortProportion = 12.5 / 48.5;
+        longProportion = 46.5 / 48.5;
+
+        double d1 = r0 / 48.5 * 16.5;
+        double d2 = r0 / 48.5 * 14;
+
+        triangleSpot = belowLinePoint(originSpot, firstSpot, r0 * longProportion, r0 * shortProportion);
+
+        braceSpot = new Spot((int) (originSpot.getX() + d1), (int) (originSpot.getY() + Math.sqrt(d1 * d1 - d2 * d2)));
+        originalBraceDistance = getDistance(braceSpot, triangleSpot);
     }
 
+    private Spot belowLinePoint(Spot spot1, Spot spot2, double r1, double r2) {
+        double[] intersectionTriangle = circleCircleIntersection(spot1, spot2, r1, r2);
+        float[] intersectionFloatTriangle = new float[4];
+        for (int i = 0; i < intersectionTriangle.length; i++) {
+            BigDecimal b = new BigDecimal(Double.toString(intersectionTriangle[i]));
+            intersectionFloatTriangle[i] = b.floatValue();
+        }
+        return  new Spot(intersectionFloatTriangle[0] > intersectionFloatTriangle[2] ? intersectionFloatTriangle[0] : intersectionFloatTriangle[2],
+                intersectionFloatTriangle[1] > intersectionFloatTriangle[3] ? intersectionFloatTriangle[1] : intersectionFloatTriangle[3]);
+    }
+
+    /**
+     * 绘制图形
+     *
+     * @param canvas
+     */
+    private void drawSpot(Canvas canvas, double rotation1, double rotation2, double rotation3, boolean isCorrect) {
+
+        if (isCorrect) {
+
+            mRotation1 = (float) (mRotation1 + radianToDegree(rotation1));
+            mRotation2 = (float) (mRotation2 + radianToDegree(rotation2));
+            mRotation3 = (float) (mRotation3 + radianToDegree(rotation3));
+            myRotation = myRotation + rotation3;
+        }
+
+
+        mPaint.setColor(Color.MAGENTA);
+        canvas.drawRect((float) leftBase, (float) topBase + armBaseBitmap.getHeight(),
+                (float) rightBase + carWidth, (float) bottomBase + carHeight, mPaint);
+
+        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) triangleSpot.getX(), (float) triangleSpot.getY(), mPaint);
+        //画基座
+        mPaint.setColor(Color.WHITE);
+        canvas.drawBitmap(armBaseBitmap, null, mArmBaseDestRect, mPaint);
+        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
+
+        //画第一条
+        mPaint.setColor(Color.BLUE);
+        mFirstMatrix.reset();
+        float dxFirst = (float) (originSpot.getX() - armFirstBitmap.getWidth() / 2);
+        float dyFirst = (float) (originSpot.getY() - armFirstBitmap.getHeight() * 4 / 5);
+        mFirstMatrix.postTranslate(dxFirst, dyFirst);
+        float pxFirst = (float) originSpot.getX();
+        float pyFirst = (float) originSpot.getY();
+        mFirstMatrix.postRotate(mRotation1, pxFirst, pyFirst);
+        canvas.drawBitmap(armFirstBitmap, mFirstMatrix, mPaint);
+        canvas.drawCircle(pxFirst, pyFirst, r0, mPaint);
+        canvas.drawLine(pxFirst, pyFirst, (float) firstSpot.getX(), (float) firstSpot.getY(), mPaint);
+
+        //画第二条
+        mPaint.setColor(Color.RED);
+        mSecondMatrix.reset();
+        float dxSecond = (float) (secondSpot.getX() - armSecondBitmap.getWidth() / 2);
+        float dySecond = (float) (secondSpot.getY() - armSecondBitmap.getHeight() * 8 / 9);
+        mSecondMatrix.postTranslate(dxSecond, dySecond);
+        float pxSecond = (float) secondSpot.getX();
+        float pySecond = (float) secondSpot.getY();
+        mSecondMatrix.postRotate(mRotation2, pxSecond, pySecond);
+        canvas.drawBitmap(armSecondBitmap, mSecondMatrix, mPaint);
+        canvas.drawCircle(pxSecond, pySecond, r1, mPaint);
+        canvas.drawCircle((float) basePosX, (float) basePosY, rtouch, mPaint);
+        canvas.drawLine(pxSecond, pySecond, (float) endingSpot.getX(), (float) endingSpot.getY(), mPaint);
+
+        //画第三条
+        mPaint.setColor(Color.GREEN);
+        mEndMatrix.reset();
+        float dxEnd = (float) (endingSpot.getX() - armEndBitmap.getWidth() / 2);
+        float dyEnd = (float) (endingSpot.getY() - armEndBitmap.getHeight() * 14 / 16);
+        mEndMatrix.postTranslate(dxEnd, dyEnd);
+        float pxEnd = (float) endingSpot.getX();
+        float pyEnd = (float) endingSpot.getY();
+        mEndMatrix.postRotate(mRotation3, pxEnd, pyEnd);
+        canvas.drawBitmap(armEndBitmap, mEndMatrix, mPaint);
+        canvas.drawCircle(pxEnd, pyEnd, r2, mPaint);
+        canvas.drawLine(pxEnd, pyEnd, (float) touchSpot.getX(), (float) touchSpot.getY(), mPaint);
+
+        mPaint.setColor(Color.YELLOW);
+        mySpot.setX(endingSpot.getX());
+        mySpot.setY(endingSpot.getY() - r2);
+        mySpot = angleAcquisitionPoint(endingSpot, mySpot, myRotation);
+        canvas.drawCircle((float) mySpot.getX(), (float) mySpot.getY(), 50, mPaint);
+
+        mPaint.setColor(Color.BLACK);
+        canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
+
+
+    }
 
     private void drawSpot(Canvas canvas, Spot spot) {
         if (spot == null) {
@@ -362,7 +463,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         }
 
         double firstDegree = radianToDegree(pointAcquisitionAngle(originSpot, firstSpot, levelSpot));
-        if (firstDegree < firstDegreeMin) {
+        if (firstDegree < 15) {
             firstSpot = temporaryFirstSpot;
             secondSpot = temporarySecondSpot;
             endingSpot = temporaryendingSpot;
@@ -370,7 +471,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             drawSpot(canvas, rotation1, rotation2, rotation3, false);
             return;
         }
-        if (firstDegree > firstDegreeMax) {
+        if (firstDegree > 61) {
             firstSpot = temporaryFirstSpot;
             secondSpot = temporarySecondSpot;
             endingSpot = temporaryendingSpot;
@@ -384,7 +485,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                 new Spot(originSpot.getX(), 2 * secondSpot.getY() - originSpot.getY()), r1);
         //android上准确点的位置
         Spot secondNeedleSpotRes0 = new Spot(secondNeedleSpotRes.getX(),
-                2 * secondSpot.getY() - secondNeedleSpotRes.getY());
+                secondSpot.getY() - (secondNeedleSpotRes.getY() - secondSpot.getY()));
         //求出圆心secondSpot圆上点homeopathicNeedleSpotRes0顺时针旋转40度的点
         Spot secondNeedleSpot40 = angleAcquisitionPoint(secondSpot, secondNeedleSpotRes0, degreeToRadian((secondDegreeMax - secondDegreeMin) / 2));
         double secondDegree = radianToDegree(pointAcquisitionAngle(secondSpot, endingSpot, secondNeedleSpot40));
@@ -413,86 +514,18 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             return;
         }
 
+        triangleSpot = belowLinePoint(originSpot, firstSpot, r0 * longProportion, r0 * shortProportion);;
+
+        double braceDistance = getDistance(braceSpot, triangleSpot);
+
+        double changeCistance = originalBraceDistance - braceDistance;
+
         drawSpot(canvas, rotation1, rotation2, rotation3, true);
         if (mDrawInterface != null) {
-            mDrawInterface.rotatioCallbackn(rotation1, rotation2, rotation3);
+
+
+            mDrawInterface.rotatioCallbackn(changeCistance, rotation2, rotation3);
         }
-
-    }
-
-    /**
-     * 绘制图形
-     *
-     * @param canvas
-     */
-    private void drawSpot(Canvas canvas, double rotation1, double rotation2, double rotation3, boolean isCorrect) {
-
-        if (isCorrect) {
-
-            mRotation1 = (float) (mRotation1 + radianToDegree(rotation1));
-            mRotation2 = (float) (mRotation2 + radianToDegree(rotation2));
-            mRotation3 = (float) (mRotation3 + radianToDegree(rotation3));
-            myRotation = myRotation + rotation3;
-        }
-
-
-        mPaint.setColor(Color.MAGENTA);
-        canvas.drawRect((float) leftBase, (float) topBase + armBaseBitmap.getHeight(),
-                (float) rightBase + carWidth, (float) bottomBase + carHeight, mPaint);
-        //画基座
-        mPaint.setColor(Color.WHITE);
-        canvas.drawBitmap(armBaseBitmap, null, mArmBaseDestRect, mPaint);
-//        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
-
-        //画第一条
-        mPaint.setColor(Color.BLUE);
-        mFirstMatrix.reset();
-        float dxFirst = (float) (originSpot.getX() - armFirstBitmap.getWidth() / 2);
-        float dyFirst = (float) (originSpot.getY() - armFirstBitmap.getHeight() * 4 / 5);
-        mFirstMatrix.postTranslate(dxFirst, dyFirst);
-        float pxFirst = (float) originSpot.getX();
-        float pyFirst = (float) originSpot.getY();
-        mFirstMatrix.postRotate(mRotation1, pxFirst, pyFirst);
-        canvas.drawBitmap(armFirstBitmap, mFirstMatrix, mPaint);
-//        canvas.drawCircle(pxFirst, pyFirst, r0, mPaint);
-//        canvas.drawLine(pxFirst, pyFirst, (float) firstSpot.getX(), (float) firstSpot.getY(), mPaint);
-
-        //画第二条
-        mPaint.setColor(Color.RED);
-        mSecondMatrix.reset();
-        float dxSecond = (float) (secondSpot.getX() - armSecondBitmap.getWidth() / 2);
-        float dySecond = (float) (secondSpot.getY() - armSecondBitmap.getHeight() * 8 / 9);
-        mSecondMatrix.postTranslate(dxSecond, dySecond);
-        float pxSecond = (float) secondSpot.getX();
-        float pySecond = (float) secondSpot.getY();
-        mSecondMatrix.postRotate(mRotation2, pxSecond, pySecond);
-        canvas.drawBitmap(armSecondBitmap, mSecondMatrix, mPaint);
-//        canvas.drawCircle(pxSecond, pySecond, r1, mPaint);
-//        canvas.drawCircle((float) basePosX, (float) basePosY, rtouch, mPaint);
-//        canvas.drawLine(pxSecond, pySecond, (float) endingSpot.getX(), (float) endingSpot.getY(), mPaint);
-
-        //画第三条
-        mPaint.setColor(Color.GREEN);
-        mEndMatrix.reset();
-        float dxEnd = (float) (endingSpot.getX() - armEndBitmap.getWidth() / 2);
-        float dyEnd = (float) (endingSpot.getY() - armEndBitmap.getHeight() * 14 / 16);
-        mEndMatrix.postTranslate(dxEnd, dyEnd);
-        float pxEnd = (float) endingSpot.getX();
-        float pyEnd = (float) endingSpot.getY();
-        mEndMatrix.postRotate(mRotation3, pxEnd, pyEnd);
-        canvas.drawBitmap(armEndBitmap, mEndMatrix, mPaint);
-//        canvas.drawCircle(pxEnd, pyEnd, r2, mPaint);
-//        canvas.drawLine(pxEnd, pyEnd, (float) touchSpot.getX(), (float) touchSpot.getY(), mPaint);
-
-        mPaint.setColor(Color.YELLOW);
-        mySpot.setX(endingSpot.getX());
-        mySpot.setY(endingSpot.getY() - r2);
-        mySpot = angleAcquisitionPoint(endingSpot, mySpot, myRotation);
-//        canvas.drawCircle((float) mySpot.getX(), (float) mySpot.getY(), 50, mPaint);
-
-        mPaint.setColor(Color.BLACK);
-//        canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
-
 
     }
 
@@ -603,15 +636,15 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * 两园相交求交点坐标
      *
      * @param spot1
-     * @param sot2
+     * @param spot2
      * @return
      */
-    private double[] circleCircleIntersection(Spot spot1, Spot sot2, int r1, int r2) {
+    private double[] circleCircleIntersection(Spot spot1, Spot spot2, double r1, double r2) {
 
         double x1 = spot1.getX();
         double y1 = spot1.getY();
-        double x2 = sot2.getX();
-        double y2 = sot2.getY();
+        double x2 = spot2.getX();
+        double y2 = spot2.getY();
         // 在一元二次方程中 a*x^2+b*x+c=0
         double a, b, c;
         //x的两个根 x_1 , x_2
@@ -981,7 +1014,6 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             switch (orientation) {
                 case 'r':
                     rotation = -rotation;
-                    Log.e("3r", rotation + " ");
                     break;
                 case 'l':
                     if (firstSpot.getX() - originSpot.getX() > 0) {///实际点在第四象限
@@ -989,7 +1021,6 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                     } else {
                         rotation = rotation;
                     }
-                    Log.e("3l", rotation + " ");
                     break;
                 case 't':
                     rotation = rotation;
