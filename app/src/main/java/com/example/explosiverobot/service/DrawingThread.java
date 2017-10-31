@@ -104,6 +104,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * 第一条线末端位置，第二条线的圆心
      */
     private Spot firstSpot;
+    private Spot firstSpotTail;
     /**
      * 第二条线的圆心
      */
@@ -129,9 +130,6 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private double mCallRotation2;
     private double mCallRotation3;
 
-    private double mTotalRotation1;
-    private double mTotalRotation2;
-    private double mTotalRotation3;
 
     public DrawingThread(SurfaceView surfaceView, SurfaceHolder holder, int screenW, int screenH) {
         super("DrawingThread");
@@ -210,6 +208,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
         braceSpot = new Spot((int) (originSpot.getX() + d1), (int) (originSpot.getY() + Math.sqrt(d1 * d1 - d2 * d2)));
         originalBraceDistance = getDistance(braceSpot, triangleSpot);
+
+        firstSpotTail = angleAcquisitionPoint(originSpot, firstSpot, degreeToRadian(firstDegreeMax - firstDegreeMin));
     }
 
     private Spot belowLinePoint(Spot spot1, Spot spot2, double r1, double r2) {
@@ -298,7 +298,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         mPaint.setColor(Color.BLACK);
         canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
 
-
+        isDrawing = false;
     }
 
     private void drawSpot(Canvas canvas, Spot spot) {
@@ -306,6 +306,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             drawSpot(canvas, degreeToRadian(90 - firstDegreeMax), degreeToRadian(90 - firstDegreeMax), Math.PI / 2, true);
             return;
         }
+        mCallRotation1 = 0.0;
+        mCallRotation2 = 0.0;
+        mCallRotation3 = 0.0;
 
         Spot temporaryFirstSpot = firstSpot;
         Spot temporarySecondSpot = secondSpot;
@@ -377,6 +380,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             mCallRotation3 = rotation3;
 
         } else if (distanceMax > r1 + r2 && distanceMax < r1 + r2 + rtouch) {//触摸点再最大半径之外再可控范围之内
+
+
             //交点 同心圆坐标求解
             double distance = getDistance(spot, secondSpot);
             endingSpot = getOuterCircle(secondSpot, distance, r1, spot);
@@ -412,35 +417,42 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             mCallRotation3 = rotation3;
 
         } else if (distanceMax < rtouch) {//接近第二个圆  no
-            //触摸点到中心点的距离
-            double distanceb = getDistance(originSpot, spot);
-            //由触摸点得到在中心圆上实际点的坐标
-            Spot temporarySpot = getOuterCircle(originSpot, distanceb, r0, spot);
-            //由中心圆实际点的坐标计算出应该旋转的角度
-            double rotation = pointAcquisitionAngle(originSpot, firstSpot, temporarySpot);
-            //触摸点与原点的差值
-            double dx = spot.getX() - firstSpot.getX();
-            double dy = spot.getY() - firstSpot.getY();
-            //差值大于1再进行判断
-            if (Math.abs(dx) > 1 && Math.abs(dy) > 1) {
-                //判断触摸的方向
-                int orientation = getOrientation(dx, dy);
-                //判断旋转方向
-                rotation = rotationDirection(spot, originSpot, firstSpot, rotation, orientation);
-                //由角度计算出个点位置
+
+            if(firstSpotTail.getY() < spot.getY()){
+                spot = firstSpotTail;
+            }else {
+
+                //触摸点到中心点的距离
+                double distanceb = getDistance(originSpot, spot);
+                //由触摸点得到在中心圆上实际点的坐标
+                Spot temporarySpot = getOuterCircle(originSpot, distanceb, r0, spot);
+                //由中心圆实际点的坐标计算出应该旋转的角度
+                double rotation = pointAcquisitionAngle(originSpot, firstSpot, temporarySpot);
+                //触摸点与原点的差值
+                double dx = spot.getX() - firstSpot.getX();
+                double dy = spot.getY() - firstSpot.getY();
+                //差值大于1再进行判断
+                if (Math.abs(dx) > 1 && Math.abs(dy) > 1) {
+                    //判断触摸的方向
+                    int orientation = getOrientation(dx, dy);
+                    //判断旋转方向
+                    rotation = rotationDirection(spot, originSpot, firstSpot, rotation, orientation);
+
+                    //由角度计算出个点位置
 //                Spot testSpor = angleAcquisitionPoint(originSpot, firstSpot, degreeToRadian(5));
-                firstSpot = angleAcquisitionPoint(originSpot, firstSpot, rotation);
-                secondSpot = angleAcquisitionPoint(originSpot, secondSpot, rotation);
-                endingSpot = angleAcquisitionPoint(originSpot, endingSpot, rotation);
-                touchSpot = angleAcquisitionPoint(originSpot, touchSpot, rotation);
+                    firstSpot = angleAcquisitionPoint(originSpot, firstSpot, rotation);
+                    secondSpot = angleAcquisitionPoint(originSpot, secondSpot, rotation);
+                    endingSpot = angleAcquisitionPoint(originSpot, endingSpot, rotation);
+                    touchSpot = angleAcquisitionPoint(originSpot, touchSpot, rotation);
 
-                rotation1 = rotation;
-                rotation2 = rotation;
-                rotation3 = rotation;
+                    rotation1 = rotation;
+                    rotation2 = rotation;
+                    rotation3 = rotation;
 
-                mCallRotation1 = rotation1;
-                mCallRotation2 = 0.0;
-                mCallRotation3 = 0.0;
+                    mCallRotation1 = rotation1;
+                    mCallRotation2 = 0.0;
+                    mCallRotation3 = 0.0;
+                }
             }
         }
         myRotation = temporaryRotation;
@@ -534,48 +546,16 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             return;
         }
 
-        mTotalRotation1 = mTotalRotation1 + rotation1;
-        if(radianToDegree(mTotalRotation1) > firstDegreeMax - firstDegreeMin){
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-
-        mTotalRotation2 = mTotalRotation2 + rotation2;
-        if(radianToDegree(mTotalRotation2) > secondDegreeMax - secondDegreeMin){
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-
-        mTotalRotation3 = mTotalRotation3 + rotation3;
-        if(radianToDegree(mTotalRotation3) > endDegreeMax - endDegreeMin){
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-
-
         triangleSpot = belowLinePoint(originSpot, firstSpot, r0 * longProportion, r0 * shortProportion);;
         double braceDistance = getDistance(braceSpot, triangleSpot);
         double changeCistance = originalBraceDistance - braceDistance;
         originalBraceDistance = braceDistance;
 
-        drawSpot(canvas, rotation1, rotation2, rotation3, true);
+
         if (mDrawInterface != null) {
-
-            mDrawInterface.rotatioCallbackn(mCallRotation1, mCallRotation2, mCallRotation3, changeCistance);
+            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance);
         }
-
+        drawSpot(canvas, rotation1, rotation2, rotation3, true);
     }
 
     @Override
@@ -601,41 +581,38 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         switch (msg.what) {
             case MSG_DRAW:
                 if (!mRunning) return true;
-                if (!isDrawing) {
-                    Spot spot = (Spot) msg.obj;
-                    if (spot != null) {
-                        isDrawing = true;
-                        // 锁定 SurfaceView，并返回到要绘图的 Canvas
-                        Canvas canvas = mDrawingSurface.lockCanvas();
-                        if (canvas == null) {
-                            break;
+                Spot spot = (Spot) msg.obj;
+                if (spot != null) {
+                    // 锁定 SurfaceView，并返回到要绘图的 Canvas
+                    Canvas canvas = mDrawingSurface.lockCanvas();
+                    if (canvas == null) {
+                        break;
+                    }
+                    try {
+                        synchronized (mDrawingSurface) {
+                            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                            drawSpot(canvas, spot);
                         }
-                        try {
-                            synchronized (mDrawingSurface) {
-                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                                drawSpot(canvas, spot);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            // 解锁 Canvas，并渲染当前的图像
-                            mDrawingSurface.unlockCanvasAndPost(canvas);
-                            isDrawing = false;
-                        }
-                    } else {
-                        Canvas canvas = mDrawingSurface.lockCanvas();
-                        try {
-                            synchronized (mDrawingSurface) {
-                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        // 解锁 Canvas，并渲染当前的图像
+                        mDrawingSurface.unlockCanvasAndPost(canvas);
+                        isDrawing = false;
+                    }
+                } else {
+                    Canvas canvas = mDrawingSurface.lockCanvas();
+                    try {
+                        synchronized (mDrawingSurface) {
+                            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                                drawSpot(canvas, null);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            mDrawingSurface.unlockCanvasAndPost(canvas);
-                            isDrawing = false;
+                            drawSpot(canvas, null);
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        mDrawingSurface.unlockCanvasAndPost(canvas);
+                        isDrawing = false;
                     }
                 }
                 break;
@@ -672,9 +649,12 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * @param spot
      */
     public void setSpot(Spot spot) {
-        // 通过 Message 参数将位置传给处理程序
-        Message msg = Message.obtain(mReceiver, MSG_DRAW, spot);
-        mReceiver.sendMessage(msg);
+        if(!isDrawing) {
+            isDrawing = true;
+            // 通过 Message 参数将位置传给处理程序
+            Message msg = Message.obtain(mReceiver, MSG_DRAW, spot);
+            mReceiver.sendMessage(msg);
+        }
     }
 
     public void setSpotUp(Spot spot){

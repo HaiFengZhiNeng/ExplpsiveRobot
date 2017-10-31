@@ -1,6 +1,5 @@
 package com.example.explosiverobot.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -46,8 +45,6 @@ import com.example.explosiverobot.util.SPManager;
 import com.example.explosiverobot.view.surface.DrawSurfaceView;
 import com.seabreeze.log.Print;
 
-import android_serialport_api.presenter.SerialPresenter;
-import android_serialport_api.presenter.ipresenter.ISerialPresenter;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
@@ -59,8 +56,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         LocationSource,
         BridgeService.PlayInterface,
         UDPAcceptReceiver.UDPAcceptInterface,
-        DrawInterface,
-        ISerialPresenter.ISerialView {
+        DrawInterface {
 
     private static final String STR_MSG_PARAM = "msgparam";
     private static final String STR_DID = "did";
@@ -133,8 +129,6 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     RelativeLayout rlIpControl;
 
     private MyRender myRender;
-
-    private SerialPresenter mSerialPresenter;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -282,8 +276,6 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @Override
     protected void init(Bundle savedInstanceState) {
-
-        mSerialPresenter = new SerialPresenter(this);
 
         mLbmManager = LocalBroadcastManager.getInstance(this);
 
@@ -478,39 +470,39 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             case R.id.ic_front_upper://前上
                 showToast("前上");
                 // TODO: 2017/10/30  
-//                mSerialPresenter.receiveMotion(SPManager.controlarmObstacleUp("00"));
+//                sendLocal(SPManager.controlarmObstacleUp("00"));
                 break;
             case R.id.ic_front_lower://前下
                 showToast("前下");
                 break;
             case R.id.ic_after_upper://后上
                 showToast("后上");
-                mSerialPresenter.receiveMotion(SPManager.controlarmObstacleUp());
+                sendLocal(SPManager.controlarmObstacleUp());
                 break;
             case R.id.ic_after_lower://后下
                 showToast("后下");
-                mSerialPresenter.receiveMotion(SPManager.controlarmObstacleDown());
+                sendLocal(SPManager.controlarmObstacleDown());
                 break;
             case R.id.tv_speed_high:
                 tvSpeedHighFront.setVisibility(View.VISIBLE);
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.GONE);
                 showToast("高速");
-                mSerialPresenter.receiveMotion(SPManager.controlTrackSpeedHigh());
+                sendLocal(SPManager.controlTrackSpeedHigh());
                 break;
             case R.id.tv_speed_medium:
                 tvSpeedHighFront.setVisibility(View.GONE);
                 tvSpeedMediumFront.setVisibility(View.VISIBLE);
                 tvSpeedLowFront.setVisibility(View.GONE);
                 showToast("中速");
-                mSerialPresenter.receiveMotion(SPManager.controlTrackSpeedMedium());
+                sendLocal(SPManager.controlTrackSpeedMedium());
                 break;
             case R.id.tv_speed_low:
                 tvSpeedHighFront.setVisibility(View.GONE);
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.VISIBLE);
                 showToast("低速");
-                mSerialPresenter.receiveMotion(SPManager.controlTrackSpeedLow());
+                sendLocal(SPManager.controlTrackSpeedLow());
                 break;
             case R.id.ib_hori_tour:
                 if (isLeftRight) {
@@ -552,6 +544,12 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         mLbmManager.sendBroadcast(intent);
     }
 
+    private void sendLocal(String order) {
+        Intent intent = new Intent(AppConstants.UDP_SEND_ACTION);
+        intent.putExtra("order", order);
+        mLbmManager.sendBroadcast(intent);
+    }
+    
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (mListener != null) {
@@ -717,11 +715,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation2) > degreeToRadian(degree)) {
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degree);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
                 Print.e("mRotation2 顺时针旋转 5 ");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degree);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degree)));
                 Print.e("mRotation2 逆时针旋转 5 ");
             }
         }
@@ -730,11 +728,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation3) > degreeToRadian(degree)) {
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degree);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
                 Print.e("mRotation3 顺时针旋转5度 ");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degree);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
                 Print.e("mRotation3 逆时针旋转5度 ");
             }
         }
@@ -756,11 +754,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation2) > degreeToRadian(degreeMin)) {
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degreeMin);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degreeMin)));
                 Print.e("mRotation2 顺时针旋转 5");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degreeMin);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degreeMin)));
                 Print.e("mRotation2 逆时针旋转 5");
             }
         }
@@ -768,22 +766,15 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation3) > degreeToRadian(degreeMin)) {
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degreeMin);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degreeMin)));
                 Print.e("mRotation3 顺时针旋转3度");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degreeMin);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  -degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  -degreeToRadian(degreeMin)));
                 Print.e("mRotation3 逆时针旋转3度");
             }
         }
     }
-
-
-    @Override
-    public Context getContext() {
-        return this;
-    }
-
 
 
     class StartPPPPThread implements Runnable {

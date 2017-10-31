@@ -1,6 +1,5 @@
 package com.example.explosiverobot.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -30,13 +29,11 @@ import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
 import java.util.ArrayList;
 import java.util.List;
 
-import android_serialport_api.presenter.SerialPresenter;
-import android_serialport_api.presenter.ipresenter.ISerialPresenter;
 import butterknife.BindView;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
 
-public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, ISerialPresenter.ISerialView {
+public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface {
 
     public String TAG = this.getClass().getSimpleName();
 
@@ -72,8 +69,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     @BindView(R.id.tv_foot_back_bottom)
     TextView tvFootBackBottom;
 
-    private SerialPresenter mSerialPresenter;
-
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
     //头部Tab
@@ -97,8 +92,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     @Override
     protected void init(Bundle savedInstanceState) {
-
-        mSerialPresenter = new SerialPresenter(this);
 
         mActionDbManager = new ActionTabDbManager();
         mLbmManager = LocalBroadcastManager.getInstance(this);
@@ -138,7 +131,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSerialPresenter.closeComPort();
         mLbmManager.unregisterReceiver(mUdpAcceptReceiver);
         sendBroadcast(new Intent(AppConstants.NET_LOONGGG_EXITAPP));
     }
@@ -156,24 +148,24 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             case R.id.tog_back:
                 // 当按钮第一次被点击时候响应的事件
                 if (togBack.isChecked()) {
-                    mSerialPresenter.receiveMotion(SPManager.controlLampBackOpen());
+                    sendLocal(SPManager.controlLampBackOpen());
                     showToast("照明灯后开");
                 }
                 // 当按钮再次被点击时候响应的事件
                 else {
-                    mSerialPresenter.receiveMotion(SPManager.controlLampBackClose());
+                    sendLocal(SPManager.controlLampBackClose());
                     showToast("照明灯后关");
                 }
                 break;
             case R.id.tog_front:
                 // 当按钮第一次被点击时候响应的事件
                 if (togFront.isChecked()) {
-                    mSerialPresenter.receiveMotion(SPManager.controlLampFrontOpen());
+                    sendLocal(SPManager.controlLampFrontOpen());
                     showToast("照明灯前开");
                 }
                 // 当按钮再次被点击时候响应的事件
                 else {
-                    mSerialPresenter.receiveMotion(SPManager.controlLampFrontClose());
+                    sendLocal(SPManager.controlLampFrontClose());
                     showToast("照明灯前关");
                 }
                 break;
@@ -310,6 +302,12 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         mLbmManager.sendBroadcast(intent);
     }
 
+    private void sendLocal(String order) {
+        Intent intent = new Intent(AppConstants.UDP_SEND_ACTION);
+        intent.putExtra("order", order);
+        mLbmManager.sendBroadcast(intent);
+    }
+
     private void startTasgAvtivity() {
         JumpItent.jump(MainActivity.this, TaskActivity.class);
     }
@@ -320,8 +318,4 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     }
 
-    @Override
-    public Context getContext() {
-        return this;
-    }
 }
