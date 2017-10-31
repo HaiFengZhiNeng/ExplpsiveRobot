@@ -169,6 +169,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     private double mChangeCistance = 0.0;
     private int degree = 5;
     private int degreeMin = 2;
+    private int lenght = 5;
+    private int lenghtMin = 3;
 
     private Handler mDrawHandler = new Handler() {
         @Override
@@ -700,39 +702,27 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @Override
     public void rotatioCallbackn(double rotation1, double rotation2, double rotation3, double changeCistance) {
-        double degree1 = radianToDegree(rotation1);
-        mRotation1 = mRotation1 + degree1;
-        if(Math.abs(mRotation1) > degree){
-            if (mRotation1 > 0.0) {
-                mRotation1 = mRotation1 - degree;
-                Print.e("mRotation1 顺时针旋转5度");
-            }else{
-                mRotation1 = mRotation1 + degree;
-                Print.e("mRotation1 逆时针旋转5度");
+        mChangeCistance = mChangeCistance + changeCistance;
+        if (Math.abs(mChangeCistance) > lenght) {
+            if (mChangeCistance > 0.0) {
+                mChangeCistance = mChangeCistance - lenght;
+                Print.e("mChangeCistance 收缩 5 ");
+            } else {
+                mChangeCistance = mChangeCistance + lenght;
+                Print.e("mChangeCistance 延长 5 ");
             }
         }
-//        Print.e(mChangeCistance);
-//        if (Math.abs(mRotation1) > degreeToRadian(degree)) {
-//            if (mRotation1 > 0.0) {
-//                mRotation1 = mRotation1 - degreeToRadian(degree);
-//                Print.e(-changeCistance);
-//                mChangeCistance = mChangeCistance - changeCistance;
-//            } else {
-//                mRotation1 = mRotation1 + degreeToRadian(degree);
-//                Print.e(changeCistance);
-//                mChangeCistance = mChangeCistance + changeCistance;
-//            }
-//        }
-
 
         mRotation2 = mRotation2 + rotation2;
         if (Math.abs(mRotation2) > degreeToRadian(degree)) {
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degree);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
+                Print.e("mRotation2 顺时针旋转 5 ");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degree);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degree)));
+                Print.e("mRotation2 逆时针旋转 5 ");
             }
         }
 
@@ -741,31 +731,37 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degree);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
+                Print.e("mRotation3 顺时针旋转5度 ");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degree);
-                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04, -degreeToRadian(degree)));
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
+                Print.e("mRotation3 逆时针旋转5度 ");
             }
         }
-
     }
 
     @Override
     public void onMotionEventUp() {
-        if (Math.abs(mRotation1) > degreeToRadian(degreeMin)) {
-//            if (mRotation1 > 0.0) {
-//                mRotation1 = mRotation1 - degreeToRadian(degreeMin);
-//            } else {
-//                mRotation1 = mRotation1 - degreeToRadian(degreeMin);
-//            }
+        if (Math.abs(mChangeCistance) > lenghtMin) {
+            if (mChangeCistance > 0.0) {
+                mChangeCistance = mChangeCistance - lenghtMin;
+                Print.e("mChangeCistance 收缩 3 ");
+            } else {
+                mChangeCistance = mChangeCistance + lenghtMin;
+                Print.e("mChangeCistance 延长 3 ");
+            }
         }
+
 
         if (Math.abs(mRotation2) > degreeToRadian(degreeMin)) {
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degreeMin);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degreeMin)));
+                Print.e("mRotation2 顺时针旋转 5");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degreeMin);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degreeMin)));
+                Print.e("mRotation2 逆时针旋转 5");
             }
         }
 
@@ -773,12 +769,15 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degreeMin);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degreeMin)));
+                Print.e("mRotation3 顺时针旋转3度");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degreeMin);
                 mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  -degreeToRadian(degreeMin)));
+                Print.e("mRotation3 逆时针旋转3度");
             }
         }
     }
+
 
     @Override
     public Context getContext() {
