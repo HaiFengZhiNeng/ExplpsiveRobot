@@ -89,14 +89,15 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             case MotionEvent.ACTION_MOVE:
                 cx = (int) event.getX();
                 cy = (int) event.getY();
+                mDrawingThread.setSpot(new Spot(cx, cy));
                 break;
             case MotionEvent.ACTION_UP:
-//                cx = (int) event.getX();
-//                cy = (int) event.getY();
+                cx = (int) event.getX();
+                cy = (int) event.getY();
+                mDrawingThread.setSpotUp(new Spot(cx, cy));
                 break;
         }
 
-        mDrawingThread.setSpot(new Spot(cx, cy));
         return true;
     }
 

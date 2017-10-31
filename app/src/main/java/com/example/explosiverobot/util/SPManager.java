@@ -7,6 +7,7 @@ package com.example.explosiverobot.util;
 public class SPManager {
     //存储
     private static String mOrientation;
+    private static String mSpeed;
 
     //包头
     public static String head = "FF";
@@ -52,6 +53,13 @@ public class SPManager {
     public static String speedLow = "03";
     //机械臂角度
     public static String armMechanicAngle;
+    //05
+    public static String armMechanicStop05 = "00";
+    public static String armMechanicClockwise05 = "01";
+    public static String armMechanicAntiClockwise05 = "02";
+    public static String armMechanicStop06 = "00";
+    public static String armMechanicTight06 = "01";
+    public static String armMechanicPine06 = "02";
     //越障后臂选择
     public static String armObstacleStop = "00";
     public static String armObstacleUp = "01";
@@ -59,6 +67,14 @@ public class SPManager {
     //等
     public static String lampOpen = "00";
     public static String lampClose = "01";
+
+    public static void setTrackOrientation(String orientation) {
+        mOrientation = orientation;
+    }
+
+    public static void setTrackSpeed(String speed) {
+        mSpeed = speed;
+    }
 
     /***************************灯的控制*****************************/
     public static String controlLampFrontOpen() {
@@ -89,12 +105,46 @@ public class SPManager {
     public static String controlarmObstacleDown(double angle) {
         return head + control + track + unTick + angle + armObstacleDown;
     }
+    public static String controlarmObstacleStop() {
+        return head + control + track + unTick + "00" + armObstacleStop;
+    }
+    public static String controlarmObstacleUp() {
+        return head + control + track + unTick + "00" + armObstacleUp;
+    }
+    public static String controlarmObstacleDown() {
+        return head + control + track + unTick + "00" + armObstacleDown;
+    }
 
 
     /***************************机械臂控制*****************************/
     public static String controlarmMechanics(String number, double angle) {
         return head + control + track + unTick + number + angle;
     }
+
+    public static String controlarmMechanicStop05() {
+        return head + control + track + unTick + armMechanics05 + armMechanicStop05;
+    }
+
+    public static String controlarmMechanicClockwise05() {
+        return head + control + track + unTick + armMechanics05 + armMechanicClockwise05;
+    }
+
+    public static String controlarmMechanicAntiClockwise05() {
+        return head + control + track + unTick + armMechanics05 + armMechanicAntiClockwise05;
+    }
+
+    public static String controlarmMechanicStop06() {
+        return head + control + track + unTick + armMechanics06 + armMechanicStop06;
+    }
+
+    public static String controlarmMechanicTight06() {
+        return head + control + track + unTick + armMechanics06 + armMechanicTight06;
+    }
+
+    public static String controlarmMechanicPine06() {
+        return head + control + track + unTick + armMechanics06 + armMechanicPine06;
+    }
+
 
 
     /***************************履带控制*****************************/

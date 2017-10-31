@@ -42,6 +42,7 @@ import com.example.explosiverobot.modle.Tele;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.util.GpsUtils;
+import com.example.explosiverobot.util.SPManager;
 import com.example.explosiverobot.view.surface.DrawSurfaceView;
 import com.seabreeze.log.Print;
 
@@ -59,7 +60,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         BridgeService.PlayInterface,
         UDPAcceptReceiver.UDPAcceptInterface,
         DrawInterface,
-        ISerialPresenter.ISerialView{
+        ISerialPresenter.ISerialView {
 
     private static final String STR_MSG_PARAM = "msgparam";
     private static final String STR_DID = "did";
@@ -161,6 +162,13 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     private boolean isLeftRight;
     private boolean isUpDown;
+
+    private double mRotation1 = 0.0;
+    private double mRotation2 = 0.0;
+    private double mRotation3 = 0.0;
+    private double mChangeCistance = 0.0;
+    private int degree = 5;
+    private int degreeMin = 2;
 
     private Handler mDrawHandler = new Handler() {
         @Override
@@ -287,6 +295,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
         initMap(savedInstanceState);
         mDrawSurfaceView.setDrawInterface(this);
+
+        SPManager.setTrackOrientation(SPManager.trackFront);
+        SPManager.setTrackSpeed(SPManager.speedHigh);
     }
 
 
@@ -464,33 +475,40 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 break;
             case R.id.ic_front_upper://前上
                 showToast("前上");
+                // TODO: 2017/10/30  
+//                mSerialPresenter.receiveMotion(SPManager.controlarmObstacleUp("00"));
                 break;
             case R.id.ic_front_lower://前下
                 showToast("前下");
                 break;
             case R.id.ic_after_upper://后上
                 showToast("后上");
+                mSerialPresenter.receiveMotion(SPManager.controlarmObstacleUp());
                 break;
             case R.id.ic_after_lower://后下
                 showToast("后下");
+                mSerialPresenter.receiveMotion(SPManager.controlarmObstacleDown());
                 break;
             case R.id.tv_speed_high:
                 tvSpeedHighFront.setVisibility(View.VISIBLE);
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.GONE);
                 showToast("高速");
+                mSerialPresenter.receiveMotion(SPManager.controlTrackSpeedHigh());
                 break;
             case R.id.tv_speed_medium:
                 tvSpeedHighFront.setVisibility(View.GONE);
                 tvSpeedMediumFront.setVisibility(View.VISIBLE);
                 tvSpeedLowFront.setVisibility(View.GONE);
                 showToast("中速");
+                mSerialPresenter.receiveMotion(SPManager.controlTrackSpeedMedium());
                 break;
             case R.id.tv_speed_low:
                 tvSpeedHighFront.setVisibility(View.GONE);
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.VISIBLE);
                 showToast("低速");
+                mSerialPresenter.receiveMotion(SPManager.controlTrackSpeedLow());
                 break;
             case R.id.ib_hori_tour:
                 if (isLeftRight) {
@@ -507,11 +525,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 if (isUpDown) {
                     ibVertTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
                     isUpDown = false;
-                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(),ContentCommon.CMD_PTZ_UP_DOWN_STOP);
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN_STOP);
                 } else {
                     ibVertTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
                     isUpDown = true;
-                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(),ContentCommon.CMD_PTZ_UP_DOWN);
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN);
                 }
                 break;
         }
@@ -681,15 +699,92 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     }
 
     @Override
-    public void rotatioCallbackn(double changeCistance, double rotation2, double rotation3) {
-//        Print.e("(" + rotation1 + ", " + rotation2 + ", " + rotation3 + ")");
+    public void rotatioCallbackn(double rotation1, double rotation2, double rotation3, double changeCistance) {
+        double degree1 = radianToDegree(rotation1);
+        mRotation1 = mRotation1 + degree1;
+        if(Math.abs(mRotation1) > degree){
+            if (mRotation1 > 0.0) {
+                mRotation1 = mRotation1 - degree;
+                Print.e("mRotation1 顺时针旋转5度");
+            }else{
+                mRotation1 = mRotation1 + degree;
+                Print.e("mRotation1 逆时针旋转5度");
+            }
+        }
+//        Print.e(mChangeCistance);
+//        if (Math.abs(mRotation1) > degreeToRadian(degree)) {
+//            if (mRotation1 > 0.0) {
+//                mRotation1 = mRotation1 - degreeToRadian(degree);
+//                Print.e(-changeCistance);
+//                mChangeCistance = mChangeCistance - changeCistance;
+//            } else {
+//                mRotation1 = mRotation1 + degreeToRadian(degree);
+//                Print.e(changeCistance);
+//                mChangeCistance = mChangeCistance + changeCistance;
+//            }
+//        }
 
+
+        mRotation2 = mRotation2 + rotation2;
+        if (Math.abs(mRotation2) > degreeToRadian(degree)) {
+            if (mRotation2 > 0.0) {
+                mRotation2 = mRotation2 - degreeToRadian(degree);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
+            } else {
+                mRotation2 = mRotation2 + degreeToRadian(degree);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degree)));
+            }
+        }
+
+        mRotation3 = mRotation3 + rotation3;
+        if (Math.abs(mRotation3) > degreeToRadian(degree)) {
+            if (mRotation3 > 0.0) {
+                mRotation3 = mRotation3 - degreeToRadian(degree);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
+            } else {
+                mRotation3 = mRotation3 + degreeToRadian(degree);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04, -degreeToRadian(degree)));
+            }
+        }
+
+    }
+
+    @Override
+    public void onMotionEventUp() {
+        if (Math.abs(mRotation1) > degreeToRadian(degreeMin)) {
+//            if (mRotation1 > 0.0) {
+//                mRotation1 = mRotation1 - degreeToRadian(degreeMin);
+//            } else {
+//                mRotation1 = mRotation1 - degreeToRadian(degreeMin);
+//            }
+        }
+
+        if (Math.abs(mRotation2) > degreeToRadian(degreeMin)) {
+            if (mRotation2 > 0.0) {
+                mRotation2 = mRotation2 - degreeToRadian(degreeMin);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degreeMin)));
+            } else {
+                mRotation2 = mRotation2 + degreeToRadian(degreeMin);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degreeMin)));
+            }
+        }
+
+        if (Math.abs(mRotation3) > degreeToRadian(degreeMin)) {
+            if (mRotation3 > 0.0) {
+                mRotation3 = mRotation3 - degreeToRadian(degreeMin);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degreeMin)));
+            } else {
+                mRotation3 = mRotation3 + degreeToRadian(degreeMin);
+                mSerialPresenter.receiveMotion(SPManager.controlarmMechanics(SPManager.armMechanics04,  -degreeToRadian(degreeMin)));
+            }
+        }
     }
 
     @Override
     public Context getContext() {
         return this;
     }
+
 
 
     class StartPPPPThread implements Runnable {

@@ -132,4 +132,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     };
 
+    public double degreeToRadian(double degree) {
+        return degree * Math.PI / 180;
+    }
+    public double radianToDegree(double radian) {
+        return radian * 180 / Math.PI;
+    }
 }

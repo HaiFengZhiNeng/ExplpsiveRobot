@@ -6,6 +6,7 @@ package com.example.explosiverobot.listener;
 
 public interface DrawInterface {
 
-    void rotatioCallbackn(double changeCistance, double rotation2, double rotation3);
+    void rotatioCallbackn(double rotation1, double rotation2, double rotation3, double changeCistance);
 
+    void onMotionEventUp();
 }
