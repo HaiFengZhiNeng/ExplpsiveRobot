@@ -324,6 +324,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         double distanceTouch = getDistance(spot, touchSpot);
         //点击的点到第二个圆中心点的距离
         double distanceMax = getDistance(spot, secondSpot);
+        //点击的点到第三个圆的中心的距离
+        double distanceEnd = getDistance(spot, endingSpot);
 
         //触摸点再第三条线的触摸范围之内，且再最大半径以内
         if (distanceTouch < rtouch && distanceMax < r1 + r2 && distanceMax > rtouch) {
@@ -453,6 +455,35 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                     mCallRotation2 = 0.0;
                     mCallRotation3 = 0.0;
                 }
+            }
+        }else if(distanceEnd < rtouch){
+
+            //触摸点到中心点的距离
+            double distanceb = getDistance(firstSpot, spot);
+            //由触摸点得到在中心圆上实际点的坐标
+            Spot temporarySpot = getOuterCircle(firstSpot, distanceb, r1, spot);
+            //由中心圆实际点的坐标计算出应该旋转的角度
+            double rotation = pointAcquisitionAngle(firstSpot, endingSpot, temporarySpot);
+            //触摸点与原点的差值
+            double dx = spot.getX() - endingSpot.getX();
+            double dy = spot.getY() - endingSpot.getY();
+            //差值大于1再进行判断
+            if (Math.abs(dx) > 1 && Math.abs(dy) > 1) {
+                //判断触摸的方向
+                int orientation = getOrientation(dx, dy);
+                //判断旋转方向
+                rotation = rotationDirection(spot, firstSpot, endingSpot, rotation, orientation);
+                //由角度计算出个点位置
+                secondSpot = angleAcquisitionPoint(firstSpot, secondSpot, rotation);
+                endingSpot = angleAcquisitionPoint(firstSpot, endingSpot, rotation);
+                touchSpot = angleAcquisitionPoint(firstSpot, touchSpot, rotation);
+
+                rotation2 = rotation;
+                rotation3 = rotation;
+
+                mCallRotation1 = 0.0;
+                mCallRotation2 = rotation2;
+                mCallRotation3 = 0.0;
             }
         }
         myRotation = temporaryRotation;

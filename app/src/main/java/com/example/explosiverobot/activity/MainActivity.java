@@ -108,6 +108,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     @Override
     protected void setListener() {
+
     }
 
 
@@ -142,7 +143,9 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 addGroup();
                 break;
             case R.id.iv_robot_bg:
-                startTasgAvtivity();
+//                startTasgAvtivity();
+
+                sendLocal(" 123 ");
                 break;
             case R.id.tog_back:
                 // 当按钮第一次被点击时候响应的事件
