@@ -62,6 +62,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private Bitmap armBaseBitmap;
     private Rect mArmBaseDestRect;
 
+    private Bitmap resetBitmap;
+
     private Bitmap armFirstBitmap;
     private Matrix mFirstMatrix;
     private float mRotation1;
@@ -152,8 +154,6 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         mPaint.setColor(Color.rgb(255, 203, 15));
         mPaint.setTextAlign(Paint.Align.LEFT);
 
-        carWidth = 400;
-        carHeight = 100;
         basePosX = (int) (screenW * 0.3);
         basePosY = (int) (screenH * 0.7);
 
@@ -161,6 +161,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         levelSpot = new Spot(originSpot.getX() + carWidth, originSpot.getY());
         //基座
         armBaseBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_base);
+
+        carWidth = armBaseBitmap.getWidth() * 2;
+        carHeight = armBaseBitmap.getHeight() / 3;
 
         groundY = (int) (originSpot.getY() + armBaseBitmap.getHeight() * 5 / 6 + carHeight);
 
@@ -176,6 +179,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         armSecondBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_second);
         //第三条机械臂
         armEndBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_end);
+
+        resetBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.ic_recovery);
 
         firstDegreeMax = 60;
         firstDegreeMin = 15;
@@ -258,6 +263,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             myRotation = myRotation + rotation3;
         }
 
+        canvas.drawBitmap(resetBitmap, 10, 10, mPaint);
 
         mPaint.setColor(Color.MAGENTA);
         canvas.drawRect((float) leftBase, (float) topBase + armBaseBitmap.getHeight(),
@@ -514,6 +520,17 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         myRotation = temporaryRotation;
         mySpot = temporaryMySpot;
 
+        if(touchSpot.getX() < rightBase + carWidth){
+            if(pointToYDistance(touchSpot.getY(), topBase + armBaseBitmap.getHeight())) {
+                firstSpot = temporaryFirstSpot;
+                secondSpot = temporarySecondSpot;
+                endingSpot = temporaryendingSpot;
+                touchSpot = temporaryTouchSpot;
+                drawSpot(canvas, 0, 0, 0, false);
+                return;
+            }
+        }
+
         if (pointToYDistance(touchSpot.getY(), groundY)) {
             firstSpot = temporaryFirstSpot;
             secondSpot = temporarySecondSpot;
@@ -591,7 +608,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                 new Spot(secondSpot.getX(), 2 * endingSpot.getY() - secondSpot.getY()), r2);
         Spot endNeedleSpotRes0 = new Spot(endNeedleSpotRes.getX(),
                 endingSpot.getY() - (endNeedleSpotRes.getY() - endingSpot.getY()));
-        if(endNeedleSpotRes0.getX() > secondSpot.getX() && touchSpot.getX() > secondSpot.getX()){
+        if(endNeedleSpotRes0.getX() > secondSpot.getX() && endNeedleSpotRes0.getY() < secondSpot.getY()
+                && touchSpot.getX() > secondSpot.getX() && touchSpot.getY() < secondSpot.getY()){
             if(endNeedleSpotRes0.getX() > touchSpot.getX()){
                 firstSpot = temporaryFirstSpot;
                 secondSpot = temporarySecondSpot;
@@ -716,11 +734,17 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * @param spot
      */
     public void setSpot(Spot spot) {
-        if(!isDrawing) {
-            isDrawing = true;
-            // 通过 Message 参数将位置传给处理程序
-            Message msg = Message.obtain(mReceiver, MSG_DRAW, spot);
-            mReceiver.sendMessage(msg);
+        if(spot.getX() > 10 && spot.getX() < 10 + resetBitmap.getHeight() && spot.getY() > 10 && spot.getY() < 10 + resetBitmap.getHeight()) {
+            if(mDrawInterface != null) {
+                mDrawInterface.onReset();
+            }
+        }else{
+            if (!isDrawing) {
+                isDrawing = true;
+                // 通过 Message 参数将位置传给处理程序
+                Message msg = Message.obtain(mReceiver, MSG_DRAW, spot);
+                mReceiver.sendMessage(msg);
+            }
         }
     }
 
@@ -729,6 +753,20 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         if(mDrawInterface != null){
             mDrawInterface.onMotionEventUp();
         }
+    }
+
+    public void reset() {
+        firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
+                basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
+        endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
+                firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
+        touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
+        mRotation1 = 0;
+        mRotation2 = 0;
+        mRotation3 = 0;
+        myRotation = 0;
+        mReceiver.sendEmptyMessage(MSG_DRAW);
+        PreferencesUtils.putBoolean(mContext, "drawIsFirst", false);
     }
 
     public void setDrawInterface(DrawInterface drawInterface) {

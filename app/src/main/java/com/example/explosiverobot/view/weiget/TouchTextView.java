@@ -1,22 +1,21 @@
 package com.example.explosiverobot.view.weiget;
 
 import android.content.Context;
-import android.os.CountDownTimer;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
-import com.example.explosiverobot.modle.Spot;
+import com.example.explosiverobot.R;
 
 /**
  * Created by zhangyuanyuan on 2017/10/31.
  */
 
-public class TouchTextView extends TextView {
+public class TouchTextView extends android.support.v7.widget.AppCompatTextView {
 
     private OnTextTimeListener onTimeListener;
 
@@ -44,14 +43,37 @@ public class TouchTextView extends TextView {
 
     public TouchTextView(Context context) {
         super(context);
+        init();
     }
 
     public TouchTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public TouchTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        setUnpress();
+    }
+
+    private void setUnpress() {
+        GradientDrawable gd = new GradientDrawable();
+        int roundRadius = 15; // 8dp 圆角半径
+        gd.setCornerRadius(roundRadius);
+        gd.setColor(getResources().getColor(R.color.steelblue));
+        setBackgroundDrawable(gd);
+    }
+
+    private void setPress() {
+        GradientDrawable gd = new GradientDrawable();
+        int roundRadius = 15; // 8dp 圆角半径
+        gd.setCornerRadius(roundRadius);
+        gd.setColor(getResources().getColor(R.color.antiquewhite));
+        setBackgroundDrawable(gd);
     }
 
     @Override
@@ -63,6 +85,7 @@ public class TouchTextView extends TextView {
                     isDown = true;
                     mHandler.sendEmptyMessageDelayed(0, 500);
                 }
+                setPress();
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
@@ -73,6 +96,7 @@ public class TouchTextView extends TextView {
                         onTimeListener.onTextDownFinish(this);
                     }
                 }
+                setUnpress();
                 break;
         }
 

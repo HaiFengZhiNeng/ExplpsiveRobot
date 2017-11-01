@@ -9,4 +9,6 @@ public interface DrawInterface {
     void rotatioCallbackn(double rotation1, double rotation2, double rotation3, double changeCistance);
 
     void onMotionEventUp();
+
+    void onReset();
 }

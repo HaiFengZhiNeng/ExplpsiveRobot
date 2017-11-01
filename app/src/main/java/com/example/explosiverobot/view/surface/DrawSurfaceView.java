@@ -87,6 +87,7 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             case MotionEvent.ACTION_DOWN:
 //                cx = (int) event.getX();
 //                cy = (int) event.getY();
+//                mDrawingThread.setSpot(new Spot(cx, cy));
                 break;
             case MotionEvent.ACTION_MOVE:
                 cx = (int) event.getX();
@@ -111,4 +112,7 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
 
+    public void onReset() {
+        mDrawingThread.reset();
+    }
 }

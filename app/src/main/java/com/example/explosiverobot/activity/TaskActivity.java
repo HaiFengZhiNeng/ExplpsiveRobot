@@ -972,6 +972,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
     }
 
+    @Override
+    public void onReset() {
+        mDrawSurfaceView.onReset();
+    }
+
 
     class StartPPPPThread implements Runnable {
 

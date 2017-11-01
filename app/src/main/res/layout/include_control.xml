@@ -37,7 +37,6 @@
                 android:text="顺时针"
                 android:textSize="12sp"
                 android:layout_margin="10dp"
-                android:background="@drawable/touchtextview_selector"
                 android:textColor="@color/color_white"
                 android:gravity="center"
                 />
@@ -51,7 +50,6 @@
                 android:text="逆时针"
                 android:textSize="12sp"
                 android:layout_margin="10dp"
-                android:background="@drawable/touchtextview_selector"
                 android:textColor="@color/color_white"
                 android:gravity="center" />
         </LinearLayout>
@@ -80,7 +78,6 @@
                 android:text="顺时针"
                 android:textSize="12sp"
                 android:layout_margin="10dp"
-                android:background="@drawable/touchtextview_selector"
                 android:textColor="@color/color_white"
                 android:gravity="center" />
 
@@ -93,7 +90,6 @@
                 android:text="逆时针"
                 android:textSize="12sp"
                 android:layout_margin="10dp"
-                android:background="@drawable/touchtextview_selector"
                 android:textColor="@color/color_white"
                 android:gravity="center" />
         </LinearLayout>
@@ -121,7 +117,6 @@
                 android:text="顺时针"
                 android:textSize="12sp"
                 android:layout_margin="10dp"
-                android:background="@drawable/touchtextview_selector"
                 android:textColor="@color/color_white"
                 android:gravity="center" />
 
@@ -134,7 +129,6 @@
                 android:text="逆时针"
                 android:textSize="12sp"
                 android:layout_margin="10dp"
-                android:background="@drawable/touchtextview_selector"
                 android:textColor="@color/color_white"
                 android:gravity="center" />
         </LinearLayout>

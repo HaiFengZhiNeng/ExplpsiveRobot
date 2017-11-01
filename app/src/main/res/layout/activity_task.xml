@@ -9,14 +9,84 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_120"
-        android:background="@color/color_top_background"
-        android:gravity="center">
+        android:layout_height="50dp"
+        android:background="?attr/colorPrimary">
 
         <ImageView
+            android:id="@+id/image_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:src="@mipmap/ic_top_title" />
+
+        <LinearLayout
+            android:id="@+id/ll_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@+id/image_title"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="信号："
+                android:textColor="@color/color_white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_signal1"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/signal" />
+
+            <TextView
+                android:id="@+id/tv_signal2"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:background="@color/signal" />
+
+            <TextView
+                android:id="@+id/tv_signal3"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:background="@color/signal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_electricity"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@+id/ll_signal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="电量："
+                android:textColor="@color/color_white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_electricity"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="40%"
+                android:textColor="@color/color_white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
@@ -43,11 +113,12 @@
 
             <com.example.explosiverobot.view.weiget.CircleViewByImage
                 android:id="@+id/control_circle_view"
-                android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_marginBottom="50dp"
-                android:layout_marginLeft="50dp"/>
+                android:layout_marginLeft="50dp" />
+
         </RelativeLayout>
 
 
@@ -108,8 +179,9 @@
                         android:id="@+id/rg_tele"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -186,10 +258,10 @@
                     android:visibility="gone" />
 
                 <RelativeLayout
-                    android:visibility="gone"
                     android:id="@+id/re_util"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"

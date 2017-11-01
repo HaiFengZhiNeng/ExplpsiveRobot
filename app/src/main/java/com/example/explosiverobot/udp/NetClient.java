@@ -3,7 +3,8 @@ package com.example.explosiverobot.udp;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
+
+import com.seabreeze.log.Print;
 
 import java.net.DatagramPacket;
 
@@ -108,7 +109,7 @@ public class NetClient {
                         }
                         break;
                     case 2:
-                        Toast.makeText(mContext, "请等待连接机器人", Toast.LENGTH_LONG).show();
+                        Print.e("请等待连接机器人");
                         break;
                 }
             }

@@ -318,4 +318,6 @@
     <color name="color_main_right_foot">#ACB6C7</color>
     <color name="color_recovery">#404650</color>
     <color name="color_back_addgroup">#313131</color>
+
+    <color name="signal">#5EC950</color>
 </resources>
