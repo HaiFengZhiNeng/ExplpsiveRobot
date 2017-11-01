@@ -591,6 +591,17 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                 new Spot(secondSpot.getX(), 2 * endingSpot.getY() - secondSpot.getY()), r2);
         Spot endNeedleSpotRes0 = new Spot(endNeedleSpotRes.getX(),
                 endingSpot.getY() - (endNeedleSpotRes.getY() - endingSpot.getY()));
+        if(endNeedleSpotRes0.getX() > secondSpot.getX() && touchSpot.getX() > secondSpot.getX()){
+            if(endNeedleSpotRes0.getX() > touchSpot.getX()){
+                firstSpot = temporaryFirstSpot;
+                secondSpot = temporarySecondSpot;
+                endingSpot = temporaryendingSpot;
+                touchSpot = temporaryTouchSpot;
+                drawSpot(canvas, 0, 0, 0, false);
+                return;
+            }
+        }
+
         Spot endNeedleSpotRes65 = angleAcquisitionPoint(endingSpot, endNeedleSpotRes0, degreeToRadian((endDegreeMax - endDegreeMin) / 2));
         double endDegree = radianToDegree(pointAcquisitionAngle(endingSpot, touchSpot, endNeedleSpotRes65));
         if (endDegree > (endDegreeMax - endDegreeMin) / 2) {

@@ -45,7 +45,7 @@ public class UdpService extends Service implements OnListenerUDPServer {
         mLbmManager = LocalBroadcastManager.getInstance(this);
 
         client = NetClient.getInstance(this);
-        client.sendUdpSocketToByIp();
+//        client.sendUdpSocketToByIp();
 
         client.registerUdpServer(new UdpReceiver(this));
 
