@@ -68,6 +68,8 @@ public class SPManager {
     public static String lampOpen = "00";
     public static String lampClose = "01";
 
+    public static String crc = "0000";
+
     public static void setTrackOrientation(String orientation) {
         mOrientation = orientation;
     }
@@ -81,28 +83,28 @@ public class SPManager {
      * 照明灯前开
      */
     public static String controlLampFrontOpen() {
-        return head + control + lamp + unTick + lampNumFront + lampOpen;
+        return head + control + lamp + unTick + lampNumFront + lampOpen + crc;
     }
 
     /**
      * 照明灯前关
      */
     public static String controlLampFrontClose() {
-        return head + control + lamp + unTick + lampNumFront + lampClose;
+        return head + control + lamp + unTick + lampNumFront + lampClose + crc;
     }
 
     /**
      * 照明灯后开
      */
     public static String controlLampBackOpen() {
-        return head + control + lamp + unTick + lampNumBack + lampOpen;
+        return head + control + lamp + unTick + lampNumBack + lampOpen + crc;
     }
 
     /**
      * 照明灯后关
      */
     public static String controlLampBackClose() {
-        return head + control + lamp + unTick + lampNumBack + lampClose;
+        return head + control + lamp + unTick + lampNumBack + lampClose + crc;
     }
 
     /***************************越障臂控制*****************************/
@@ -112,15 +114,15 @@ public class SPManager {
      * @param angle
      */
     public static String controlarmObstacleStop(double angle) {
-        return head + control + track + unTick + angle + armObstacleStop;
+        return head + control + track + unTick + angle + armObstacleStop + crc;
     }
 
     public static String controlarmObstacleUp(double angle) {
-        return head + control + track + unTick + angle + armObstacleUp;
+        return head + control + track + unTick + angle + armObstacleUp + crc;
     }
 
     public static String controlarmObstacleDown(double angle) {
-        return head + control + track + unTick + angle + armObstacleDown;
+        return head + control + track + unTick + angle + armObstacleDown + crc;
     }
 
     /**
@@ -153,49 +155,49 @@ public class SPManager {
      * @param angle  为正 顺时针，为负 逆时针
      */
     public static String controlarmMechanics(String number, double angle) {
-        return head + control + track + unTick + number + angle;
+        return head + control + track + unTick + number + angle + crc;
     }
 
     /**
      * 机械臂05 停止旋转
      */
     public static String controlarmMechanicStop05() {
-        return head + control + track + unTick + armMechanics05 + armMechanicStop05;
+        return head + control + track + unTick + armMechanics05 + armMechanicStop05 + crc;
     }
 
     /**
      * 机械臂05 顺时针旋转
      */
     public static String controlarmMechanicClockwise05() {
-        return head + control + track + unTick + armMechanics05 + armMechanicClockwise05;
+        return head + control + track + unTick + armMechanics05 + armMechanicClockwise05 + crc;
     }
 
     /**
      * 机械臂05 逆时针旋转
      */
     public static String controlarmMechanicAntiClockwise05() {
-        return head + control + track + unTick + armMechanics05 + armMechanicAntiClockwise05;
+        return head + control + track + unTick + armMechanics05 + armMechanicAntiClockwise05 + crc;
     }
 
     /**
      * 机械臂06 停止抓紧
      */
     public static String controlarmMechanicStop06() {
-        return head + control + track + unTick + armMechanics06 + armMechanicStop06;
+        return head + control + track + unTick + armMechanics06 + armMechanicStop06 + crc;
     }
 
     /**
      * 机械臂06 紧
      */
     public static String controlarmMechanicTight06() {
-        return head + control + track + unTick + armMechanics06 + armMechanicTight06;
+        return head + control + track + unTick + armMechanics06 + armMechanicTight06 + crc;
     }
 
     /**
      * 机械臂06 松
      */
     public static String controlarmMechanicPine06() {
-        return head + control + track + unTick + armMechanics06 + armMechanicPine06;
+        return head + control + track + unTick + armMechanics06 + armMechanicPine06 + crc;
     }
 
 
@@ -203,7 +205,7 @@ public class SPManager {
     public static String controlTrack(String orientation, String speed) {
         mOrientation = orientation;
         mSpeed = speed;
-        return head + control + track + unTick + orientation + speed;
+        return head + control + track + unTick + orientation + speed + crc;
     }
 
     public static String controlTrackOrientation(String orientation) {
