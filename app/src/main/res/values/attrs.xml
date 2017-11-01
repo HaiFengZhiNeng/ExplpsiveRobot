@@ -41,4 +41,9 @@
         <attr name="selectedTabTextColor" format="color" />
         <attr name="pstsUnderlineEqualText" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="CircleViewByImage">
+        <attr name="foreground" format="reference" />
+        <attr name="background" format="reference" />
+    </declare-styleable>
 </resources>

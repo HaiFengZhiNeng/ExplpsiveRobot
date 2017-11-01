@@ -40,6 +40,14 @@
                 android:id="@+id/draw_suface_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <com.example.explosiverobot.view.weiget.CircleViewByImage
+                android:id="@+id/control_circle_view"
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="50dp"/>
         </RelativeLayout>
 
 
@@ -78,6 +86,16 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="地图" />
+
+                    <View style="@style/task_vertical_line" />
+
+                    <TextView
+                        android:id="@+id/tv_util"
+                        style="@style/task_top_tv_unselector"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="工具" />
                 </LinearLayout>
 
 
@@ -137,9 +155,9 @@
                         android:layout_toRightOf="@+id/rg_tele">
 
                         <LinearLayout
-                            android:layout_centerHorizontal="true"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true">
 
                             <ImageButton
                                 android:id="@+id/ib_hori_tour"
@@ -164,7 +182,79 @@
                 <com.amap.api.maps.MapView
                     android:id="@+id/map_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:id="@+id/re_util"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_mian_right"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="照明灯"
+                            android:textColor="@color/color_black"
+                            android:textSize="@dimen/dimen_32" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="前"
+                                android:textSize="14sp" />
+
+                            <ToggleButton
+                                android:id="@+id/tog_front"
+                                android:layout_width="60dp"
+                                android:layout_height="25dp"
+                                android:layout_marginLeft="5dp"
+                                android:background="@drawable/main_toggle"
+                                android:checked="false"
+                                android:textOff=""
+                                android:textOn="" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="后"
+                                android:textSize="14sp" />
+
+                            <ToggleButton
+                                android:id="@+id/tog_back"
+                                android:layout_width="60dp"
+                                android:layout_height="25dp"
+                                android:layout_marginLeft="5dp"
+                                android:background="@drawable/main_toggle"
+                                android:checked="false"
+                                android:textOff=""
+                                android:textOn="" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -185,7 +275,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="3D模型" />
+                        android:text="驾驶" />
 
                     <View style="@style/task_vertical_line" />
 
@@ -212,18 +302,7 @@
 
                 <include layout="@layout/include_drive" />
 
-                <RelativeLayout
-                    android:id="@+id/re_control"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="control" />
-                </RelativeLayout>
+                <include layout="@layout/include_control" />
 
                 <RelativeLayout
                     android:id="@+id/re_inspect"

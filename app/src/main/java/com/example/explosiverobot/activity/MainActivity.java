@@ -108,7 +108,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     @Override
     protected void setListener() {
-
     }
 
 

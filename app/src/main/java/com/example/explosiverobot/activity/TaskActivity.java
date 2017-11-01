@@ -14,11 +14,11 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -43,6 +43,9 @@ import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.util.GpsUtils;
 import com.example.explosiverobot.util.SPManager;
 import com.example.explosiverobot.view.surface.DrawSurfaceView;
+import com.example.explosiverobot.view.weiget.CircleViewByImage;
+import com.example.explosiverobot.view.weiget.TouchImageView;
+import com.example.explosiverobot.view.weiget.TouchTextView;
 import com.seabreeze.log.Print;
 
 import butterknife.BindView;
@@ -56,7 +59,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         LocationSource,
         BridgeService.PlayInterface,
         UDPAcceptReceiver.UDPAcceptInterface,
-        DrawInterface {
+        DrawInterface,
+        TouchImageView.OnImageTimeListener,
+        TouchTextView.OnTextTimeListener {
 
     private static final String STR_MSG_PARAM = "msgparam";
     private static final String STR_DID = "did";
@@ -67,10 +72,14 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     TextView tvModel;
     @BindView(R.id.tv_map)
     TextView tvMap;
+    @BindView(R.id.tv_util)
+    TextView tvUtil;
     @BindView(R.id.re_model)
     RelativeLayout reModel;
     @BindView(R.id.map_view)
     MapView mapView;
+    @BindView(R.id.re_util)
+    RelativeLayout reUtil;
     @BindView(R.id.tv_drive)
     TextView tvDrive;
     @BindView(R.id.tv_control)
@@ -84,9 +93,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     @BindView(R.id.re_inspect)
     RelativeLayout reInspect;
     @BindView(R.id.ic_front_upper)
-    ImageView icFrontUpper;
+    TouchImageView icFrontUpper;
     @BindView(R.id.ic_front_lower)
-    ImageView icFrontLower;
+    TouchImageView icFrontLower;
     @BindView(R.id.ic_after_upper)
     ImageView icAfterUpper;
     @BindView(R.id.ic_after_lower)
@@ -103,8 +112,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     TextView tvSpeedLowFront;
     @BindView(R.id.tv_speed_low)
     TextView tvSpeedLow;
-    @BindView(R.id.iv_arm)
-    ImageView ivArm;
+    //    @BindView(R.id.iv_arm)
+//    ImageView ivArm;
     @BindView(R.id.sc_dodge)
     SwitchCompat scDodge;
     @BindView(R.id.draw_suface_view)
@@ -119,14 +128,32 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     RadioButton rbTele4;
     @BindView(R.id.rg_tele)
     RadioGroup rgTele;
-    @BindView(R.id.drive_sole)
-    LinearLayout driveSole;
+    //    @BindView(R.id.drive_sole)
+//    LinearLayout driveSole;
     @BindView(R.id.ib_hori_tour)
     ImageButton ibHoriTour;
     @BindView(R.id.ib_vert_tour)
     ImageButton ibVertTour;
     @BindView(R.id.rl_ip_control)
     RelativeLayout rlIpControl;
+    @BindView(R.id.tog_front)
+    ToggleButton togFront;
+    @BindView(R.id.tog_back)
+    ToggleButton togBack;
+    @BindView(R.id.ttv_base_clockwise)
+    TouchTextView ttvBaseClockwise;
+    @BindView(R.id.ttv_base_counter)
+    TouchTextView ttvBaseCounter;
+    @BindView(R.id.ttv_head_clockwise)
+    TouchTextView ttvHeadClockwise;
+    @BindView(R.id.ttv_head_counter)
+    TouchTextView ttvHeadCounter;
+    @BindView(R.id.ttv_grab_clockwise)
+    TouchTextView ttvGrabClockwise;
+    @BindView(R.id.ttv_grab_counter)
+    TouchTextView ttvGrabCounter;
+    @BindView(R.id.control_circle_view)
+    CircleViewByImage controlCircleView;
 
     private MyRender myRender;
 
@@ -163,8 +190,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     private double mChangeCistance = 0.0;
     private int degree = 5;
     private int degreeMin = 2;
-    private int lenght = 5;
-    private int lenghtMin = 3;
+    private int lenght = 3;
+    private int lenghtMin = 2;
 
     private Handler mDrawHandler = new Handler() {
         @Override
@@ -292,6 +319,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
         SPManager.setTrackOrientation(SPManager.trackFront);
         SPManager.setTrackSpeed(SPManager.speedHigh);
+
+        mDrawSurfaceView.setVisibility(View.GONE);
     }
 
 
@@ -341,6 +370,46 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                         rlIpControl.setVisibility(View.GONE);
                         break;
                 }
+            }
+        });
+        icFrontUpper.setOnTimeListener(this);
+        icFrontLower.setOnTimeListener(this);
+        ttvBaseClockwise.setOnTimeListener(this);
+        ttvBaseCounter.setOnTimeListener(this);
+        ttvHeadClockwise.setOnTimeListener(this);
+        ttvHeadCounter.setOnTimeListener(this);
+        ttvGrabClockwise.setOnTimeListener(this);
+        ttvGrabCounter.setOnTimeListener(this);
+
+        controlCircleView.setCallback(new CircleViewByImage.ActionCallback() {
+            @Override
+            public void forwardMove() {//上
+                Print.e("上");
+                sendLocal(SPManager.controlTrackFront());
+            }
+
+            @Override
+            public void backMove() {//下
+                Print.e("下");
+                sendLocal(SPManager.controlTrackBack());
+            }
+
+            @Override
+            public void leftMove() {//左
+                Print.e("左");
+                sendLocal(SPManager.controlTrackLeft());
+            }
+
+            @Override
+            public void rightMove() {
+                Print.e("右");//右
+                sendLocal(SPManager.controlTrackRight());
+            }
+
+            @Override
+            public void actionUp() {//**
+                Print.e("离开");
+                sendLocal(SPManager.controlTrackStop());
             }
         });
     }
@@ -429,19 +498,50 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
     }
 
-    @OnClick({R.id.tv_model, R.id.tv_map, R.id.tv_drive, R.id.tv_control, R.id.tv_inspect,
+    @OnClick({R.id.tv_model, R.id.tv_map, R.id.tv_util, R.id.tv_drive, R.id.tv_control, R.id.tv_inspect,
             R.id.ic_front_upper, R.id.ic_front_lower, R.id.ic_after_upper, R.id.ic_after_lower,
             R.id.tv_speed_high, R.id.tv_speed_medium, R.id.tv_speed_low,
-            R.id.ib_hori_tour, R.id.ib_vert_tour})
+            R.id.ib_hori_tour, R.id.ib_vert_tour, R.id.tog_back, R.id.tog_front})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_model:
-                choiceTop(true);
+                tvModel.setTextColor(getResources().getColor(R.color.color_black));
+                tvModel.setBackgroundColor(getResources().getColor(R.color.task_while));
+                reModel.setVisibility(View.VISIBLE);
 
+                tvMap.setTextColor(getResources().getColor(R.color.color_white));
+                tvMap.setBackgroundColor(getResources().getColor(R.color.task_deep));
+                mapView.setVisibility(View.GONE);
+
+                tvUtil.setTextColor(getResources().getColor(R.color.color_white));
+                tvUtil.setBackgroundColor(getResources().getColor(R.color.task_deep));
+                reUtil.setVisibility(View.GONE);
                 break;
             case R.id.tv_map:
-                choiceTop(false);
+                tvMap.setTextColor(getResources().getColor(R.color.color_black));
+                tvMap.setBackgroundColor(getResources().getColor(R.color.task_while));
+                mapView.setVisibility(View.VISIBLE);
 
+                tvModel.setTextColor(getResources().getColor(R.color.color_white));
+                tvModel.setBackgroundColor(getResources().getColor(R.color.task_deep));
+                reModel.setVisibility(View.GONE);
+
+                tvUtil.setTextColor(getResources().getColor(R.color.color_white));
+                tvUtil.setBackgroundColor(getResources().getColor(R.color.task_deep));
+                reUtil.setVisibility(View.GONE);
+                break;
+            case R.id.tv_util:
+                tvUtil.setTextColor(getResources().getColor(R.color.color_black));
+                tvUtil.setBackgroundColor(getResources().getColor(R.color.task_while));
+                reUtil.setVisibility(View.VISIBLE);
+
+                tvModel.setTextColor(getResources().getColor(R.color.color_white));
+                tvModel.setBackgroundColor(getResources().getColor(R.color.task_deep));
+                reModel.setVisibility(View.GONE);
+
+                tvMap.setTextColor(getResources().getColor(R.color.color_white));
+                tvMap.setBackgroundColor(getResources().getColor(R.color.task_deep));
+                mapView.setVisibility(View.GONE);
                 break;
             case R.id.tv_drive:
                 tvDrive.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
@@ -450,6 +550,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 reControl.setVisibility(View.GONE);
                 tvInspect.setBackgroundColor(getResources().getColor(R.color.task_deep));
                 reInspect.setVisibility(View.GONE);
+
+                controlCircleView.setVisibility(View.VISIBLE);
+                mDrawSurfaceView.setVisibility(View.GONE);
                 break;
             case R.id.tv_control:
                 tvControl.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
@@ -458,6 +561,9 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 reDrive.setVisibility(View.GONE);
                 tvInspect.setBackgroundColor(getResources().getColor(R.color.task_deep));
                 reInspect.setVisibility(View.GONE);
+
+                controlCircleView.setVisibility(View.GONE);
+                mDrawSurfaceView.setVisibility(View.VISIBLE);
                 break;
             case R.id.tv_inspect:
                 tvInspect.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
@@ -466,43 +572,38 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 reDrive.setVisibility(View.GONE);
                 tvControl.setBackgroundColor(getResources().getColor(R.color.task_deep));
                 reControl.setVisibility(View.GONE);
-                break;
-            case R.id.ic_front_upper://前上
-                showToast("前上");
-                // TODO: 2017/10/30  
-//                sendLocal(SPManager.controlarmObstacleUp("00"));
-                break;
-            case R.id.ic_front_lower://前下
-                showToast("前下");
+
+                mDrawSurfaceView.setVisibility(View.GONE);
+                controlCircleView.setVisibility(View.GONE);
                 break;
             case R.id.ic_after_upper://后上
-                showToast("后上");
                 sendLocal(SPManager.controlarmObstacleUp());
+                Print.e("后轮向上");
                 break;
             case R.id.ic_after_lower://后下
-                showToast("后下");
                 sendLocal(SPManager.controlarmObstacleDown());
+                Print.e("后轮向下");
                 break;
             case R.id.tv_speed_high:
                 tvSpeedHighFront.setVisibility(View.VISIBLE);
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.GONE);
-                showToast("高速");
                 sendLocal(SPManager.controlTrackSpeedHigh());
+                Print.e("高速");
                 break;
             case R.id.tv_speed_medium:
                 tvSpeedHighFront.setVisibility(View.GONE);
                 tvSpeedMediumFront.setVisibility(View.VISIBLE);
                 tvSpeedLowFront.setVisibility(View.GONE);
-                showToast("中速");
                 sendLocal(SPManager.controlTrackSpeedMedium());
+                Print.e("中速");
                 break;
             case R.id.tv_speed_low:
                 tvSpeedHighFront.setVisibility(View.GONE);
                 tvSpeedMediumFront.setVisibility(View.GONE);
                 tvSpeedLowFront.setVisibility(View.VISIBLE);
-                showToast("低速");
                 sendLocal(SPManager.controlTrackSpeedLow());
+                Print.e("低速");
                 break;
             case R.id.ib_hori_tour:
                 if (isLeftRight) {
@@ -526,16 +627,111 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                     NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN);
                 }
                 break;
+            case R.id.tog_back:
+                if (togBack.isChecked()) {
+                    sendLocal(SPManager.controlLampBackOpen());
+                    Print.e("照明灯后开");
+                } else {
+                    sendLocal(SPManager.controlLampBackClose());
+                    Print.e("照明灯后关");
+                }
+                break;
+            case R.id.tog_front:
+                if (togFront.isChecked()) {
+                    sendLocal(SPManager.controlLampFrontOpen());
+                    Print.e("照明灯前开");
+                } else {
+                    sendLocal(SPManager.controlLampFrontClose());
+                    Print.e("照明灯前关");
+                }
+                break;
         }
     }
 
-    private void choiceTop(boolean b) {
-        tvModel.setTextColor(b ? getResources().getColor(R.color.color_black) : getResources().getColor(R.color.color_white));
-        tvModel.setBackgroundColor(b ? getResources().getColor(R.color.task_while) : getResources().getColor(R.color.task_deep));
-        reModel.setVisibility(b ? View.VISIBLE : View.GONE);
-        tvMap.setTextColor(!b ? getResources().getColor(R.color.color_black) : getResources().getColor(R.color.color_white));
-        tvMap.setBackgroundColor(!b ? getResources().getColor(R.color.task_while) : getResources().getColor(R.color.task_deep));
-        mapView.setVisibility(!b ? View.VISIBLE : View.GONE);
+    @Override
+    public void onImageTimecount(View view, int count) {
+        switch (view.getId()) {
+            case R.id.ic_front_upper://前上
+                sendLocal(SPManager.controlarmObstacleStop(degreeToRadian(degree)));
+                Print.e("前轮顺时针旋转 5 度");
+                break;
+            case R.id.ic_front_lower://前下
+                sendLocal(SPManager.controlarmObstacleStop(-degreeToRadian(degree)));
+                Print.e("前轮逆时针旋转 5 度");
+                break;
+        }
+    }
+
+    @Override
+    public void onImageDownFinish(View view) {
+        switch (view.getId()) {
+            case R.id.ic_front_upper:
+                Print.e("前轮停止");
+                sendLocal(SPManager.controlarmObstacleStop());
+                break;
+            case R.id.ic_front_lower:
+                Print.e("前轮停止");
+                sendLocal(SPManager.controlarmObstacleStop());
+                break;
+        }
+    }
+
+    @Override
+    public void onTextTimecount(View view, int count) {
+        switch (view.getId()) {
+            case R.id.ttv_base_clockwise:
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics01, degreeToRadian(degree)));
+                Print.e("基座顺时针旋转 5 度");
+                break;
+            case R.id.ttv_base_counter:
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics01, -degreeToRadian(degree)));
+                Print.e("基座逆时针旋转 -5 度");
+                break;
+            case R.id.ttv_head_clockwise:
+                sendLocal(SPManager.controlarmMechanicClockwise05());
+                Print.e("05臂顺时针旋转");
+                break;
+            case R.id.ttv_head_counter:
+                sendLocal(SPManager.controlarmMechanicAntiClockwise05());
+                Print.e("05臂逆时针旋转");
+                break;
+            case R.id.ttv_grab_clockwise:
+                sendLocal(SPManager.controlarmMechanicTight06());
+                Print.e("06臂紧");
+                break;
+            case R.id.ttv_grab_counter:
+                sendLocal(SPManager.controlarmMechanicPine06());
+                Print.e("06臂松");
+                break;
+        }
+    }
+
+    @Override
+    public void onTextDownFinish(View view) {
+        switch (view.getId()) {
+            case R.id.ttv_base_clockwise:
+
+                break;
+            case R.id.ttv_base_counter:
+
+                break;
+            case R.id.ttv_head_clockwise:
+                sendLocal(SPManager.controlarmMechanicStop05());
+                Print.e("05停止");
+                break;
+            case R.id.ttv_head_counter:
+                sendLocal(SPManager.controlarmMechanicStop05());
+                Print.e("05停止");
+                break;
+            case R.id.ttv_grab_clockwise:
+                sendLocal(SPManager.controlarmMechanicStop06());
+                Print.e("06停止");
+                break;
+            case R.id.ttv_grab_counter:
+                sendLocal(SPManager.controlarmMechanicStop06());
+                Print.e("06停止");
+                break;
+        }
     }
 
     private void sendLocal(byte[] bytes) {
@@ -549,7 +745,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         intent.putExtra("order", order);
         mLbmManager.sendBroadcast(intent);
     }
-    
+
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (mListener != null) {
@@ -704,10 +900,10 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mChangeCistance) > lenght) {
             if (mChangeCistance > 0.0) {
                 mChangeCistance = mChangeCistance - lenght;
-                Print.e("mChangeCistance 收缩 5 ");
+                Print.e("机械臂 02 收缩 " + lenght);
             } else {
                 mChangeCistance = mChangeCistance + lenght;
-                Print.e("mChangeCistance 延长 5 ");
+                Print.e("机械臂 02 延长 " + lenght);
             }
         }
 
@@ -716,11 +912,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degree);
                 sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
-                Print.e("mRotation2 顺时针旋转 5 ");
+                Print.e("机械臂 03 顺时针旋转 5 ");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degree);
                 sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degree)));
-                Print.e("mRotation2 逆时针旋转 5 ");
+                Print.e("机械臂 03 逆时针旋转 5 ");
             }
         }
 
@@ -728,12 +924,12 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation3) > degreeToRadian(degree)) {
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degree);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
-                Print.e("mRotation3 顺时针旋转5度 ");
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, degreeToRadian(degree)));
+                Print.e("机械臂 04 顺时针旋转5度 ");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degree);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degree)));
-                Print.e("mRotation3 逆时针旋转5度 ");
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, degreeToRadian(degree)));
+                Print.e("机械臂 04 逆时针旋转5度 ");
             }
         }
     }
@@ -743,10 +939,10 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mChangeCistance) > lenghtMin) {
             if (mChangeCistance > 0.0) {
                 mChangeCistance = mChangeCistance - lenghtMin;
-                Print.e("mChangeCistance 收缩 3 ");
+                Print.e("机械臂 02 收缩 " + lenghtMin);
             } else {
                 mChangeCistance = mChangeCistance + lenghtMin;
-                Print.e("mChangeCistance 延长 3 ");
+                Print.e("机械臂 02 延长 3 " + lenghtMin);
             }
         }
 
@@ -755,23 +951,23 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degreeMin);
                 sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degreeMin)));
-                Print.e("mRotation2 顺时针旋转 5");
+                Print.e("机械臂 03 顺时针旋转 5");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degreeMin);
                 sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degreeMin)));
-                Print.e("mRotation2 逆时针旋转 5");
+                Print.e("机械臂 03 逆时针旋转 5");
             }
         }
 
         if (Math.abs(mRotation3) > degreeToRadian(degreeMin)) {
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degreeMin);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  degreeToRadian(degreeMin)));
-                Print.e("mRotation3 顺时针旋转3度");
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, degreeToRadian(degreeMin)));
+                Print.e("机械臂 04 顺时针旋转3度");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degreeMin);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04,  -degreeToRadian(degreeMin)));
-                Print.e("mRotation3 逆时针旋转3度");
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, -degreeToRadian(degreeMin)));
+                Print.e("机械臂 04 逆时针旋转3度");
             }
         }
     }

@@ -77,23 +77,40 @@ public class SPManager {
     }
 
     /***************************灯的控制*****************************/
+    /**
+     * 照明灯前开
+     */
     public static String controlLampFrontOpen() {
         return head + control + lamp + unTick + lampNumFront + lampOpen;
     }
 
+    /**
+     * 照明灯前关
+     */
     public static String controlLampFrontClose() {
         return head + control + lamp + unTick + lampNumFront + lampClose;
     }
 
+    /**
+     * 照明灯后开
+     */
     public static String controlLampBackOpen() {
         return head + control + lamp + unTick + lampNumBack + lampOpen;
     }
 
+    /**
+     * 照明灯后关
+     */
     public static String controlLampBackClose() {
         return head + control + lamp + unTick + lampNumBack + lampClose;
     }
 
     /***************************越障臂控制*****************************/
+    /**
+     * 越障臂前臂旋转 angle 度
+     *
+     * @param angle
+     */
     public static String controlarmObstacleStop(double angle) {
         return head + control + track + unTick + angle + armObstacleStop;
     }
@@ -105,83 +122,137 @@ public class SPManager {
     public static String controlarmObstacleDown(double angle) {
         return head + control + track + unTick + angle + armObstacleDown;
     }
+
+    /**
+     * 越障臂前臂停止
+     */
     public static String controlarmObstacleStop() {
-        return head + control + track + unTick + "00" + armObstacleStop;
+        return controlarmObstacleStop(0);
     }
+
+    /**
+     * 越障臂后臂向上
+     */
     public static String controlarmObstacleUp() {
-        return head + control + track + unTick + "00" + armObstacleUp;
+        return controlarmObstacleUp(0);
     }
+
+    /**
+     * 越障臂后臂向下
+     */
     public static String controlarmObstacleDown() {
-        return head + control + track + unTick + "00" + armObstacleDown;
+        return controlarmObstacleDown(0);
     }
 
 
     /***************************机械臂控制*****************************/
+    /**
+     * 控制机械臂旋转
+     *
+     * @param number 机械臂
+     * @param angle  为正 顺时针，为负 逆时针
+     */
     public static String controlarmMechanics(String number, double angle) {
         return head + control + track + unTick + number + angle;
     }
 
+    /**
+     * 机械臂05 停止旋转
+     */
     public static String controlarmMechanicStop05() {
         return head + control + track + unTick + armMechanics05 + armMechanicStop05;
     }
 
+    /**
+     * 机械臂05 顺时针旋转
+     */
     public static String controlarmMechanicClockwise05() {
         return head + control + track + unTick + armMechanics05 + armMechanicClockwise05;
     }
 
+    /**
+     * 机械臂05 逆时针旋转
+     */
     public static String controlarmMechanicAntiClockwise05() {
         return head + control + track + unTick + armMechanics05 + armMechanicAntiClockwise05;
     }
 
+    /**
+     * 机械臂06 停止抓紧
+     */
     public static String controlarmMechanicStop06() {
         return head + control + track + unTick + armMechanics06 + armMechanicStop06;
     }
 
+    /**
+     * 机械臂06 紧
+     */
     public static String controlarmMechanicTight06() {
         return head + control + track + unTick + armMechanics06 + armMechanicTight06;
     }
 
+    /**
+     * 机械臂06 松
+     */
     public static String controlarmMechanicPine06() {
         return head + control + track + unTick + armMechanics06 + armMechanicPine06;
     }
 
 
-
     /***************************履带控制*****************************/
     public static String controlTrack(String orientation, String speed) {
         mOrientation = orientation;
+        mSpeed = speed;
         return head + control + track + unTick + orientation + speed;
     }
 
-    public static String controlTrackSpeed(String speed) {
-        return head + control + track + unTick + mOrientation + speed;
+    public static String controlTrackOrientation(String orientation) {
+        return controlTrack(orientation, mSpeed);
     }
 
+    public static String controlTrackFront() {
+        return controlTrack(trackFront, mSpeed);
+    }
+
+    public static String controlTrackBack() {
+        return controlTrack(trackBack, mSpeed);
+    }
+
+    public static String controlTrackLeft() {
+        return controlTrack(trackLeft, mSpeed);
+    }
+
+    public static String controlTrackRight() {
+        return controlTrack(trackRight, mSpeed);
+    }
+
+    public static String controlTrackStop() {
+        return controlTrack(trackStop, mSpeed);
+    }
+
+
     public static String controlTrackSpeedHigh() {
-        return head + control + track + unTick + mOrientation + speedHigh;
+        return controlTrack(mOrientation, speedHigh);
     }
 
     public static String controlTrackSpeedMedium() {
-        return head + control + track + unTick + mOrientation + speedMedium;
+        return controlTrack(mOrientation, speedMedium);
     }
 
     public static String controlTrackSpeedLow() {
-        return head + control + track + unTick + mOrientation + speedLow;
+        return controlTrack(mOrientation, speedLow);
     }
 
     public static String controlTrackSpeedHigh(String orientation) {
-        mOrientation = orientation;
-        return head + control + track + unTick + orientation + speedHigh;
+        return controlTrack(orientation, speedHigh);
     }
 
     public static String controlTrackSpeedMedium(String orientation) {
-        mOrientation = orientation;
-        return head + control + track + unTick + orientation + speedMedium;
+        return controlTrack(orientation, speedMedium);
     }
 
     public static String controlTrackSpeedLow(String orientation) {
-        mOrientation = orientation;
-        return head + control + track + unTick + orientation + speedLow;
+        return controlTrack(orientation, speedLow);
     }
 
 

@@ -6,79 +6,25 @@
     android:layout_height="match_parent"
     android:background="@color/task_deep">
 
-    <LinearLayout
-        android:id="@+id/drive_sole"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/drive_sole"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp">-->
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="脚掌\n控制"
-            android:textColor="@color/color_white"
-            android:textSize="12sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="前"
-            android:textColor="@color/color_white"
-            android:textSize="10sp" />
-
-        <ImageView
-            android:id="@+id/ic_front_upper"
-            android:layout_width="0dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:src="@mipmap/ic_front_upper" />
-
-        <ImageView
-            android:id="@+id/ic_front_lower"
-            android:layout_width="0dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:src="@mipmap/ic_front_lower" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="后"
-            android:textColor="@color/color_white"
-            android:textSize="10sp" />
-
-        <ImageView
-            android:id="@+id/ic_after_upper"
-            android:layout_width="0dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:src="@mipmap/ic_after_upper" />
-
-        <ImageView
-            android:id="@+id/ic_after_lower"
-            android:layout_width="0dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:src="@mipmap/ic_after_lower" />
-    </LinearLayout>
-
-    <View
-        style="@style/task_line"
-        android:layout_below="@+id/drive_sole" />
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="2"-->
+            <!--android:gravity="center"-->
+            <!--android:text="脚掌\n控制"-->
+            <!--android:textColor="@color/color_white"-->
+            <!--android:textSize="12sp" />-->
+        <!---->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/drive_sole"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -188,14 +134,82 @@
             android:layout_weight="2"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_arm"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
                 android:layout_marginBottom="60dp"
                 android:layout_marginTop="20dp"
-                android:src="@mipmap/ic_launcher" />
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="前(长按)"
+                        android:textColor="@color/color_white"
+                        android:textSize="10sp" />
+
+                    <com.example.explosiverobot.view.weiget.TouchImageView
+                        android:id="@+id/ic_front_upper"
+                        android:layout_width="0dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@mipmap/ic_front_upper" />
+
+                    <com.example.explosiverobot.view.weiget.TouchImageView
+                        android:id="@+id/ic_front_lower"
+                        android:layout_width="0dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@mipmap/ic_front_lower" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="后"
+                        android:textColor="@color/color_white"
+                        android:textSize="10sp" />
+
+                    <ImageView
+                        android:id="@+id/ic_after_upper"
+                        android:layout_width="0dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@mipmap/ic_after_upper" />
+
+                    <ImageView
+                        android:id="@+id/ic_after_lower"
+                        android:layout_width="0dp"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@mipmap/ic_after_lower" />
+                </LinearLayout>
+            </LinearLayout>
+            <!--<ImageView-->
+                <!--android:id="@+id/iv_arm"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginBottom="60dp"-->
+                <!--android:layout_marginTop="20dp"-->
+                <!--android:src="@mipmap/ic_launcher" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"

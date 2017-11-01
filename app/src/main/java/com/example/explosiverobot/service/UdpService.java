@@ -11,11 +11,9 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.explosiverobot.ExplpsiveApplication;
-import com.example.explosiverobot.activity.MainActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.udp.UdpControl;
 import com.example.explosiverobot.udp.UdpReceiver;
@@ -133,7 +131,6 @@ public class UdpService extends Service {
         client.registerUdpServer(new UdpReceiver(new OnListenerUDPServer() {
             @Override
             public void receiver(String receiver) {
-                Log.e("registerUdpServer", "接收到UDP返回的数据--->" + receiver);
                 if (receiver.contains("{")) {
                     mHandler.removeMessages(4);
                     mHandler.sendEmptyMessageDelayed(4, 300);
@@ -161,9 +158,9 @@ public class UdpService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            showToast("activity发过来的数据");
             byte[] interfaceBytes = intent.getByteArrayExtra("bytes");
             if(interfaceBytes != null){
+                showToast("activity发过来的数据");
                 setInterfaceBytes(interfaceBytes);
             }
         }

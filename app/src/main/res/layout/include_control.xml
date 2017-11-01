@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/re_control"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/task_deep"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="基座(长按)"
+                android:textColor="@color/color_white"
+                android:textSize="10sp" />
+
+            <com.example.explosiverobot.view.weiget.TouchTextView
+                android:id="@+id/ttv_base_clockwise"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="顺时针"
+                android:textSize="12sp"
+                android:layout_margin="10dp"
+                android:background="@drawable/touchtextview_selector"
+                android:textColor="@color/color_white"
+                android:gravity="center"
+                />
+
+            <com.example.explosiverobot.view.weiget.TouchTextView
+                android:id="@+id/ttv_base_counter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="逆时针"
+                android:textSize="12sp"
+                android:layout_margin="10dp"
+                android:background="@drawable/touchtextview_selector"
+                android:textColor="@color/color_white"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="头(长按)"
+                android:textColor="@color/color_white"
+                android:textSize="10sp" />
+
+            <com.example.explosiverobot.view.weiget.TouchTextView
+                android:id="@+id/ttv_head_clockwise"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="顺时针"
+                android:textSize="12sp"
+                android:layout_margin="10dp"
+                android:background="@drawable/touchtextview_selector"
+                android:textColor="@color/color_white"
+                android:gravity="center" />
+
+            <com.example.explosiverobot.view.weiget.TouchTextView
+                android:id="@+id/ttv_head_counter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="逆时针"
+                android:textSize="12sp"
+                android:layout_margin="10dp"
+                android:background="@drawable/touchtextview_selector"
+                android:textColor="@color/color_white"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="抓(长按)"
+                android:textColor="@color/color_white"
+                android:textSize="10sp" />
+
+            <com.example.explosiverobot.view.weiget.TouchTextView
+                android:id="@+id/ttv_grab_clockwise"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="顺时针"
+                android:textSize="12sp"
+                android:layout_margin="10dp"
+                android:background="@drawable/touchtextview_selector"
+                android:textColor="@color/color_white"
+                android:gravity="center" />
+
+            <com.example.explosiverobot.view.weiget.TouchTextView
+                android:id="@+id/ttv_grab_counter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="逆时针"
+                android:textSize="12sp"
+                android:layout_margin="10dp"
+                android:background="@drawable/touchtextview_selector"
+                android:textColor="@color/color_white"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+</RelativeLayout>
