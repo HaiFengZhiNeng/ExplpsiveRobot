@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Spot;
 import com.example.explosiverobot.service.DrawingThread;
+import com.seabreeze.log.Print;
 
 
 public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -63,18 +64,19 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         screenW = getWidth();
         screenH = getHeight();
 
-        mDrawingThread = new DrawingThread(this, mHolder, screenW, screenH);
+        mDrawingThread = new DrawingThread(mContext, this, mHolder, screenW, screenH);
         mDrawingThread.start(); // 启动线程
         mDrawingThread.setDrawInterface(mDrawInterface);
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
+        Print.e("");
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        mDrawingThread.save();
         mDrawingThread.quit();
         mDrawingThread = null;
     }

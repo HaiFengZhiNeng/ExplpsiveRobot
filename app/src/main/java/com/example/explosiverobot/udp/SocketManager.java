@@ -1,7 +1,5 @@
 package com.example.explosiverobot.udp;
 
-import com.seabreeze.log.Print;
-
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -92,7 +90,6 @@ public class SocketManager {
             int port = isGetTcpIp ? RECEIVE_PORT: SEND_PORT;
 
 
-            Print.e("发送数据 IP ： " + host.toString() + " port : " + port);
             getExecutorService().execute(new UDPSendRunnable(mDatagramSocketSend, host, port, msg));
         } catch (UnknownHostException e) {
             e.printStackTrace();

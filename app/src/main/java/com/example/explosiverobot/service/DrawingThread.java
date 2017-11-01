@@ -1,5 +1,6 @@
 package com.example.explosiverobot.service;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,6 +18,8 @@ import android.view.SurfaceView;
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Spot;
+import com.example.explosiverobot.util.GsonUtil;
+import com.example.explosiverobot.util.PreferencesUtils;
 
 import java.math.BigDecimal;
 
@@ -27,6 +30,9 @@ import java.math.BigDecimal;
 public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     private static final int MSG_DRAW = 101;
+
+    private Context mContext;
+
     private int leftBase;
     private int topBase;
     private int rightBase;
@@ -131,8 +137,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private double mCallRotation3;
 
 
-    public DrawingThread(SurfaceView surfaceView, SurfaceHolder holder, int screenW, int screenH) {
+    public DrawingThread(Context context, SurfaceView surfaceView, SurfaceHolder holder, int screenW, int screenH) {
         super("DrawingThread");
+        mContext = context;
         mSurfaceView = surfaceView;
         mDrawingSurface = holder;
         mScreenW = screenW;
@@ -185,18 +192,26 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         r1 = armSecondBitmap.getHeight() * 8 / 9 - armEndBitmap.getWidth() / 2;
         r2 = armEndBitmap.getHeight() - armEndBitmap.getWidth();
 
-
-        firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
-                basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
+        firstSpot = takeForKey("firstSpot");
+        if(firstSpot == null) {
+            firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
+                    basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
+        }
 
         secondSpot = firstSpot;
 
-        endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
-                firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
+        endingSpot = takeForKey("endingSpot");
+        if(endingSpot == null) {
+            endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
+                    firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
+        }
+
+        touchSpot = takeForKey("touchSpot");
+        if(touchSpot == null) {
+            touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
+        }
 
         mySpot = new Spot(0, 0);
-
-        touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
 
         shortProportion = 12.5 / 48.5;
         longProportion = 46.5 / 48.5;
@@ -210,6 +225,11 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         originalBraceDistance = getDistance(braceSpot, triangleSpot);
 
         firstSpotTail = angleAcquisitionPoint(originSpot, firstSpot, degreeToRadian(firstDegreeMax - firstDegreeMin));
+
+        mRotation1 = PreferencesUtils.getFloat(mContext, "mRotation1", 0);
+        mRotation2 = PreferencesUtils.getFloat(mContext, "mRotation2", 0);
+        mRotation3 = PreferencesUtils.getFloat(mContext, "mRotation3", 0);
+        myRotation = PreferencesUtils.getFloat(mContext, "myRotation", 0);
     }
 
     private Spot belowLinePoint(Spot spot1, Spot spot2, double r1, double r2) {
@@ -303,7 +323,12 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     private void drawSpot(Canvas canvas, Spot spot) {
         if (spot == null) {
-            drawSpot(canvas, degreeToRadian(90 - firstDegreeMax), degreeToRadian(90 - firstDegreeMax), Math.PI / 2, true);
+            if(PreferencesUtils.getBoolean(mContext, "drawIsFirst")) {
+
+                drawSpot(canvas, 0, 0, 0, false);
+            }else{
+                drawSpot(canvas, degreeToRadian(90 - firstDegreeMax), degreeToRadian(90 - firstDegreeMax), Math.PI / 2, true);
+            }
             return;
         }
         mCallRotation1 = 0.0;
@@ -697,6 +722,23 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     public void setDrawInterface(DrawInterface drawInterface) {
         this.mDrawInterface = drawInterface;
+    }
+
+    public void save() {
+        PreferencesUtils.putString(mContext, "firstSpot", GsonUtil.GsonString(firstSpot));
+        PreferencesUtils.putString(mContext, "endingSpot", GsonUtil.GsonString(endingSpot));
+        PreferencesUtils.putString(mContext, "touchSpot", GsonUtil.GsonString(touchSpot));
+
+        PreferencesUtils.putFloat(mContext, "mRotation1", mRotation1);
+        PreferencesUtils.putFloat(mContext, "mRotation2", mRotation2);
+        PreferencesUtils.putFloat(mContext, "mRotation3", mRotation3);
+        PreferencesUtils.putFloat(mContext, "myRotation", (float) myRotation);
+
+        PreferencesUtils.putBoolean(mContext, "drawIsFirst", true);
+    }
+
+    public Spot takeForKey(String key){
+        return GsonUtil.GsonToBean(PreferencesUtils.getString(mContext, key), Spot.class);
     }
 
     /**
@@ -1219,5 +1261,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     public static double degreeToRadian(double degree) {
         return degree * Math.PI / 180;
     }
+
+
 }
 

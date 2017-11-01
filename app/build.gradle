@@ -144,14 +144,15 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile project(':amapsdk')
-    compile files('libs/gson-2.3.1.jar')
-    compile files('libs/okhttp-3.4.1.jar')
-    compile files('libs/okio-1.10.0.jar')
+//    compile files('libs/gson-2.3.1.jar')
+//    compile files('libs/okhttp-3.4.1.jar')
+//    compile files('libs/okio-1.10.0.jar')
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile 'com.android.support:support-v4:26.+'
+    compile 'com.google.code.gson:gson:2.8.1'
+//    compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'

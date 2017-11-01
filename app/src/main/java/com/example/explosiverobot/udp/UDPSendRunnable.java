@@ -2,8 +2,6 @@ package com.example.explosiverobot.udp;
 
 import android.text.TextUtils;
 
-import com.seabreeze.log.Print;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -42,6 +40,5 @@ public class UDPSendRunnable implements Runnable {
             e.printStackTrace();
             mServer.close();
         }
-        Print.e("Thread.interrupted");
     }
 }
