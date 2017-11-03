@@ -192,6 +192,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     private int degreeMin = 2;
     private int lenght = 3;
     private int lenghtMin = 2;
+    private String just = "0";
+    private String loss = "1";
 
     private Handler mDrawHandler = new Handler() {
         @Override
@@ -652,11 +654,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     public void onImageTimecount(View view, int count) {
         switch (view.getId()) {
             case R.id.ic_front_upper://前上
-                sendLocal(SPManager.controlarmObstacleStop(degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmObstacleStop(just + degree));
                 Print.e("前轮顺时针旋转 5 度");
                 break;
             case R.id.ic_front_lower://前下
-                sendLocal(SPManager.controlarmObstacleStop(-degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmObstacleStop(loss + degree));
                 Print.e("前轮逆时针旋转 5 度");
                 break;
         }
@@ -680,11 +682,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     public void onTextTimecount(View view, int count) {
         switch (view.getId()) {
             case R.id.ttv_base_clockwise:
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics01, degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics01, just + degree));
                 Print.e("基座顺时针旋转 5 度");
                 break;
             case R.id.ttv_base_counter:
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics01, -degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics01, loss + degree));
                 Print.e("基座逆时针旋转 -5 度");
                 break;
             case R.id.ttv_head_clockwise:
@@ -901,9 +903,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             if (mChangeCistance > 0.0) {
                 mChangeCistance = mChangeCistance - lenght;
                 Print.e("机械臂 02 收缩 " + lenght);
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, just + lenght));
             } else {
                 mChangeCistance = mChangeCistance + lenght;
                 Print.e("机械臂 02 延长 " + lenght);
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, loss + lenght));
             }
         }
 
@@ -911,11 +915,12 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation2) > degreeToRadian(degree)) {
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degree);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
+//                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, just + degree));
                 Print.e("机械臂 03 顺时针旋转 5 ");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degree);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, loss + degree));
                 Print.e("机械臂 03 逆时针旋转 5 ");
             }
         }
@@ -924,11 +929,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation3) > degreeToRadian(degree)) {
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degree);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, just + degree));
                 Print.e("机械臂 04 顺时针旋转5度 ");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degree);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, degreeToRadian(degree)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, loss +degree));
                 Print.e("机械臂 04 逆时针旋转5度 ");
             }
         }
@@ -950,11 +955,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation2) > degreeToRadian(degreeMin)) {
             if (mRotation2 > 0.0) {
                 mRotation2 = mRotation2 - degreeToRadian(degreeMin);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, just + degreeMin));
                 Print.e("机械臂 03 顺时针旋转 5");
             } else {
                 mRotation2 = mRotation2 + degreeToRadian(degreeMin);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, -degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, loss + degreeMin));
                 Print.e("机械臂 03 逆时针旋转 5");
             }
         }
@@ -962,11 +967,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         if (Math.abs(mRotation3) > degreeToRadian(degreeMin)) {
             if (mRotation3 > 0.0) {
                 mRotation3 = mRotation3 - degreeToRadian(degreeMin);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, just  + degreeMin));
                 Print.e("机械臂 04 顺时针旋转3度");
             } else {
                 mRotation3 = mRotation3 + degreeToRadian(degreeMin);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, -degreeToRadian(degreeMin)));
+                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, loss + degreeMin));
                 Print.e("机械臂 04 逆时针旋转3度");
             }
         }

@@ -113,15 +113,15 @@ public class SPManager {
      *
      * @param angle
      */
-    public static String controlarmObstacleStop(double angle) {
+    public static String controlarmObstacleStop(String angle) {
         return head + control + track + unTick + angle + armObstacleStop + crc;
     }
 
-    public static String controlarmObstacleUp(double angle) {
+    public static String controlarmObstacleUp(String angle) {
         return head + control + track + unTick + angle + armObstacleUp + crc;
     }
 
-    public static String controlarmObstacleDown(double angle) {
+    public static String controlarmObstacleDown(String angle) {
         return head + control + track + unTick + angle + armObstacleDown + crc;
     }
 
@@ -129,21 +129,21 @@ public class SPManager {
      * 越障臂前臂停止
      */
     public static String controlarmObstacleStop() {
-        return controlarmObstacleStop(0);
+        return controlarmObstacleStop("00");
     }
 
     /**
      * 越障臂后臂向上
      */
     public static String controlarmObstacleUp() {
-        return controlarmObstacleUp(0);
+        return controlarmObstacleUp("00");
     }
 
     /**
      * 越障臂后臂向下
      */
     public static String controlarmObstacleDown() {
-        return controlarmObstacleDown(0);
+        return controlarmObstacleDown("00");
     }
 
 
@@ -154,50 +154,50 @@ public class SPManager {
      * @param number 机械臂
      * @param angle  为正 顺时针，为负 逆时针
      */
-    public static String controlarmMechanics(String number, double angle) {
-        return head + control + track + unTick + number + angle + crc;
+    public static String controlarmMechanics(String number, String angle) {
+        return head + control + armMechanics + unTick + number + angle + crc;
     }
 
     /**
      * 机械臂05 停止旋转
      */
     public static String controlarmMechanicStop05() {
-        return head + control + track + unTick + armMechanics05 + armMechanicStop05 + crc;
+        return head + control + armMechanics + unTick + armMechanics05 + armMechanicStop05 + crc;
     }
 
     /**
      * 机械臂05 顺时针旋转
      */
     public static String controlarmMechanicClockwise05() {
-        return head + control + track + unTick + armMechanics05 + armMechanicClockwise05 + crc;
+        return head + control + armMechanics + unTick + armMechanics05 + armMechanicClockwise05 + crc;
     }
 
     /**
      * 机械臂05 逆时针旋转
      */
     public static String controlarmMechanicAntiClockwise05() {
-        return head + control + track + unTick + armMechanics05 + armMechanicAntiClockwise05 + crc;
+        return head + control + armMechanics + unTick + armMechanics05 + armMechanicAntiClockwise05 + crc;
     }
 
     /**
      * 机械臂06 停止抓紧
      */
     public static String controlarmMechanicStop06() {
-        return head + control + track + unTick + armMechanics06 + armMechanicStop06 + crc;
+        return head + control + armMechanics + unTick + armMechanics06 + armMechanicStop06 + crc;
     }
 
     /**
      * 机械臂06 紧
      */
     public static String controlarmMechanicTight06() {
-        return head + control + track + unTick + armMechanics06 + armMechanicTight06 + crc;
+        return head + control + armMechanics + unTick + armMechanics06 + armMechanicTight06 + crc;
     }
 
     /**
      * 机械臂06 松
      */
     public static String controlarmMechanicPine06() {
-        return head + control + track + unTick + armMechanics06 + armMechanicPine06 + crc;
+        return head + control + armMechanics + unTick + armMechanics06 + armMechanicPine06 + crc;
     }
 
 

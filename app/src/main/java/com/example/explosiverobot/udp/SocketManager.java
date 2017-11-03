@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class SocketManager {
 
     public final static int SEND_PORT = 8808;
-    public final static int RECEIVE_PORT = 8008;
+    public final static int RECEIVE_PORT = 12556;
 
     private String mAddress;
 
@@ -87,7 +87,7 @@ public class SocketManager {
         try {
 
             InetAddress host = InetAddress.getByName(isGetTcpIp ? mAddress : "255.255.255.255");
-            int port = isGetTcpIp ? RECEIVE_PORT: SEND_PORT;
+            int port = isGetTcpIp ? SEND_PORT: SEND_PORT;
 
 
             getExecutorService().execute(new UDPSendRunnable(mDatagramSocketSend, host, port, msg));

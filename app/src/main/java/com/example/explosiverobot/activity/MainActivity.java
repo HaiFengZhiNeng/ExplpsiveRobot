@@ -68,6 +68,8 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     //脚掌后向下
     @BindView(R.id.tv_foot_back_bottom)
     TextView tvFootBackBottom;
+    @BindView(R.id.test)
+    TextView test;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -144,6 +146,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 break;
             case R.id.iv_robot_bg:
                 startTasgAvtivity();
+//                sendLocal(NetClient.GET_IP);
                 break;
             case R.id.tog_back:
                 // 当按钮第一次被点击时候响应的事件
@@ -303,6 +306,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     }
 
     private void sendLocal(String order) {
+        test.setText(order);
         Intent intent = new Intent(AppConstants.UDP_SEND_ACTION);
         intent.putExtra("order", order);
         mLbmManager.sendBroadcast(intent);

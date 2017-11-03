@@ -22,7 +22,7 @@ public class NetClient {
 
     private static NetClient client;
 
-    public static final String GET_IP = "FF03000000000000";
+    public static final String GET_IP = "FF03030000000000";
 
     public static NetClient getInstance(Context mContext) {
         if (client == null) {

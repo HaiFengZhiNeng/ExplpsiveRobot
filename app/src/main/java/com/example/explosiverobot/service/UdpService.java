@@ -123,6 +123,8 @@ public class UdpService extends Service implements OnListenerUDPServer {
         public void onReceive(Context context, Intent intent) {
             String information = intent.getStringExtra("order");
             if(information != null){
+
+                Print.e("information" + information);
                 client.sendUdpTextMessage(information);
             }
         }

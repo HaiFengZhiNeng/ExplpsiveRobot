@@ -20,6 +20,7 @@ import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Spot;
 import com.example.explosiverobot.util.GsonUtil;
 import com.example.explosiverobot.util.PreferencesUtils;
+import com.seabreeze.log.Print;
 
 import java.math.BigDecimal;
 
@@ -138,6 +139,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private double mCallRotation2;
     private double mCallRotation3;
 
+    private long curTime;
 
     public DrawingThread(Context context, SurfaceView surfaceView, SurfaceHolder holder, int screenW, int screenH) {
         super("DrawingThread");
@@ -638,7 +640,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
 
         if (mDrawInterface != null) {
-            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance);
+            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance * 48.5/r0);
         }
         drawSpot(canvas, rotation1, rotation2, rotation3, true);
     }
@@ -756,17 +758,22 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
     public void reset() {
-        firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
-                basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
-        endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
-                firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
-        touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
-        mRotation1 = 0;
-        mRotation2 = 0;
-        mRotation3 = 0;
-        myRotation = 0;
-        mReceiver.sendEmptyMessage(MSG_DRAW);
-        PreferencesUtils.putBoolean(mContext, "drawIsFirst", false);
+        if(System.currentTimeMillis() - curTime > 500) {
+            curTime = System.currentTimeMillis();
+
+            firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
+                    basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
+            secondSpot = firstSpot;
+            endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
+                    firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
+            touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
+            mRotation1 = 0;
+            mRotation2 = 0;
+            mRotation3 = 0;
+            myRotation = 0;
+            PreferencesUtils.putBoolean(mContext, "drawIsFirst", false);
+            mReceiver.sendEmptyMessage(MSG_DRAW);
+        }
     }
 
     public void setDrawInterface(DrawInterface drawInterface) {

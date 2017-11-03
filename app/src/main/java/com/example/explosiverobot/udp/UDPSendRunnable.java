@@ -31,7 +31,8 @@ public class UDPSendRunnable implements Runnable {
 
             byte[] sendBuf = new byte[1024];
             if (!TextUtils.isEmpty(mMsg)) {
-                sendBuf = mMsg.getBytes();
+//                sendBuf = mMsg.getBytes();
+                sendBuf = HexToByteArr(mMsg);
             }
             DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, mAddress, mPort);
             mServer.send(sendPacket);
@@ -40,5 +41,31 @@ public class UDPSendRunnable implements Runnable {
             e.printStackTrace();
             mServer.close();
         }
+    }
+
+    private byte[] HexToByteArr(String inHex) {//hex字符串转字节数组
+        int hexlen = inHex.length();
+        byte[] result;
+        if (isOdd(hexlen) == 1) {//奇数
+            hexlen++;
+            result = new byte[(hexlen / 2)];
+            inHex = "0" + inHex;
+        } else {//偶数
+            result = new byte[(hexlen / 2)];
+        }
+        int j = 0;
+        for (int i = 0; i < hexlen; i += 2) {
+            result[j] = HexToByte(inHex.substring(i, i + 2));
+            j++;
+        }
+        return result;
+    }
+
+    private int isOdd(int num) {
+        return num & 0x1;
+    }
+
+    private byte HexToByte(String inHex) {//Hex字符串转byte
+        return (byte) Integer.parseInt(inHex, 16);
     }
 }
