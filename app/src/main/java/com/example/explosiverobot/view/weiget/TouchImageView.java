@@ -29,7 +29,7 @@ public class TouchImageView extends ImageView {
                             onTimeListener.onImageTimecount(TouchImageView.this, mCount);
                         }
 
-                        mHandler.sendEmptyMessageDelayed(0, 500);
+                        mHandler.sendEmptyMessageDelayed(0, delayYime);
                     }
                     break;
             }
@@ -39,6 +39,8 @@ public class TouchImageView extends ImageView {
     private int mCount;
 
     private boolean isDown;
+    
+    private long delayYime = 2000;
 
     public TouchImageView(Context context) {
         super(context);
@@ -59,7 +61,7 @@ public class TouchImageView extends ImageView {
                 mCount = 0;
                 if (!isDown) {
                     isDown = true;
-                    mHandler.sendEmptyMessageDelayed(0, 500);
+                    mHandler.sendEmptyMessageDelayed(0, delayYime);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -68,6 +70,7 @@ public class TouchImageView extends ImageView {
                 isDown = false;
                 if (onTimeListener != null) {
                     if(mCount != 0) {
+                        mHandler.removeMessages(0);
                         onTimeListener.onImageDownFinish(this);
                     }
                 }

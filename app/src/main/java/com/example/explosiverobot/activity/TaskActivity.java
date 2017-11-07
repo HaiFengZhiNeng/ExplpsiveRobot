@@ -323,6 +323,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         SPManager.setTrackSpeed(SPManager.speedHigh);
 
         mDrawSurfaceView.setVisibility(View.GONE);
+
     }
 
 
@@ -980,6 +981,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     @Override
     public void onReset() {
         mDrawSurfaceView.onReset();
+        sendLocal(SPManager.controlReset());
     }
 
 

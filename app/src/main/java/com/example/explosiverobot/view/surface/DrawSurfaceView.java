@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.VelocityTracker;
 
 import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Spot;
@@ -27,6 +28,9 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private int screenH;        //屏幕高度
 
     private DrawInterface mDrawInterface;
+
+    private VelocityTracker mTracker;
+    private boolean isSlow;
 
     public DrawSurfaceView(Context context) {
         super(context);
@@ -88,22 +92,47 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 //                cx = (int) event.getX();
 //                cy = (int) event.getY();
 //                mDrawingThread.setSpot(new Spot(cx, cy));
+                if (mTracker == null) {
+                    mTracker = VelocityTracker.obtain();
+                } else {
+                    mTracker.clear();
+                }
+                isSlow = false;
+                mTracker.addMovement(event);
                 break;
             case MotionEvent.ACTION_MOVE:
-                cx = (int) event.getX();
-                cy = (int) event.getY();
-                mDrawingThread.setSpot(new Spot(cx, cy));
+                mTracker.addMovement(event);
+                mTracker.computeCurrentVelocity(1000);
+                int xSpeed = (int) Math.abs(mTracker.getXVelocity());
+                int ySpeed = (int) Math.abs(mTracker.getYVelocity());
+                if(xSpeed < 200 && ySpeed < 200) {
+                    isSlow = true;
+                }else{
+                    isSlow = false;
+                }
+                if(isSlow){
+                    cx = (int) event.getX();
+                    cy = (int) event.getY();
+                    mDrawingThread.setSpot(new Spot(cx, cy));
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                cx = (int) event.getX();
-                cy = (int) event.getY();
-                mDrawingThread.setSpotUp(new Spot(cx, cy));
+                if(isSlow){
+                    cx = (int) event.getX();
+                    cy = (int) event.getY();
+                    mDrawingThread.setSpotUp(new Spot(cx, cy));
+                }
+                if (mTracker != null) {
+                    mTracker.recycle();
+                    mTracker = null;
+                    isSlow = false;
+                }
+
                 break;
         }
 
         return true;
     }
-
 
     public void clear() {
         if (mDrawingThread != null) {

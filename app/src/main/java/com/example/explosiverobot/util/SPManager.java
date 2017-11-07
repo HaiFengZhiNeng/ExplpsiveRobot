@@ -10,7 +10,7 @@ public class SPManager {
     private static String mSpeed;
 
     //包头
-    public static String head = "FF";
+    public static String head = "00FF";
 
     //操作码
     public static String control = "01";
@@ -22,6 +22,7 @@ public class SPManager {
     public static String armMechanics = "02";
     public static String armObstacle = "03";
     public static String lamp = "04";
+    public static String reset = "04";
 
     //是否反馈
     public static String unTick = "00";
@@ -65,8 +66,8 @@ public class SPManager {
     public static String armObstacleUp = "01";
     public static String armObstacleDown = "02";
     //等
-    public static String lampOpen = "00";
-    public static String lampClose = "01";
+    public static String lampOpen = "01";
+    public static String lampClose = "00";
 
     public static String crc = "0000";
 
@@ -76,6 +77,11 @@ public class SPManager {
 
     public static void setTrackSpeed(String speed) {
         mSpeed = speed;
+    }
+
+    /***************************重置*****************************/
+    public static String controlReset() {
+        return head + control + reset + unTick + "00" + "00" + crc;
     }
 
     /***************************灯的控制*****************************/
@@ -114,15 +120,15 @@ public class SPManager {
      * @param angle
      */
     public static String controlarmObstacleStop(String angle) {
-        return head + control + track + unTick + angle + armObstacleStop + crc;
+        return head + control + armObstacle + unTick + angle + armObstacleStop + crc;
     }
 
     public static String controlarmObstacleUp(String angle) {
-        return head + control + track + unTick + angle + armObstacleUp + crc;
+        return head + control + armObstacle + unTick + angle + armObstacleUp + crc;
     }
 
     public static String controlarmObstacleDown(String angle) {
-        return head + control + track + unTick + angle + armObstacleDown + crc;
+        return head + control + armObstacle + unTick + angle + armObstacleDown + crc;
     }
 
     /**

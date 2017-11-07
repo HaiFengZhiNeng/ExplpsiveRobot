@@ -9,14 +9,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.udp.NetClient;
 import com.example.explosiverobot.udp.OnListenerUDPServer;
 import com.example.explosiverobot.udp.UdpReceiver;
 import com.seabreeze.log.Print;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by zhangyuanyuan on 2017/10/18.
@@ -32,6 +32,8 @@ public class UdpService extends Service implements OnListenerUDPServer {
 
     private NetClient client;
 
+    private LinkedBlockingQueue<String> mSendQueue;//队列
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -44,8 +46,10 @@ public class UdpService extends Service implements OnListenerUDPServer {
 
         mLbmManager = LocalBroadcastManager.getInstance(this);
 
+        mSendQueue = new LinkedBlockingQueue<>();
+
         client = NetClient.getInstance(this);
-//        client.sendUdpSocketToByIp();
+        client.sendUdpSocketToByIp();
 
         client.registerUdpServer(new UdpReceiver(this));
 
@@ -53,6 +57,9 @@ public class UdpService extends Service implements OnListenerUDPServer {
         mUdpSendReceiver = new UdpSendReceiver();
         IntentFilter filter = new IntentFilter(AppConstants.UDP_SEND_ACTION);
         mLbmManager.registerReceiver(mUdpSendReceiver, filter);
+
+        mHandler.post(runnable);
+
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -64,38 +71,6 @@ public class UdpService extends Service implements OnListenerUDPServer {
         super.onDestroy();
         mLbmManager.unregisterReceiver(mUdpSendReceiver);
     }
-
-
-    /**
-     * 显示toast
-     *
-     * @param resId
-     */
-    public void showToast(final int resId) {
-        showToast(getString(resId));
-    }
-
-    /**
-     * 显示toast
-     *
-     * @param resStr
-     * @return Toast对象，便于控制toast的显示与关闭
-     */
-    public void showToast(final String resStr) {
-
-        if (TextUtils.isEmpty(resStr)) {
-            return;
-        }
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast toast = Toast.makeText(UdpService.this, resStr, Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
-    }
-
-
 
 
     private void sendLocal(String content){
@@ -112,7 +87,8 @@ public class UdpService extends Service implements OnListenerUDPServer {
     @Override
     public void acquireIp(boolean isAcquire) {
         Print.e(isAcquire);
-        showToast("接受到服务端的ip 端口");
+//        mHandler.post(runnable);
+        sendLocal("接受到服务端的ip 端口");
     }
 
 
@@ -124,10 +100,29 @@ public class UdpService extends Service implements OnListenerUDPServer {
             String information = intent.getStringExtra("order");
             if(information != null){
 
-                Print.e("information" + information);
-                client.sendUdpTextMessage(information);
+//                client.sendUdpTextMessage(information);
+                if(mSendQueue != null) {
+                    mSendQueue.add(information);
+                }
             }
         }
     }
+
+    Runnable runnable = new Runnable() {
+
+        @Override
+        public void run() {
+            String order = null;
+            if (!mSendQueue.isEmpty()) {
+                order = mSendQueue.poll();
+            }
+            if(order != null){
+                client.sendUdpTextMessage(order);
+                Print.e("runnable : " + order);
+            }
+            mHandler.postDelayed(runnable, 500);
+        }
+
+    };
 
 }

@@ -46,6 +46,8 @@ public class CircleViewByImage extends FrameLayout {
     private float firstY;//按下去时y的坐标
     private boolean isShortTime;
 
+    private long delayYime = 2000;
+    
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -64,7 +66,7 @@ public class CircleViewByImage extends FrameLayout {
                         if (callback != null) {
                             callback.leftMove();
                         }
-                        mHandler.sendEmptyMessageDelayed(0, 500);
+                        mHandler.sendEmptyMessageDelayed(0, delayYime);
                     }
                     break;
                 case 1:
@@ -72,7 +74,7 @@ public class CircleViewByImage extends FrameLayout {
                         if (callback != null) {
                             callback.forwardMove();;
                         }
-                        mHandler.sendEmptyMessageDelayed(1, 500);
+                        mHandler.sendEmptyMessageDelayed(1, delayYime);
                     }
                     break;
                 case 2:
@@ -80,7 +82,7 @@ public class CircleViewByImage extends FrameLayout {
                         if (callback != null) {
                             callback.rightMove();
                         }
-                        mHandler.sendEmptyMessageDelayed(2, 500);
+                        mHandler.sendEmptyMessageDelayed(2, delayYime);
                     }
                     break;
                 case 3:
@@ -88,7 +90,7 @@ public class CircleViewByImage extends FrameLayout {
                         if (callback != null) {
                             callback.backMove();
                         }
-                        mHandler.sendEmptyMessageDelayed(3, 500);
+                        mHandler.sendEmptyMessageDelayed(3, delayYime);
                     }
                     break;
             }
@@ -192,7 +194,7 @@ public class CircleViewByImage extends FrameLayout {
                 firstX = x;
                 firstY = y;
                 isShortTime = true;
-                handler.sendEmptyMessageDelayed(0, 500);//500ms后再点击则判断为此次动作为非点击动作
+                handler.sendEmptyMessageDelayed(0, delayYime);//500ms后再点击则判断为此次动作为非点击动作
             case MotionEvent.ACTION_MOVE:
                 // 当触屏区域不在活动范围内
                 if (Math.sqrt(Math.pow((RockerCircleX - (int) x), 2) + Math.pow((RockerCircleY - (int) y), 2)) >= RockerCircleR) {
@@ -273,7 +275,7 @@ public class CircleViewByImage extends FrameLayout {
                         downing = false;
                         lefting = true;
                         righting = false;
-                        mHandler.sendEmptyMessageDelayed(0, 500);
+                        mHandler.sendEmptyMessageDelayed(0, delayYime);
                     }
                 } else if (rad > -big && rad < -small) {//上
                     if(!uping) {
@@ -282,7 +284,7 @@ public class CircleViewByImage extends FrameLayout {
                         downing = false;
                         lefting = false;
                         righting = false;
-                        mHandler.sendEmptyMessageDelayed(1, 500);
+                        mHandler.sendEmptyMessageDelayed(1, delayYime);
                     }
                 } else if (rad >= -small && rad <= small) {//右
                     if(!righting) {
@@ -291,7 +293,7 @@ public class CircleViewByImage extends FrameLayout {
                         downing = false;
                         lefting = false;
                         righting = true;
-                        mHandler.sendEmptyMessageDelayed(2, 500);
+                        mHandler.sendEmptyMessageDelayed(2, delayYime);
                     }
                 } else {//下
                     if(!downing) {
@@ -300,7 +302,7 @@ public class CircleViewByImage extends FrameLayout {
                         downing = true;
                         lefting = false;
                         righting = false;
-                        mHandler.sendEmptyMessageDelayed(3, 500);
+                        mHandler.sendEmptyMessageDelayed(3, delayYime);
                     }
                 }
                 break;
@@ -311,6 +313,10 @@ public class CircleViewByImage extends FrameLayout {
 //                callback.centerClick();
 //                break;
             case ACTION_UP:
+                mHandler.removeMessages(0);
+                mHandler.removeMessages(1);
+                mHandler.removeMessages(2);
+                mHandler.removeMessages(3);
                 callback.actionUp();
                 uping = false;
                 downing = false;

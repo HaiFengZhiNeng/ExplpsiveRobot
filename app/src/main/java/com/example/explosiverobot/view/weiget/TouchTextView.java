@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.explosiverobot.R;
 
@@ -15,7 +16,7 @@ import com.example.explosiverobot.R;
  * Created by zhangyuanyuan on 2017/10/31.
  */
 
-public class TouchTextView extends android.support.v7.widget.AppCompatTextView {
+public class TouchTextView extends TextView {
 
     private OnTextTimeListener onTimeListener;
 
@@ -30,7 +31,7 @@ public class TouchTextView extends android.support.v7.widget.AppCompatTextView {
                         onTimeListener.onTextTimecount(TouchTextView.this, mCount);
                     }
                     if(isDown) {
-                        mHandler.sendEmptyMessageDelayed(0, 500);
+                        mHandler.sendEmptyMessageDelayed(0, delayYime);
                     }
                     break;
             }
@@ -40,6 +41,8 @@ public class TouchTextView extends android.support.v7.widget.AppCompatTextView {
     private int mCount;
 
     private boolean isDown;
+    
+    private long delayYime = 2000;
 
     public TouchTextView(Context context) {
         super(context);
@@ -83,7 +86,7 @@ public class TouchTextView extends android.support.v7.widget.AppCompatTextView {
                 mCount = 0;
                 if(!isDown) {
                     isDown = true;
-                    mHandler.sendEmptyMessageDelayed(0, 500);
+                    mHandler.sendEmptyMessageDelayed(0, delayYime);
                 }
                 setPress();
                 break;
@@ -93,6 +96,7 @@ public class TouchTextView extends android.support.v7.widget.AppCompatTextView {
                 isDown = false;
                 if(onTimeListener != null){
                     if(mCount != 0) {
+                        mHandler.removeMessages(0);
                         onTimeListener.onTextDownFinish(this);
                     }
                 }

@@ -89,7 +89,6 @@ public class SocketManager {
             InetAddress host = InetAddress.getByName(isGetTcpIp ? mAddress : "255.255.255.255");
             int port = isGetTcpIp ? SEND_PORT: SEND_PORT;
 
-
             getExecutorService().execute(new UDPSendRunnable(mDatagramSocketSend, host, port, msg));
         } catch (UnknownHostException e) {
             e.printStackTrace();

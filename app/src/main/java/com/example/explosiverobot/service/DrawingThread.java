@@ -20,7 +20,6 @@ import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Spot;
 import com.example.explosiverobot.util.GsonUtil;
 import com.example.explosiverobot.util.PreferencesUtils;
-import com.seabreeze.log.Print;
 
 import java.math.BigDecimal;
 
@@ -241,13 +240,17 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     private Spot belowLinePoint(Spot spot1, Spot spot2, double r1, double r2) {
         double[] intersectionTriangle = circleCircleIntersection(spot1, spot2, r1, r2);
-        float[] intersectionFloatTriangle = new float[4];
-        for (int i = 0; i < intersectionTriangle.length; i++) {
-            BigDecimal b = new BigDecimal(Double.toString(intersectionTriangle[i]));
-            intersectionFloatTriangle[i] = b.floatValue();
+        if(intersectionTriangle != null) {
+            float[] intersectionFloatTriangle = new float[4];
+            for (int i = 0; i < intersectionTriangle.length; i++) {
+                BigDecimal b = new BigDecimal(Double.toString(intersectionTriangle[i]));
+                intersectionFloatTriangle[i] = b.floatValue();
+            }
+            return new Spot(intersectionFloatTriangle[0] > intersectionFloatTriangle[2] ? intersectionFloatTriangle[0] : intersectionFloatTriangle[2],
+                    intersectionFloatTriangle[1] > intersectionFloatTriangle[3] ? intersectionFloatTriangle[1] : intersectionFloatTriangle[3]);
+        }else{
+            return null;
         }
-        return  new Spot(intersectionFloatTriangle[0] > intersectionFloatTriangle[2] ? intersectionFloatTriangle[0] : intersectionFloatTriangle[2],
-                intersectionFloatTriangle[1] > intersectionFloatTriangle[3] ? intersectionFloatTriangle[1] : intersectionFloatTriangle[3]);
     }
 
     /**
