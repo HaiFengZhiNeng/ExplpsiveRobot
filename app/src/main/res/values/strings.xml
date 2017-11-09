@@ -59,4 +59,8 @@
 
     <string name="preset_set">预置位设置</string>
     <string name="preset_call">预置位调用</string>
+
+    <string name="add_search_result">搜索结果</string>
+
+
 </resources>

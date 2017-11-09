@@ -10,26 +10,36 @@ public class Tele {
     private String pwd;
     private String did;
 
+    private String did0 = "VSTA347062EGDGD";
+    private String user0 = "admin";
+    private String pwd0 = "12345678";
+
+    private String did1 = "VSTA347005YFLMR";
     private String user1 = "admin";
-    private String pwd1 = "haifeng567";
-    private String did1 = "VSTA347062EGDGD";
+    private String pwd1 = "12345678";
 
     private String user2 = "admin";
     private String pwd2 = "12345678";
     private String did2 = "VSTC900392EUSVZ";
 
-    private String user3 = "";
-    private String pwd3 = "";
-    private String did3 = "";
+    private String user3 = "admin";
+    private String pwd3 = "888888";
+    private String did3 = "VSTC900390VVHHV";
 
-    private String user4 = "";
-    private String pwd4 = "";
-    private String did4 = "";
+    private String user4 = "admin";
+    private String pwd4 = "888888";
+    private String did4 = "VSTC900394UWPVU";
 
     private static Tele ourInstance = new Tele();
 
     public static Tele getInstance() {
         return ourInstance;
+    }
+
+    public void setTele0() {
+        Tele.getInstance().setUser(user0);
+        Tele.getInstance().setPwd(pwd0);
+        Tele.getInstance().setDid(did0);
     }
 
     public void setTele1() {

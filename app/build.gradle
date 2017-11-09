@@ -54,9 +54,9 @@ android {
         versionCode 1
         versionName "1.0"
         signingConfig signingConfigs.release
-        ndk {
-            abiFilters 'armeabi', 'armeabi-v7a'
-        }
+//        ndk {
+//            abiFilters 'armeabi', 'armeabi-v7a', 'mips64'
+//        }
     }
     buildTypes {
         release {

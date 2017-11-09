@@ -15,6 +15,7 @@ import android.widget.ToggleButton;
 
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.adapter.ActionViewPagerAdapter;
+import com.example.explosiverobot.base.Constants;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.db.manager.ActionTabDbManager;
@@ -25,6 +26,8 @@ import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.SPManager;
 import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
+import com.example.explosiverobot.view.weiget.TouchTextView;
+import com.seabreeze.log.Print;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +36,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import vstc2.nativecaller.NativeCaller;
 
-public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface {
+public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener  {
 
     public String TAG = this.getClass().getSimpleName();
 
@@ -58,18 +61,16 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     ToggleButton togBack;
     //脚掌前向上
     @BindView(R.id.tv_foot_front_top)
-    TextView tvFootFrontTop;
+    TouchTextView tvFootFrontTop;
     //脚掌前向下
     @BindView(R.id.tv_foot_front_bottom)
-    TextView tvFootFrontBottom;
+    TouchTextView tvFootFrontBottom;
     //脚掌后向上
     @BindView(R.id.tv_foot_back_top)
     TextView tvFootBackTop;
     //脚掌后向下
     @BindView(R.id.tv_foot_back_bottom)
     TextView tvFootBackBottom;
-    @BindView(R.id.test)
-    TextView test;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -86,7 +87,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     private ActionTabDbManager mActionDbManager;
     private long actionId = 0;
 
-
     @Override
     protected int getContentViewId() {
         return R.layout.activity_main;
@@ -101,6 +101,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         startService(startIntent);
 
         initTopTab();
+
     }
 
     @Override
@@ -110,7 +111,8 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     @Override
     protected void setListener() {
-
+        tvFootFrontTop.setOnTimeListener(this);
+        tvFootFrontBottom.setOnTimeListener(this);
     }
 
 
@@ -173,22 +175,17 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 }
                 break;
             case R.id.tv_foot_back_bottom:
-                showToast("脚掌后下");
+                sendLocal(SPManager.controlarmObstacleDown());
+                Print.e("后轮向下");
                 break;
             case R.id.tv_foot_back_top:
-                showToast("脚掌后上");
-                break;
-            case R.id.tv_foot_front_bottom:
-                showToast("脚掌前下");
-                break;
-            case R.id.tv_foot_front_top:
-                showToast("脚掌前上");
+                sendLocal(SPManager.controlarmObstacleUp());
+                Print.e("后轮向上");
                 break;
             //复位
             case R.id.ll_recovery:
                 showToast("复位");
                 break;
-
         }
     }
 
@@ -306,7 +303,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     }
 
     private void sendLocal(String order) {
-        test.setText(order);
         Intent intent = new Intent(AppConstants.UDP_SEND_ACTION);
         intent.putExtra("order", order);
         mLbmManager.sendBroadcast(intent);
@@ -322,4 +318,31 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     }
 
+    @Override
+    public void onTextTimecount(View view, int count) {
+        switch (view.getId()) {
+            case R.id.tv_foot_front_bottom:
+                sendLocal(SPManager.controlarmObstacleStop(Constants.just + Constants.degree));
+                Print.e("前轮顺时针旋转 5 度");
+                break;
+            case R.id.tv_foot_front_top:
+                sendLocal(SPManager.controlarmObstacleStop(Constants.loss + Constants.degree));
+                Print.e("前轮逆时针旋转 5 度");
+                break;
+        }
+    }
+
+    @Override
+    public void onTextDownFinish(View view) {
+        switch (view.getId()) {
+            case R.id.tv_foot_front_bottom:
+                Print.e("前轮停止");
+                sendLocal(SPManager.controlarmObstacleStop());
+                break;
+            case R.id.tv_foot_front_top:
+                Print.e("前轮停止");
+                sendLocal(SPManager.controlarmObstacleStop());
+                break;
+        }
+    }
 }

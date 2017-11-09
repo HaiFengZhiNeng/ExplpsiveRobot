@@ -271,14 +271,14 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         canvas.drawBitmap(resetBitmap, 10, 10, mPaint);
 
         mPaint.setColor(Color.MAGENTA);
-        canvas.drawRect((float) leftBase, (float) topBase + armBaseBitmap.getHeight(),
-                (float) rightBase + carWidth, (float) bottomBase + carHeight, mPaint);
+//        canvas.drawRect((float) leftBase, (float) topBase + armBaseBitmap.getHeight(),
+//                (float) rightBase + carWidth, (float) bottomBase + carHeight, mPaint);
 
-        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) triangleSpot.getX(), (float) triangleSpot.getY(), mPaint);
+//        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) triangleSpot.getX(), (float) triangleSpot.getY(), mPaint);
         //画基座
         mPaint.setColor(Color.WHITE);
         canvas.drawBitmap(armBaseBitmap, null, mArmBaseDestRect, mPaint);
-        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
+//        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
 
         //画第一条
         mPaint.setColor(Color.BLUE);
@@ -290,8 +290,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         float pyFirst = (float) originSpot.getY();
         mFirstMatrix.postRotate(mRotation1, pxFirst, pyFirst);
         canvas.drawBitmap(armFirstBitmap, mFirstMatrix, mPaint);
-        canvas.drawCircle(pxFirst, pyFirst, r0, mPaint);
-        canvas.drawLine(pxFirst, pyFirst, (float) firstSpot.getX(), (float) firstSpot.getY(), mPaint);
+//        canvas.drawCircle(pxFirst, pyFirst, r0, mPaint);
+//        canvas.drawLine(pxFirst, pyFirst, (float) firstSpot.getX(), (float) firstSpot.getY(), mPaint);
 
         //画第二条
         mPaint.setColor(Color.RED);
@@ -303,9 +303,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         float pySecond = (float) secondSpot.getY();
         mSecondMatrix.postRotate(mRotation2, pxSecond, pySecond);
         canvas.drawBitmap(armSecondBitmap, mSecondMatrix, mPaint);
-        canvas.drawCircle(pxSecond, pySecond, r1, mPaint);
-        canvas.drawCircle((float) basePosX, (float) basePosY, rtouch, mPaint);
-        canvas.drawLine(pxSecond, pySecond, (float) endingSpot.getX(), (float) endingSpot.getY(), mPaint);
+//        canvas.drawCircle(pxSecond, pySecond, r1, mPaint);
+//        canvas.drawCircle((float) basePosX, (float) basePosY, rtouch, mPaint);
+//        canvas.drawLine(pxSecond, pySecond, (float) endingSpot.getX(), (float) endingSpot.getY(), mPaint);
 
         //画第三条
         mPaint.setColor(Color.GREEN);
@@ -317,17 +317,17 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         float pyEnd = (float) endingSpot.getY();
         mEndMatrix.postRotate(mRotation3, pxEnd, pyEnd);
         canvas.drawBitmap(armEndBitmap, mEndMatrix, mPaint);
-        canvas.drawCircle(pxEnd, pyEnd, r2, mPaint);
-        canvas.drawLine(pxEnd, pyEnd, (float) touchSpot.getX(), (float) touchSpot.getY(), mPaint);
+//        canvas.drawCircle(pxEnd, pyEnd, r2, mPaint);
+//        canvas.drawLine(pxEnd, pyEnd, (float) touchSpot.getX(), (float) touchSpot.getY(), mPaint);
 
         mPaint.setColor(Color.YELLOW);
         mySpot.setX(endingSpot.getX());
         mySpot.setY(endingSpot.getY() - r2);
         mySpot = angleAcquisitionPoint(endingSpot, mySpot, myRotation);
-        canvas.drawCircle((float) mySpot.getX(), (float) mySpot.getY(), 50, mPaint);
+//        canvas.drawCircle((float) mySpot.getX(), (float) mySpot.getY(), 50, mPaint);
 
         mPaint.setColor(Color.BLACK);
-        canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
+//        canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
 
         isDrawing = false;
     }
