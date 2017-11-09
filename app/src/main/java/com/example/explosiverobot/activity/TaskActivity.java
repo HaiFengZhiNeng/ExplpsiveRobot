@@ -444,6 +444,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         super.onStop();
         mapView.onPause();
         isAccept = false;
+        NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT_STOP);
+        NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN_STOP);
     }
 
     @Override
@@ -621,24 +623,25 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 break;
             case R.id.ib_hori_tour:
                 if (isLeftRight) {
-                    ibHoriTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
-                    isLeftRight = false;
-                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT_STOP);
-                } else {
                     ibHoriTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
                     isLeftRight = true;
                     NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT);
+                } else {
+                    ibHoriTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
+                    isLeftRight = false;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT_STOP);
                 }
                 break;
             case R.id.ib_vert_tour:
                 if (isUpDown) {
-                    ibVertTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
-                    isUpDown = false;
-                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN_STOP);
-                } else {
                     ibVertTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
                     isUpDown = true;
                     NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN);
+                } else {
+                    ibVertTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
+                    isUpDown = false;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN_STOP);
+
                 }
                 break;
             case R.id.tog_back:

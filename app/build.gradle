@@ -87,7 +87,7 @@ android {
                 }
             }
             //设置签名信息
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
         debug {
             signingConfig signingConfigs.release
