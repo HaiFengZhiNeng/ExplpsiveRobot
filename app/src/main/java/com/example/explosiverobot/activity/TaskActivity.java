@@ -252,6 +252,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
     };
 
+    private int tag = 0;
+
     private Handler PPPPMsgHandler = new Handler() {
         public void handleMessage(Message msg) {
             Bundle bd = msg.getData();
@@ -265,28 +267,36 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                             Print.e(getString(R.string.pppp_status_connecting));
                             showToast(getString(R.string.pppp_status_connecting));
                             tvCameraState.setText(getString(R.string.pppp_status_connecting));
+                            tag = 2;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_FAILED://3
                             Print.e(getString(R.string.pppp_status_connect_failed));
                             showToast(getString(R.string.pppp_status_connect_failed));
                             tvCameraState.setText(getString(R.string.pppp_status_connect_failed));
-                            dismissDialog();
+                            tag = 0;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_DISCONNECT://4
                             Print.e(getString(R.string.pppp_status_disconnect));
                             showToast(getString(R.string.pppp_status_disconnect));
                             tvCameraState.setText(getString(R.string.pppp_status_disconnect));
+                            tag = 0;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_INITIALING://1
                             Print.e(getString(R.string.pppp_status_initialing));
                             showToast(getString(R.string.pppp_status_initialing));
                             tvCameraState.setText(getString(R.string.pppp_status_initialing));
+                            tag = 2;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_INVALID_ID://5
                             Print.e(getString(R.string.pppp_status_invalid_id));
                             showToast(getString(R.string.pppp_status_invalid_id));
                             tvCameraState.setText(getString(R.string.pppp_status_invalid_id));
-                            dismissDialog();
+                            tag = 0;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_ON_LINE://2 在线状态
                             //摄像机在线之后读取摄像机类型
@@ -296,31 +306,34 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                             showToast(getString(R.string.pppp_status_online));
                             tvCameraState.setText(getString(R.string.pppp_status_online));
                             priviewIpcamera();
-                            dismissDialog();
+                            tag = 1;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_DEVICE_NOT_ON_LINE://6
                             Print.e(getString(R.string.device_not_on_line));
                             showToast(getString(R.string.device_not_on_line));
                             tvCameraState.setText(getString(R.string.device_not_on_line));
-                            dismissDialog();
+                            tag = 0;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_TIMEOUT://7
                             Print.e(getString(R.string.pppp_status_connect_timeout));
                             showToast(getString(R.string.pppp_status_connect_timeout));
                             tvCameraState.setText(getString(R.string.pppp_status_connect_timeout));
-                            dismissDialog();
+                            tag = 0;
+                            cameraState();
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_ERRER://8
                             Print.e(getString(R.string.pppp_status_pwd_error));
                             showToast(getString(R.string.pppp_status_pwd_error));
                             tvCameraState.setText(getString(R.string.pppp_status_pwd_error));
-                            dismissDialog();
+                            tag = 0;
+                            cameraState();
                             break;
                         default:
                             Print.e(getString(R.string.pppp_status_unknown));
                             showToast(getString(R.string.pppp_status_unknown));
                             tvCameraState.setText(getString(R.string.pppp_status_unknown));
-                            dismissDialog();
                     }
                     if (msgParam == ContentCommon.PPPP_STATUS_ON_LINE) {
                         NativeCaller.PPPPGetSystemParams(did, ContentCommon.MSG_TYPE_GET_PARAMS);
@@ -407,7 +420,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         rgTele.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                showDialog();
+                showDialog("相机切换中...");
                 switch (i) {
                     case R.id.rb_tele1:
                         stopIpcamera();
@@ -488,7 +501,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
 
         connectIpcamera();
-        showDialog();
+        showDialog("相机连接中...");
     }
 
     @Override
@@ -1133,11 +1146,36 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         sendLocal(SPManager.controlReset());
     }
 
-    private void showDialog(){
+
+    private void cameraState() {
+        if(tag == 1) {
+            sweetAlertDialog.setTitleText("连接成功!")
+                    .setConfirmText("确定")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            dismissDialog();
+                        }
+                    })
+                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+        }else if(tag == 0){
+            sweetAlertDialog.setTitleText("连接失败!")
+                    .setConfirmText("确定")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            dismissDialog();
+                        }
+                    })
+                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+        }
+    }
+
+    private void showDialog(String msg){
         if(sweetAlertDialog == null){
 
             sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-                    .setTitleText("正在连接中...");
+                    .setTitleText(msg);
             sweetAlertDialog.setCancelable(false);
         }
         sweetAlertDialog.show();
@@ -1149,6 +1187,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             sweetAlertDialog.dismiss();
             dialogHandler.removeCallbacks(runnable);
         }
+        sweetAlertDialog = null;
     }
 
     Runnable runnable = new Runnable() {
