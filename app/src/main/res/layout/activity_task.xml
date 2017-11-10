@@ -238,6 +238,7 @@
                         android:layout_toRightOf="@+id/rg_tele">
 
                         <LinearLayout
+                            android:id="@+id/ll_direction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true">
@@ -258,6 +259,15 @@
                                 android:background="@color/task_deepblue"
                                 android:src="@mipmap/ptz_vert_tour" />
                         </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_camera_state"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="未知"
+                            android:gravity="center"
+                            android:layout_below="@+id/ll_direction"
+                            />
                     </RelativeLayout>
 
                 </RelativeLayout>
@@ -387,18 +397,8 @@
 
                 <include layout="@layout/include_control" />
 
-                <RelativeLayout
-                    android:id="@+id/re_inspect"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone">
+                <include layout="@layout/include_inspect" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="inspect" />
-                </RelativeLayout>
             </LinearLayout>
 
         </LinearLayout>

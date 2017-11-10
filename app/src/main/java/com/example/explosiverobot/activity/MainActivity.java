@@ -3,6 +3,7 @@ package com.example.explosiverobot.activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
 public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener  {
@@ -71,6 +73,12 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     //脚掌后向下
     @BindView(R.id.tv_foot_back_bottom)
     TextView tvFootBackBottom;
+    @BindView(R.id.tv_state)
+    TextView tvState;
+    @BindView(R.id.tv_order)
+    TextView tvOrder;
+
+    private boolean isConnect;
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -102,8 +110,10 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
         initTopTab();
 
+        showDialog();
     }
 
+    private int i = -1;
     @Override
     protected void initData() {
 
@@ -134,6 +144,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     @Override
     protected void onDestroy() {
+        stopService(new Intent(this, UdpService.class));
         super.onDestroy();
         mLbmManager.unregisterReceiver(mUdpAcceptReceiver);
         sendBroadcast(new Intent(AppConstants.NET_LOONGGG_EXITAPP));
@@ -184,7 +195,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 break;
             //复位
             case R.id.ll_recovery:
-                showToast("复位");
+                sendLocal(SPManager.controlReset());
                 break;
         }
     }
@@ -288,11 +299,64 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     }
 
+    private void showDialog() {
+        final SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText("正在连接中...");
+        pDialog.show();
+        pDialog.setCancelable(false);
+        new CountDownTimer(500 * 7, 500) {
+            public void onTick(long millisUntilFinished) {
+                // you can change the progress bar color by ProgressHelper every 800 millis
+                i++;
+                switch (i){
+                    case 0:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.blue_btn_bg_color));
+                        break;
+                    case 1:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_50));
+                        break;
+                    case 2:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
+                        break;
+                    case 3:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_20));
+                        break;
+                    case 4:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_blue_grey_80));
+                        break;
+                    case 5:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.warning_stroke_color));
+                        break;
+                    case 6:
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
+                        break;
+                }
+            }
+            public void onFinish() {
+                i = -1;
+                if(isConnect) {
+                    pDialog.setTitleText("连接成功!")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                }else{
+                    tvState.setText("未连接");
+                    pDialog.setTitleText("连接失败!")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                }
+            }
+        }.start();
+    }
 
     @Override
     public void UDPAcceptMessage(String content) {
         if (isAccept) {
-            showToast(content);
+            if(content.equals("udp connect")){
+                tvState.setText("已连接");
+                isConnect = true;
+            }else {
+                tvOrder.setText(content);
+            }
         }
     }
 

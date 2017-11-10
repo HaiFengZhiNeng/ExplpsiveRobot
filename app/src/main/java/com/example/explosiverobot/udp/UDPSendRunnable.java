@@ -31,8 +31,11 @@ public class UDPSendRunnable implements Runnable {
 
             byte[] sendBuf = new byte[1024];
             if (!TextUtils.isEmpty(mMsg)) {
-//                sendBuf = mMsg.getBytes();
-                sendBuf = HexToByteArr(mMsg);
+                if(mMsg.length() > 3) {
+                    sendBuf = HexToByteArr(mMsg);
+                }else{
+                    sendBuf = mMsg.getBytes();
+                }
             }
             DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, mAddress, mPort);
             mServer.send(sendPacket);

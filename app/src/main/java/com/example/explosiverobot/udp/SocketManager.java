@@ -28,7 +28,6 @@ public class SocketManager {
     private DatagramSocket mDatagramSocketSend;
     private DatagramSocket mDatagramSocketReceive;
 
-
     public static SocketManager getInstance() {
         if (mInstance == null) {
             synchronized (SocketManager.class) {

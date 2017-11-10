@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -52,6 +53,7 @@ import com.seabreeze.log.Print;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
 public class TaskActivity extends BaseActivity implements AMapLocationListener,
@@ -92,8 +94,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     RelativeLayout reDrive;
     @BindView(R.id.re_control)
     RelativeLayout reControl;
-    @BindView(R.id.re_inspect)
-    RelativeLayout reInspect;
+    @BindView(R.id.ll_inspect)
+    LinearLayout llInspect;
     @BindView(R.id.ic_front_upper)
     TouchImageView icFrontUpper;
     @BindView(R.id.ic_front_lower)
@@ -158,6 +160,44 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     CircleViewByImage controlCircleView;
     @BindView(R.id.btn_searchCamera)
     Button btnSearchCamera;
+    @BindView(R.id.tv_camera_state)
+    TextView tvCameraState;
+    @BindView(R.id.btn_z)
+    Button btnz;
+    @BindView(R.id.btn_Z)
+    Button btnZ;
+    @BindView(R.id.btn_x)
+    Button btnx;
+    @BindView(R.id.btn_X)
+    Button btnX;
+    @BindView(R.id.btn_c)
+    Button btnc;
+    @BindView(R.id.btn_C)
+    Button btnC;
+    @BindView(R.id.btn_w)
+    Button btnw;
+    @BindView(R.id.btn_s)
+    Button btns;
+    @BindView(R.id.btn_a)
+    Button btna;
+    @BindView(R.id.btn_i)
+    Button btni;
+    @BindView(R.id.btn_m)
+    Button btnm;
+    @BindView(R.id.btn_k)
+    Button btnk;
+    @BindView(R.id.btn_j)
+    Button btnj;
+    @BindView(R.id.btn_l)
+    Button btnl;
+    @BindView(R.id.btn_o)
+    Button btno;
+    @BindView(R.id.btn_p)
+    Button btnp;
+    @BindView(R.id.btn_g)
+    Button btng;
+    @BindView(R.id.btn_h)
+    Button btnh;
 
     private MyRender myRender;
 
@@ -212,9 +252,6 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
     };
 
-    //连接状态
-    private int tag = 0;
-
     private Handler PPPPMsgHandler = new Handler() {
         public void handleMessage(Message msg) {
             Bundle bd = msg.getData();
@@ -227,27 +264,29 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                         case ContentCommon.PPPP_STATUS_CONNECTING://0
                             Print.e(getString(R.string.pppp_status_connecting));
                             showToast(getString(R.string.pppp_status_connecting));
-                            tag = 2;
+                            tvCameraState.setText(getString(R.string.pppp_status_connecting));
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_FAILED://3
                             Print.e(getString(R.string.pppp_status_connect_failed));
                             showToast(getString(R.string.pppp_status_connect_failed));
-                            tag = 0;
+                            tvCameraState.setText(getString(R.string.pppp_status_connect_failed));
+                            dismissDialog();
                             break;
                         case ContentCommon.PPPP_STATUS_DISCONNECT://4
                             Print.e(getString(R.string.pppp_status_disconnect));
                             showToast(getString(R.string.pppp_status_disconnect));
-                            tag = 0;
+                            tvCameraState.setText(getString(R.string.pppp_status_disconnect));
                             break;
                         case ContentCommon.PPPP_STATUS_INITIALING://1
                             Print.e(getString(R.string.pppp_status_initialing));
                             showToast(getString(R.string.pppp_status_initialing));
-                            tag = 2;
+                            tvCameraState.setText(getString(R.string.pppp_status_initialing));
                             break;
                         case ContentCommon.PPPP_STATUS_INVALID_ID://5
                             Print.e(getString(R.string.pppp_status_invalid_id));
                             showToast(getString(R.string.pppp_status_invalid_id));
-                            tag = 0;
+                            tvCameraState.setText(getString(R.string.pppp_status_invalid_id));
+                            dismissDialog();
                             break;
                         case ContentCommon.PPPP_STATUS_ON_LINE://2 在线状态
                             //摄像机在线之后读取摄像机类型
@@ -255,27 +294,33 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                             NativeCaller.TransferMessage(did, cmd, 1);
                             Print.e(getString(R.string.pppp_status_online));
                             showToast(getString(R.string.pppp_status_online));
-                            tag = 1;
+                            tvCameraState.setText(getString(R.string.pppp_status_online));
                             priviewIpcamera();
+                            dismissDialog();
                             break;
                         case ContentCommon.PPPP_STATUS_DEVICE_NOT_ON_LINE://6
                             Print.e(getString(R.string.device_not_on_line));
                             showToast(getString(R.string.device_not_on_line));
-                            tag = 0;
+                            tvCameraState.setText(getString(R.string.device_not_on_line));
+                            dismissDialog();
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_TIMEOUT://7
                             Print.e(getString(R.string.pppp_status_connect_timeout));
                             showToast(getString(R.string.pppp_status_connect_timeout));
-                            tag = 0;
+                            tvCameraState.setText(getString(R.string.pppp_status_connect_timeout));
+                            dismissDialog();
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_ERRER://8
                             Print.e(getString(R.string.pppp_status_pwd_error));
                             showToast(getString(R.string.pppp_status_pwd_error));
-                            tag = 0;
+                            tvCameraState.setText(getString(R.string.pppp_status_pwd_error));
+                            dismissDialog();
                             break;
                         default:
                             Print.e(getString(R.string.pppp_status_unknown));
                             showToast(getString(R.string.pppp_status_unknown));
+                            tvCameraState.setText(getString(R.string.pppp_status_unknown));
+                            dismissDialog();
                     }
                     if (msgParam == ContentCommon.PPPP_STATUS_ON_LINE) {
                         NativeCaller.PPPPGetSystemParams(did, ContentCommon.MSG_TYPE_GET_PARAMS);
@@ -306,6 +351,11 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             }
         }
     };
+
+    private SweetAlertDialog sweetAlertDialog;
+    private int dialogCount;
+
+    private Handler dialogHandler = new Handler();
 
 
     @Override
@@ -437,6 +487,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
 
         connectIpcamera();
+        showDialog();
     }
 
     @Override
@@ -517,7 +568,25 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             R.id.ic_front_upper, R.id.ic_front_lower, R.id.ic_after_upper, R.id.ic_after_lower,
             R.id.tv_speed_high, R.id.tv_speed_medium, R.id.tv_speed_low,
             R.id.ib_hori_tour, R.id.ib_vert_tour, R.id.tog_back, R.id.tog_front,
-            R.id.btn_searchCamera})
+            R.id.btn_searchCamera,
+            R.id.btn_z,
+            R.id.btn_Z,
+            R.id.btn_x,
+            R.id.btn_X,
+            R.id.btn_c,
+            R.id.btn_C,
+            R.id.btn_w,
+            R.id.btn_s,
+            R.id.btn_a,
+            R.id.btn_i,
+            R.id.btn_m,
+            R.id.btn_k,
+            R.id.btn_j,
+            R.id.btn_l,
+            R.id.btn_o,
+            R.id.btn_p,
+            R.id.btn_g,
+            R.id.btn_h})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_model:
@@ -565,7 +634,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 tvControl.setBackgroundColor(getResources().getColor(R.color.task_deep));
                 reControl.setVisibility(View.GONE);
                 tvInspect.setBackgroundColor(getResources().getColor(R.color.task_deep));
-                reInspect.setVisibility(View.GONE);
+                llInspect.setVisibility(View.GONE);
 
                 controlCircleView.setVisibility(View.VISIBLE);
                 mDrawSurfaceView.setVisibility(View.GONE);
@@ -576,14 +645,14 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 tvDrive.setBackgroundColor(getResources().getColor(R.color.task_deep));
                 reDrive.setVisibility(View.GONE);
                 tvInspect.setBackgroundColor(getResources().getColor(R.color.task_deep));
-                reInspect.setVisibility(View.GONE);
+                llInspect.setVisibility(View.GONE);
 
                 controlCircleView.setVisibility(View.GONE);
                 mDrawSurfaceView.setVisibility(View.VISIBLE);
                 break;
             case R.id.tv_inspect:
                 tvInspect.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
-                reInspect.setVisibility(View.VISIBLE);
+                llInspect.setVisibility(View.VISIBLE);
                 tvDrive.setBackgroundColor(getResources().getColor(R.color.task_deep));
                 reDrive.setVisibility(View.GONE);
                 tvControl.setBackgroundColor(getResources().getColor(R.color.task_deep));
@@ -593,11 +662,13 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 controlCircleView.setVisibility(View.GONE);
                 break;
             case R.id.ic_after_upper://后上
-                sendLocal(SPManager.controlarmObstacleUp());
+//                sendLocal(SPManager.controlarmObstacleUp());
+                sendLocal("3");
                 Print.e("后轮向上");
                 break;
             case R.id.ic_after_lower://后下
-                sendLocal(SPManager.controlarmObstacleDown());
+//                sendLocal(SPManager.controlarmObstacleUp());
+                sendLocal("9");
                 Print.e("后轮向下");
                 break;
             case R.id.tv_speed_high:
@@ -623,24 +694,24 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 break;
             case R.id.ib_hori_tour:
                 if (isLeftRight) {
-                    ibHoriTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
-                    isLeftRight = true;
-                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT);
-                } else {
                     ibHoriTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
                     isLeftRight = false;
                     NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT_STOP);
+                } else {
+                    ibHoriTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
+                    isLeftRight = true;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_LEFT_RIGHT);
                 }
                 break;
             case R.id.ib_vert_tour:
                 if (isUpDown) {
-                    ibVertTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
-                    isUpDown = true;
-                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN);
-                } else {
                     ibVertTour.setBackgroundColor(getResources().getColor(R.color.task_deepblue));
                     isUpDown = false;
                     NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN_STOP);
+                } else {
+                    ibVertTour.setBackgroundColor(getResources().getColor(R.color.navajowhite));
+                    isUpDown = true;
+                    NativeCaller.PPPPPTZControl(Tele.getInstance().getDid(), ContentCommon.CMD_PTZ_UP_DOWN);
 
                 }
                 break;
@@ -669,6 +740,60 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 //                    updateListHandler.postDelayed(updateThread, 30000);
                 }
                 break;
+            case R.id.btn_z:
+                sendLocal("z");
+                break;
+            case R.id.btn_Z:
+                sendLocal("Z");
+                break;
+            case R.id.btn_x:
+                sendLocal("x");
+                break;
+            case R.id.btn_X:
+                sendLocal("X");
+                break;
+            case R.id.btn_c:
+                sendLocal("c");
+                break;
+            case R.id.btn_C:
+                sendLocal("C");
+                break;
+            case R.id.btn_w:
+                sendLocal("w");
+                break;
+            case R.id.btn_s:
+                sendLocal("s");
+                break;
+            case R.id.btn_a:
+                sendLocal("a");
+                break;
+            case R.id.btn_i:
+                sendLocal("i");
+                break;
+            case R.id.btn_m:
+                sendLocal("m");
+                break;
+            case R.id.btn_k:
+                sendLocal("k");
+                break;
+            case R.id.btn_j:
+                sendLocal("j");
+                break;
+            case R.id.btn_l:
+                sendLocal("l");
+                break;
+            case R.id.btn_o:
+                sendLocal("0");
+                break;
+            case R.id.btn_p:
+                sendLocal("p");
+                break;
+            case R.id.btn_g:
+                sendLocal("g");
+                break;
+            case R.id.btn_h:
+                sendLocal("h");
+                break;
         }
     }
 
@@ -676,11 +801,13 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     public void onImageTimecount(View view, int count) {
         switch (view.getId()) {
             case R.id.ic_front_upper://前上
-                sendLocal(SPManager.controlarmObstacleStop(Constants.just + Constants.degree));
+//                sendLocal(SPManager.controlarmObstacleStop(Constants.just + Constants.degree));
+                sendLocal("1");
                 Print.e("前轮顺时针旋转 5 度");
                 break;
             case R.id.ic_front_lower://前下
-                sendLocal(SPManager.controlarmObstacleStop(Constants.loss + Constants.degree));
+//                sendLocal(SPManager.controlarmObstacleStop(Constants.loss + Constants.degree));
+                sendLocal("7");
                 Print.e("前轮逆时针旋转 5 度");
                 break;
         }
@@ -1005,6 +1132,58 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         sendLocal(SPManager.controlReset());
     }
 
+    private void showDialog(){
+        if(sweetAlertDialog == null){
+
+            sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                    .setTitleText("正在连接中...");
+            sweetAlertDialog.setCancelable(false);
+        }
+        sweetAlertDialog.show();
+        dialogHandler.postDelayed(runnable, 300);
+    }
+
+    private void dismissDialog(){
+        if(sweetAlertDialog != null && sweetAlertDialog.isShowing()){
+            sweetAlertDialog.dismiss();
+            dialogHandler.removeCallbacks(runnable);
+        }
+    }
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            dialogCount++;
+            if (dialogCount == 7) {
+                dialogCount = 0;
+            }
+            dialogHandler.postDelayed(runnable, 300);
+            switch (dialogCount) {
+                case 0:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.blue_btn_bg_color));
+                    break;
+                case 1:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_50));
+                    break;
+                case 2:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
+                    break;
+                case 3:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_20));
+                    break;
+                case 4:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_blue_grey_80));
+                    break;
+                case 5:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.warning_stroke_color));
+                    break;
+                case 6:
+                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
+                    break;
+            }
+        }
+
+    };
 
     class StartPPPPThread implements Runnable {
 

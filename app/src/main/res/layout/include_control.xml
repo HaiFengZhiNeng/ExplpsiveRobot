@@ -31,7 +31,7 @@
             <com.example.explosiverobot.view.weiget.TouchTextView
                 android:id="@+id/ttv_base_clockwise"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:text="顺时针"
@@ -44,7 +44,7 @@
             <com.example.explosiverobot.view.weiget.TouchTextView
                 android:id="@+id/ttv_base_counter"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:text="逆时针"
@@ -72,7 +72,7 @@
             <com.example.explosiverobot.view.weiget.TouchTextView
                 android:id="@+id/ttv_head_clockwise"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:text="顺时针"
@@ -84,7 +84,7 @@
             <com.example.explosiverobot.view.weiget.TouchTextView
                 android:id="@+id/ttv_head_counter"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:text="逆时针"
@@ -111,7 +111,7 @@
             <com.example.explosiverobot.view.weiget.TouchTextView
                 android:id="@+id/ttv_grab_clockwise"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:text="顺时针"
@@ -123,7 +123,7 @@
             <com.example.explosiverobot.view.weiget.TouchTextView
                 android:id="@+id/ttv_grab_counter"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:text="逆时针"

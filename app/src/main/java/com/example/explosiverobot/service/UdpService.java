@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.udp.NetClient;
 import com.example.explosiverobot.udp.OnListenerUDPServer;
+import com.example.explosiverobot.udp.SocketManager;
 import com.example.explosiverobot.udp.UdpReceiver;
 import com.seabreeze.log.Print;
 
@@ -49,10 +50,11 @@ public class UdpService extends Service implements OnListenerUDPServer {
         mSendQueue = new LinkedBlockingQueue<>();
 
         client = NetClient.getInstance(this);
-        client.sendUdpSocketToByIp();
+//        client.sendUdpSocketToByIp();
 
         client.registerUdpServer(new UdpReceiver(this));
-
+        SocketManager.getInstance().setUdpIp("192.168.1.102");
+        sendLocal("udp connect");
 
         mUdpSendReceiver = new UdpSendReceiver();
         IntentFilter filter = new IntentFilter(AppConstants.UDP_SEND_ACTION);
@@ -88,7 +90,7 @@ public class UdpService extends Service implements OnListenerUDPServer {
     public void acquireIp(boolean isAcquire) {
         Print.e(isAcquire);
 //        mHandler.post(runnable);
-        sendLocal("接受到服务端的ip 端口");
+        sendLocal("udp connect");
     }
 
 
@@ -120,7 +122,7 @@ public class UdpService extends Service implements OnListenerUDPServer {
                 client.sendUdpTextMessage(order);
                 Print.e("runnable : " + order);
             }
-            mHandler.postDelayed(runnable, 500);
+            mHandler.postDelayed(runnable, 300);
         }
 
     };

@@ -143,6 +143,8 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:hint="请输入"
+                    android:focusable="false"
+                    android:focusableInTouchMode="true"
                     android:padding="3dp"
                     android:textColor="@color/color_white"
                     android:textColorHint="@color/color_white"
@@ -222,12 +224,6 @@
                 android:layout_weight="2.5"
                 android:gravity="center"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/test"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="25sp"
-                    android:text="指令"/>
                 <ImageView
                     android:id="@+id/iv_robot_bg"
                     android:layout_width="wrap_content"
@@ -241,6 +237,23 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="连接中..."
+                        android:gravity="center"/>
+                    <TextView
+                        android:id="@+id/tv_order"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"/>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

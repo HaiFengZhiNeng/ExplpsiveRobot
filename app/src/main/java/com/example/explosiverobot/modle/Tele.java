@@ -10,9 +10,10 @@ public class Tele {
     private String pwd;
     private String did;
 
-    private String did0 = "VSTA347062EGDGD";
+
     private String user0 = "admin";
-    private String pwd0 = "12345678";
+    private String pwd0 = "pb123456";
+    private String did0 = "VSTC900390VVHHV";
 
     private String did1 = "VSTA347005YFLMR";
     private String user1 = "admin";
@@ -22,9 +23,9 @@ public class Tele {
     private String pwd2 = "12345678";
     private String did2 = "VSTC900392EUSVZ";
 
+    private String did3 = "VSTA347062EGDGD";
     private String user3 = "admin";
-    private String pwd3 = "888888";
-    private String did3 = "VSTC900390VVHHV";
+    private String pwd3 = "12345678";
 
     private String user4 = "admin";
     private String pwd4 = "888888";
