@@ -28,7 +28,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="time:"
+                    android:text="时间:"
                     android:textColor="@color/color_white"
                     android:textSize="11sp" />
 
@@ -56,7 +56,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="14:42"
+                    android:text="14 "
                     android:textColor="@color/color_white"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -111,11 +111,19 @@
             </LinearLayout>
         </LinearLayout>
 
-        <ImageView
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:src="@mipmap/ic_top_title" />-->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@mipmap/ic_top_title" />
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/color_white"
+            android:textSize="26sp"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -126,7 +134,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.1"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
@@ -142,9 +150,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:hint="请输入"
                     android:focusable="false"
                     android:focusableInTouchMode="true"
+                    android:hint="请输入"
                     android:padding="3dp"
                     android:textColor="@color/color_white"
                     android:textColorHint="@color/color_white"
@@ -224,6 +232,7 @@
                 android:layout_weight="2.5"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <ImageView
                     android:id="@+id/iv_robot_bg"
                     android:layout_width="wrap_content"
@@ -242,17 +251,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/tv_state"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="连接中..."
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:text="连接中..." />
+
                     <TextView
                         android:id="@+id/tv_order"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"/>
+                        android:gravity="center" />
                 </LinearLayout>
 
                 <LinearLayout

@@ -32,6 +32,8 @@ import com.seabreeze.log.Print;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -79,6 +81,8 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     TextView tvOrder;
 
     private boolean isConnect;
+
+    private boolean quit = false; //设置退出标识
 
     private LocalBroadcastManager mLbmManager;
     private boolean isAccept;
@@ -148,6 +152,28 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         super.onDestroy();
         mLbmManager.unregisterReceiver(mUdpAcceptReceiver);
         sendBroadcast(new Intent(AppConstants.NET_LOONGGG_EXITAPP));
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (!quit) { //询问退出程序
+            showToast("再按一次退出程序");
+            new Timer(true).schedule(new TimerTask() { //启动定时任务
+                @Override
+                public void run() {
+                    quit = false; //重置退出标识
+                }
+            }, 2000);
+            quit = true;
+        } else { //确认退出程序
+            super.onBackPressed();
+            finish();
+            //退出时杀掉所有进程
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+
+//        moveTaskToBack(true);
     }
 
     @OnClick({R.id.tv_add_group, R.id.iv_robot_bg, R.id.tog_back, R.id.tog_front, R.id.ll_recovery})
