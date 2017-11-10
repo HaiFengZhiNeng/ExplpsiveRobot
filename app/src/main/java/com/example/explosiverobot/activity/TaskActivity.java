@@ -407,6 +407,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         rgTele.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                showDialog();
                 switch (i) {
                     case R.id.rb_tele1:
                         stopIpcamera();
