@@ -17,7 +17,6 @@ import android.widget.ToggleButton;
 
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.adapter.ActionViewPagerAdapter;
-import com.example.explosiverobot.base.Constants;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.db.manager.ActionTabDbManager;
@@ -210,23 +209,25 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             case R.id.tog_front:
                 // 当按钮第一次被点击时候响应的事件
                 if (togFront.isChecked()) {
-                    sendLocal(SPManager.controlLampFrontOpen());
+//                    sendLocal(SPManager.controlLampFrontOpen());
+                    sendLocal("z");
                     showToast("照明灯前开");
                 }
                 // 当按钮再次被点击时候响应的事件
                 else {
-                    sendLocal(SPManager.controlLampFrontClose());
+//                    sendLocal(SPManager.controlLampFrontClose());
+                    sendLocal("Z");
                     showToast("照明灯前关");
                 }
                 break;
-            case R.id.tv_foot_back_bottom:
-                sendLocal(SPManager.controlarmObstacleDown());
-                Print.e("后轮向下");
-                break;
-            case R.id.tv_foot_back_top:
-                sendLocal(SPManager.controlarmObstacleUp());
-                Print.e("后轮向上");
-                break;
+//            case R.id.tv_foot_back_bottom:
+//                sendLocal(SPManager.controlarmObstacleDown());
+//                Print.e("后轮向下");
+//                break;
+//            case R.id.tv_foot_back_top:
+//                sendLocal(SPManager.controlarmObstacleUp());
+//                Print.e("后轮向上");
+//                break;
             //复位
             case R.id.ll_recovery:
                 sendLocal(SPManager.controlReset());
@@ -415,21 +416,29 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     }
 
     @Override
+    public void onTextDowm() {
+        sendLocal("x");
+    }
+
+    @Override
     public void onTextTimecount(View view, int count) {
         switch (view.getId()) {
             case R.id.tv_foot_front_bottom:
-                sendLocal(SPManager.controlarmObstacleStop(Constants.just + Constants.degree));
-                Print.e("前轮顺时针旋转 5 度");
+//                sendLocal(SPManager.controlarmObstacleStop(Constants.just + Constants.degree));
+                sendLocal("1");
+                Print.e("后轮 发送 1 ");
                 break;
             case R.id.tv_foot_front_top:
-                sendLocal(SPManager.controlarmObstacleStop(Constants.loss + Constants.degree));
-                Print.e("前轮逆时针旋转 5 度");
+                sendLocal("7");
+                Print.e("后轮 发送 7 ");
                 break;
             case R.id.tv_foot_back_bottom:
-                showToast("后脚掌向下");
+                sendLocal("3");
+                Print.e("后轮 发送 3 ");
                 break;
             case R.id.tv_foot_back_top:
-                showToast("后脚掌向上");
+                sendLocal("9");
+                Print.e("后轮 发送 9 ");
                 break;
         }
     }

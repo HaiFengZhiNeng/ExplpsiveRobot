@@ -87,6 +87,9 @@ public class TouchTextView extends TextView {
                 if(!isDown) {
                     isDown = true;
                     mHandler.sendEmptyMessageDelayed(0, delayYime);
+                    if(onTimeListener != null){
+                        onTimeListener.onTextDowm();
+                    }
                 }
                 setPress();
                 break;
@@ -113,7 +116,10 @@ public class TouchTextView extends TextView {
     }
 
     public interface OnTextTimeListener {
+        void onTextDowm();
+
         void onTextTimecount(View view, int count);
+
         void onTextDownFinish(View view);
     }
 }
