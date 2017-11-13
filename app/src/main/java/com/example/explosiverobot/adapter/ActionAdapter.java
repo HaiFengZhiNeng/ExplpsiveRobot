@@ -32,6 +32,7 @@ public class ActionAdapter extends SimpleAdapter<ActionItem> {
     @Override
     protected void convert(BaseRecyclerViewHolder viewHolder, ActionItem item, int pos) {
         viewHolder.getTextView(R.id.tv_actionName).setText(item.getItem_name());
+        viewHolder.getTextView(R.id.tv_actionGroup).setText(item.getItem_group());
         Picasso.with(mContext).load(new File(item.getItem_pic())).into(viewHolder.getImageView(R.id.iv_actionPic));
         //判断手臂夹状态
         if (item.getItem_isOpen().equals("1")) {

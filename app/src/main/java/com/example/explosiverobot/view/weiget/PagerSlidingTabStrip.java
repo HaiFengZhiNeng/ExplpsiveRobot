@@ -31,9 +31,6 @@ import com.example.explosiverobot.R;
 
 import java.util.Locale;
 
-/**
- * Created by dqhl on 17/7/7.
- */
 public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     public interface IconTabProvider {

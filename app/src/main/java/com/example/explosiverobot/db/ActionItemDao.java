@@ -28,7 +28,8 @@ public class ActionItemDao extends AbstractDao<ActionItem, Long> {
         public final static Property Item_name = new Property(1, String.class, "item_name", false, "ITEM_NAME");
         public final static Property Item_pic = new Property(2, String.class, "item_pic", false, "ITEM_PIC");
         public final static Property Item_isOpen = new Property(3, String.class, "item_isOpen", false, "ITEM_IS_OPEN");
-        public final static Property Id = new Property(4, Long.class, "id", true, "_id");
+        public final static Property Item_group = new Property(4, String.class, "item_group", false, "ITEM_GROUP");
+        public final static Property Id = new Property(5, Long.class, "id", true, "_id");
     }
 
 
@@ -48,7 +49,8 @@ public class ActionItemDao extends AbstractDao<ActionItem, Long> {
                 "\"ITEM_NAME\" TEXT," + // 1: item_name
                 "\"ITEM_PIC\" TEXT," + // 2: item_pic
                 "\"ITEM_IS_OPEN\" TEXT," + // 3: item_isOpen
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT );"); // 4: id
+                "\"ITEM_GROUP\" TEXT," + // 4: item_group
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT );"); // 5: id
     }
 
     /** Drops the underlying database table. */
@@ -81,9 +83,14 @@ public class ActionItemDao extends AbstractDao<ActionItem, Long> {
             stmt.bindString(4, item_isOpen);
         }
  
+        String item_group = entity.getItem_group();
+        if (item_group != null) {
+            stmt.bindString(5, item_group);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(5, id);
+            stmt.bindLong(6, id);
         }
     }
 
@@ -111,15 +118,20 @@ public class ActionItemDao extends AbstractDao<ActionItem, Long> {
             stmt.bindString(4, item_isOpen);
         }
  
+        String item_group = entity.getItem_group();
+        if (item_group != null) {
+            stmt.bindString(5, item_group);
+        }
+ 
         Long id = entity.getId();
         if (id != null) {
-            stmt.bindLong(5, id);
+            stmt.bindLong(6, id);
         }
     }
 
     @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4);
+        return cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5);
     }    
 
     @Override
@@ -129,7 +141,8 @@ public class ActionItemDao extends AbstractDao<ActionItem, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // item_name
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // item_pic
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // item_isOpen
-            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4) // id
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // item_group
+            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5) // id
         );
         return entity;
     }
@@ -140,7 +153,8 @@ public class ActionItemDao extends AbstractDao<ActionItem, Long> {
         entity.setItem_name(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setItem_pic(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setItem_isOpen(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setId(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setItem_group(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setId(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
      }
     
     @Override

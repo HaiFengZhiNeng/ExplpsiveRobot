@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
-public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener  {
+public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener, PagerSlidingTabStrip.OnPagerSlidingTabStripChanged {
 
     public String TAG = this.getClass().getSimpleName();
 
@@ -71,10 +72,10 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     TouchTextView tvFootFrontBottom;
     //脚掌后向上
     @BindView(R.id.tv_foot_back_top)
-    TextView tvFootBackTop;
+    TouchTextView tvFootBackTop;
     //脚掌后向下
     @BindView(R.id.tv_foot_back_bottom)
-    TextView tvFootBackBottom;
+    TouchTextView tvFootBackBottom;
     @BindView(R.id.tv_state)
     TextView tvState;
     @BindView(R.id.tv_order)
@@ -118,15 +119,22 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     }
 
     private int i = -1;
+
     @Override
     protected void initData() {
-
+        pagerSlidingTabstrip.setOnPagerSlidingTabStripChanged(this);
+        etInputGroupName.setFocusable(true);
+        etInputGroupName.setFocusableInTouchMode(true);
+        etInputGroupName.requestFocus();
+        etInputGroupName.requestFocusFromTouch();
     }
 
     @Override
     protected void setListener() {
         tvFootFrontTop.setOnTimeListener(this);
         tvFootFrontBottom.setOnTimeListener(this);
+        tvFootBackBottom.setOnTimeListener(this);
+        tvFootBackTop.setOnTimeListener(this);
     }
 
 
@@ -240,16 +248,13 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     private void addGroup() {
         String mTabName = etInputGroupName.getText().toString().trim();
         if (!"".equals(mTabName)) {
-
             List<ActionTab> actionTabs = mActionDbManager.queryByTabName(mTabName);
             if (!actionTabs.isEmpty()) {
                 showToast("请不要添加相同的问题！");
                 return;
             }
-
             ++mGroupNum;
-            mActionTabsList.add(new ActionTab(mGroupNum + "", mTabName, actionId));
-
+            mActionTabsList.add(new ActionTab(mGroupNum + "", mTabName));
             mTitleList.add(mTabName);
 
             ActionCommonFragment actionCommonFragment_new = new ActionCommonFragment();
@@ -257,8 +262,8 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             bundle.putString("theme_name", mTabName);
             actionCommonFragment_new.setArguments(bundle);
             mFragmentList.add(actionCommonFragment_new);
-            setPageTitle();
 
+            setPageTitle();
             mActionDbManager.insert(new ActionTab(mGroupNum + "", mTabName));
             showToast("添加成功");
         } else {
@@ -302,8 +307,8 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         setPageTitle();
     }
 
-    /*
-     *设置Title样式
+    /**
+     * 设置Title样式
      */
     private void setPageTitle() {
 //        viewPager 记载adapter
@@ -334,7 +339,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             public void onTick(long millisUntilFinished) {
                 // you can change the progress bar color by ProgressHelper every 800 millis
                 i++;
-                switch (i){
+                switch (i) {
                     case 0:
                         pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.blue_btn_bg_color));
                         break;
@@ -358,13 +363,14 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                         break;
                 }
             }
+
             public void onFinish() {
                 i = -1;
-                if(isConnect) {
+                if (isConnect) {
                     pDialog.setTitleText("连接成功!")
                             .setConfirmText("确定")
                             .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                }else{
+                } else {
                     tvState.setText("未连接");
                     pDialog.setTitleText("连接失败!")
                             .setConfirmText("确定")
@@ -377,10 +383,10 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     @Override
     public void UDPAcceptMessage(String content) {
         if (isAccept) {
-            if(content.equals("udp connect")){
+            if (content.equals("udp connect")) {
                 tvState.setText("已连接");
                 isConnect = true;
-            }else {
+            } else {
                 tvOrder.setText(content);
             }
         }
@@ -419,6 +425,12 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 sendLocal(SPManager.controlarmObstacleStop(Constants.loss + Constants.degree));
                 Print.e("前轮逆时针旋转 5 度");
                 break;
+            case R.id.tv_foot_back_bottom:
+                showToast("后脚掌向下");
+                break;
+            case R.id.tv_foot_back_top:
+                showToast("后脚掌向上");
+                break;
         }
     }
 
@@ -433,6 +445,19 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 Print.e("前轮停止");
                 sendLocal(SPManager.controlarmObstacleStop());
                 break;
+            case R.id.tv_foot_back_bottom:
+                showToast("后脚掌向下停止");
+                break;
+            case R.id.tv_foot_back_top:
+                showToast("后脚掌向上停止");
+                break;
         }
+    }
+
+
+    @Override
+    public void onPageChanged(int position) {
+        Log.e("GG pagetrip 当前positon", position + "");
+        Log.e("GG pagetrip 当前positon", mActionTabsList.get(position).getTab_name());
     }
 }

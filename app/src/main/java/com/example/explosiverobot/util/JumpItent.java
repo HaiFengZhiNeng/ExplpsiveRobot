@@ -43,8 +43,12 @@ public class JumpItent {
         intent.putExtra(REQUEST_CODE, requestCode);
         activity.startActivityForResult(intent, requestCode);
     }
-    public static void jump(Fragment fragment,Activity activity, Class<?> cls, int requestCode){
+    public static void jump(Fragment fragment,Activity activity, Class<?> cls,Bundle bundle, int requestCode){
         Intent intent = new Intent(activity, cls);
+        if (bundle != null) {
+            bundle.putInt(REQUEST_CODE, requestCode);
+            intent.putExtras(bundle);
+        }
         intent.putExtra(REQUEST_CODE, requestCode);
         fragment.startActivityForResult(intent, requestCode);
     }

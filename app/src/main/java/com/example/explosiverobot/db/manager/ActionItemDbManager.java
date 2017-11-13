@@ -20,11 +20,12 @@ public class ActionItemDbManager extends BaseManager<ActionItem, Long> {
     public AbstractDao<ActionItem, Long> getAbstractDao() {
         return daoSession.getActionItemDao();
     }
+
     public List<ActionItem> queryByItemName(String name) {
         Query<ActionItem> build = null;
         try {
             build = getAbstractDao().queryBuilder()
-                    .where(ActionItemDao.Properties.Item_name.eq(name))
+                    .where(ActionItemDao.Properties.Item_group.eq(name))
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

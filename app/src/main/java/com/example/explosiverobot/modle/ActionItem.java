@@ -12,17 +12,19 @@ public class ActionItem {
     private String item_id;
     private String item_name;
     private String item_pic;
-    private String item_isOpen;
+    private String item_isOpen;//是否打开手臂
+    private String item_group;// 该行为属于哪个分组下
     @Id(autoincrement = true)//该字段的类型为long或Long类型，autoincrement设置是否自动增长
     private Long id;
 
-    @Generated(hash = 191247622)
+    @Generated(hash = 60214600)
     public ActionItem(String item_id, String item_name, String item_pic,
-                      String item_isOpen, Long id) {
+            String item_isOpen, String item_group, Long id) {
         this.item_id = item_id;
         this.item_name = item_name;
         this.item_pic = item_pic;
         this.item_isOpen = item_isOpen;
+        this.item_group = item_group;
         this.id = id;
     }
 
@@ -34,6 +36,13 @@ public class ActionItem {
         this.item_name = item_name;
         this.item_pic = item_pic;
         this.item_isOpen = item_isOpen;
+    }
+
+    public ActionItem(String item_name, String item_pic, String item_isOpen, String item_group) {
+        this.item_name = item_name;
+        this.item_pic = item_pic;
+        this.item_isOpen = item_isOpen;
+        this.item_group = item_group;
     }
 
     public String getItem_id() {
@@ -74,5 +83,13 @@ public class ActionItem {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getItem_group() {
+        return this.item_group;
+    }
+
+    public void setItem_group(String item_group) {
+        this.item_group = item_group;
     }
 }

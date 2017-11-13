@@ -49,6 +49,8 @@ public class AddActionActivity extends Activity implements View.OnClickListener 
     //选取图片
     public static Uri imageUri1;
 
+    private String tabName = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class AddActionActivity extends Activity implements View.OnClickListener 
     }
 
     protected void initView() {
+        tabName = getIntent().getStringExtra("tabName");
         actionItemDbManager = new ActionItemDbManager();
     }
 
@@ -80,7 +83,7 @@ public class AddActionActivity extends Activity implements View.OnClickListener 
             case R.id.tv_save:
                 mActionName = etActionName.getText().toString().trim();
                 mPicPath = tvActionPic.getText().toString().trim();
-                if (!"".equals(mActionName) || !"".equals(mPicPath)) {
+                if (!"".equals(mActionName) && !"".equals(mPicPath)) {
                     isSaveAction();
                 } else {
                     Toast.makeText(AddActionActivity.this, "请填写动作信息", Toast.LENGTH_SHORT);
@@ -110,8 +113,7 @@ public class AddActionActivity extends Activity implements View.OnClickListener 
      * 提交
      */
     public void doCommit() {
-        actionItemDbManager.insert(new ActionItem(mActionName, mPicPath, "1"));
-
+        actionItemDbManager.insert(new ActionItem(mActionName, mPicPath, "1",tabName));
         Toast.makeText(AddActionActivity.this, "添加成功", Toast.LENGTH_SHORT);
         setResult(ADD_ACTION_RESUL_TCODE);
         finish();

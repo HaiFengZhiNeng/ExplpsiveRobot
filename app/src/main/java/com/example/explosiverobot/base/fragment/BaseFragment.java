@@ -35,6 +35,7 @@ public abstract class BaseFragment extends Fragment {
         mContext = (BaseActivity) getActivity();
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
