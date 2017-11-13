@@ -2,19 +2,17 @@ package com.example.explosiverobot.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.explosiverobot.R;
@@ -28,7 +26,6 @@ import com.example.explosiverobot.util.JumpItent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +50,9 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
     Unbinder unbinder;
     @BindView(R.id.tv_noInfo)
     TextView tvNoInfo;
+    @BindView(R.id.rl_addAction)
+    RelativeLayout rlAddAction;
+    Unbinder unbinder1;
     //Tab本地数据
     private ActionItemDbManager actionItemDbManager;
 
@@ -89,10 +89,10 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
         ryActionAll.setAdapter(actionAdapter);
         if ("全部".equals(theme_name)) {
             actionItems = actionItemDbManager.loadAll();
-            ivAddAction.setVisibility(View.GONE);
+            rlAddAction.setVisibility(View.GONE);
         } else {
             actionItems = actionItemDbManager.queryByItemName(theme_name);
-            ivAddAction.setVisibility(View.VISIBLE);
+            rlAddAction.setVisibility(View.VISIBLE);
         }
 
         if (actionItems != null && actionItems.size() > 0) {
@@ -210,5 +210,18 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
         Log.e("GG", "setUserVisibleHint: " + isVisibleToUser);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder1 = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder1.unbind();
+    }
 }
 

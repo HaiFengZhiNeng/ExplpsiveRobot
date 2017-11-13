@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
+import android.os.Process;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -27,21 +28,24 @@ import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.SPManager;
+import com.example.explosiverobot.view.weiget.MainTouchTextView;
+import com.example.explosiverobot.view.weiget.MyImageView;
 import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
-import com.example.explosiverobot.view.weiget.TouchTextView;
 import com.seabreeze.log.Print;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
-public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener, PagerSlidingTabStrip.OnPagerSlidingTabStripChanged {
+public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, MainTouchTextView.OnTextTimeListener, PagerSlidingTabStrip.OnPagerSlidingTabStripChanged {
 
     public String TAG = this.getClass().getSimpleName();
 
@@ -52,7 +56,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     @BindView(R.id.tv_add_group)
     TextView tvAddGroup;
     @BindView(R.id.iv_robot_bg)
-    ImageView ivRobotBg;
+    MyImageView ivRobotBg;
     @BindView(R.id.et_inputGroupName)
     EditText etInputGroupName;
     //复位
@@ -66,20 +70,22 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     ToggleButton togBack;
     //脚掌前向上
     @BindView(R.id.tv_foot_front_top)
-    TouchTextView tvFootFrontTop;
+    MainTouchTextView tvFootFrontTop;
     //脚掌前向下
     @BindView(R.id.tv_foot_front_bottom)
-    TouchTextView tvFootFrontBottom;
+    MainTouchTextView tvFootFrontBottom;
     //脚掌后向上
     @BindView(R.id.tv_foot_back_top)
-    TouchTextView tvFootBackTop;
+    MainTouchTextView tvFootBackTop;
     //脚掌后向下
     @BindView(R.id.tv_foot_back_bottom)
-    TouchTextView tvFootBackBottom;
+    MainTouchTextView tvFootBackBottom;
     @BindView(R.id.tv_state)
     TextView tvState;
     @BindView(R.id.tv_order)
     TextView tvOrder;
+    @BindView(R.id.tv_foot_back_bottom)
+    MainTouchTextView tvFootBackBottom;
 
     private boolean isConnect;
 
@@ -116,6 +122,8 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         initTopTab();
 
         showDialog();
+
+        initShow();
     }
 
     private int i = -1;
@@ -137,6 +145,12 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         tvFootBackTop.setOnTimeListener(this);
     }
 
+    public void initShow() {
+        File file = new File(Environment.getExternalStorageDirectory() + "/aapaibao/");
+        if (file.exists()) {
+            ivRobotBg.load(file);
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -178,7 +192,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             super.onBackPressed();
             finish();
             //退出时杀掉所有进程
-            android.os.Process.killProcess(android.os.Process.myPid());
+            Process.killProcess(Process.myPid());
         }
 
 //        moveTaskToBack(true);
@@ -459,5 +473,12 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     public void onPageChanged(int position) {
         Log.e("GG pagetrip 当前positon", position + "");
         Log.e("GG pagetrip 当前positon", mActionTabsList.get(position).getTab_name());
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }

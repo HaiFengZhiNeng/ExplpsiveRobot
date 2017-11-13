@@ -23,14 +23,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <TextView
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="时间:"
-                    android:textColor="@color/color_white"
-                    android:textSize="11sp" />
+                    android:src="@mipmap/ic_green_icon" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -43,7 +42,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -64,7 +63,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -85,7 +84,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -112,6 +111,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/iv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -125,6 +125,81 @@
             android:text=""
             android:textColor="@color/color_white"
             android:textSize="26sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@+id/iv_title"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="信号："
+                android:textColor="@color/color_white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_signal1"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/signal" />
+
+            <TextView
+                android:id="@+id/tv_signal2"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:background="@color/signal" />
+
+            <TextView
+                android:id="@+id/tv_signal3"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:background="@color/signal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_electricity"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@+id/ll_signal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="电量："
+                android:textColor="@color/color_white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_electricity"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:text="40%"
+                android:textColor="@color/color_white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/ic_setting" />
     </RelativeLayout>
 
     <LinearLayout
@@ -164,8 +239,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@mipmap/ic_addgroup_back"
-                    android:padding="3dp"
                     android:gravity="center"
+                    android:padding="3dp"
                     android:text="添加分组"
                     android:textColor="@color/color_white"
                     android:textSize="13sp" />
@@ -199,7 +274,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:background="@color/color_white"
+            android:background="@mipmap/ic_right_back"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -235,17 +310,16 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <com.example.explosiverobot.view.weiget.MyImageView
                     android:id="@+id/iv_robot_bg"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/bg_android" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -350,6 +424,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:orientation="horizontal"
                         android:paddingLeft="10dp">
 
@@ -362,10 +437,10 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
+                            android:layout_marginLeft="10dp"
                             android:orientation="vertical">
 
-                            <com.example.explosiverobot.view.weiget.TouchTextView
+                            <com.example.explosiverobot.view.weiget.MainTouchTextView
                                 android:id="@+id/tv_foot_front_top"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -377,7 +452,7 @@
                                 android:text="向上"
                                 android:textColor="@color/color_white" />
 
-                            <com.example.explosiverobot.view.weiget.TouchTextView
+                            <com.example.explosiverobot.view.weiget.MainTouchTextView
                                 android:id="@+id/tv_foot_front_bottom"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -396,13 +471,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:gravity="center_horizontal"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingLeft="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:text="后 " />
+                            android:text="后" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -410,7 +486,7 @@
                             android:layout_marginLeft="10dp"
                             android:orientation="vertical">
 
-                            <com.example.explosiverobot.view.weiget.TouchTextView
+                            <com.example.explosiverobot.view.weiget.MainTouchTextView
                                 android:id="@+id/tv_foot_back_top"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -422,7 +498,7 @@
                                 android:text="向上"
                                 android:textColor="@color/color_white" />
 
-                            <com.example.explosiverobot.view.weiget.TouchTextView
+                            <com.example.explosiverobot.view.weiget.MainTouchTextView
                                 android:id="@+id/tv_foot_back_bottom"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
