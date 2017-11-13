@@ -273,43 +273,56 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/ll_recovery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/color_recovery"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="3dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_recovery" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="复位"
-                    android:textColor="@color/color_white"
-                    android:textSize="17sp" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1.5"
-                android:gravity="center"
                 android:orientation="vertical">
 
-                <com.example.explosiverobot.view.weiget.MyImageView
-                    android:id="@+id/iv_robot_bg"
+                <LinearLayout
+                    android:id="@+id/ll_recovery"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/color_recovery"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="3dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/ic_recovery" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="复位"
+                        android:textColor="@color/color_white"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/ic_circle_back"></RelativeLayout>
+
+                    <com.example.explosiverobot.view.weiget.MyImageView
+                        android:id="@+id/iv_robot_bg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/ic_robot" />
+                </LinearLayout>
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="0dp"

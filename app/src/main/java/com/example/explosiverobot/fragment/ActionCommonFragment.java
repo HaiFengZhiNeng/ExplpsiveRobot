@@ -75,19 +75,21 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
     protected void initView(View view) {
         theme_name = getArguments().getString("theme_name");
         actionItemDbManager = new ActionItemDbManager();
-
+        ryActionAll.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         ryActionAll.setLayoutManager(new GridLayoutManager(getActivity(), 3));
     }
 
     @Override
     protected void initData() {
-        actionItems.add(new ActionItem("哈哈", "", "1", "动作"));
-        actionAdapter = new ActionAdapter(getActivity(), actionItems);
-        ryActionAll.setAdapter(actionAdapter);
         if ("全部".equals(theme_name)) {
+            actionAdapter = new ActionAdapter(getActivity(), actionItems, theme_name);
+            ryActionAll.setAdapter(actionAdapter);
             actionItems = actionItemDbManager.loadAll();
         } else {
+            actionAdapter = new ActionAdapter(getActivity(), actionItems, theme_name);
+            ryActionAll.setAdapter(actionAdapter);
             actionItems = actionItemDbManager.queryByItemName(theme_name);
+            actionItems.add(new ActionItem("", "", "", "", ActionAdapter.ADD));
         }
 
         if (actionItems != null && actionItems.size() > 0) {
@@ -95,11 +97,17 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
             ryActionAll.setVisibility(View.VISIBLE);
 
             actionAdapter.refreshData(actionItems);
-            ryActionAll.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
             actionAdapter.setmOnClickimageListener(new ActionAdapter.OnItemClickListener() {
                 @Override
                 public void onClick(int position) {
-                    showToast("222222222");
+                    if (position == actionItems.size() - 1) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("tabName", theme_name);
+                        JumpItent.jump(ActionCommonFragment.this, getActivity(), AddActionActivity.class, bundle, ADD_ACTION_REQUEST_TCODE);
+                    } else {
+
+                    }
                 }
             });
 
@@ -126,10 +134,7 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
 //            case R.id.iv_addAction:
-//                Bundle bundle = new Bundle();
-//                bundle.putString("tabName", theme_name);
-//                JumpItent.jump(ActionCommonFragment.this, getActivity(), AddActionActivity.class, bundle, ADD_ACTION_REQUEST_TCODE);
-//                break;
+//
         }
     }
 
@@ -166,11 +171,12 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_ACTION_REQUEST_TCODE && resultCode == ACTION_RESUL_TCODE) {
             Log.e("GG", "onactivity result " + theme_name);
-            actionItems = actionItemDbManager.queryByItemName(theme_name);
-            if (actionItems != null && actionItems.size() > 0) {
-                ryActionAll.setVisibility(View.VISIBLE);
-                actionAdapter.refreshData(actionItems);
-            }
+//            actionItems = actionItemDbManager.queryByItemName(theme_name);
+//            if (actionItems != null && actionItems.size() > 0) {
+//                ryActionAll.setVisibility(View.VISIBLE);
+//                actionAdapter.refreshData(actionItems);
+//            }
+            onRefresh();
         }
     }
 
@@ -179,10 +185,14 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
         // 开始刷新，设置当前为刷新状态
         smartRefreshLayout.setRefreshing(true);
         Log.e("GG", theme_name + "");
+        actionItems.clear();
+        actionAdapter = new ActionAdapter(getActivity(), actionItems, theme_name);
+        ryActionAll.setAdapter(actionAdapter);
         if ("全部".equals(theme_name)) {
             actionItems = actionItemDbManager.loadAll();
         } else {
             actionItems = actionItemDbManager.queryByItemName(theme_name);
+            actionItems.add(new ActionItem("", "", "", "", ActionAdapter.ADD));
         }
         if (actionItems != null && actionItems.size() > 0) {
             ryActionAll.setVisibility(View.VISIBLE);

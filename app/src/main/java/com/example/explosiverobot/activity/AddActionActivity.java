@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.explosiverobot.R;
+import com.example.explosiverobot.adapter.ActionAdapter;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.db.manager.ActionItemDbManager;
 import com.example.explosiverobot.modle.ActionItem;
@@ -113,7 +114,7 @@ public class AddActionActivity extends Activity implements View.OnClickListener 
      * 提交
      */
     public void doCommit() {
-        actionItemDbManager.insert(new ActionItem(mActionName, mPicPath, "1",tabName));
+        actionItemDbManager.insert(new ActionItem(mActionName, mPicPath, "1", tabName, ActionAdapter.OTHER));
         Toast.makeText(AddActionActivity.this, "添加成功", Toast.LENGTH_SHORT);
         setResult(ADD_ACTION_RESUL_TCODE);
         finish();

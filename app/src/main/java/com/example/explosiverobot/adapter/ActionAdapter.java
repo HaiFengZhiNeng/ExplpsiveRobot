@@ -35,13 +35,18 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context mContext;
     private List<ActionItem> mActionItems = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
+    private String mTheme;
+
+    public static final int ADD = 0;//添加按钮
+    public static final int OTHER = 1;//发送文本消息类型
 
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
 
-    public ActionAdapter(Context context, List<ActionItem> actionItems) {
+    public ActionAdapter(Context context, List<ActionItem> actionItems, String theme) {
         this.mContext = context;
         this.mActionItems = actionItems;
+        this.mTheme = theme;
         mLayoutInflater = LayoutInflater.from(context);
     }
 
@@ -49,13 +54,20 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
         RecyclerView.ViewHolder holder = null;
-        if (viewType == mActionItems.size()) {
-            view = mLayoutInflater.inflate(R.layout.layout_item_add, parent, false);
-            holder = new ActionAddViewHolder(view);
-        } else {
+        if (mTheme.equals("全部")) {
             view = mLayoutInflater.inflate(R.layout.layout_item_action, parent, false);
             holder = new ActionItemViewHolder(view);
+        } else {
+            if (viewType == OTHER) {
+                view = mLayoutInflater.inflate(R.layout.layout_item_action, parent, false);
+                holder = new ActionItemViewHolder(view);
+            } else if (viewType == ADD) {
+                view = mLayoutInflater.inflate(R.layout.layout_item_add, parent, false);
+                holder = new ActionAddViewHolder(view);
+            }
+
         }
+        view.setTag(viewType);
         view.setOnClickListener(this);
         view.setOnLongClickListener(this);
         return holder;
@@ -64,9 +76,15 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ActionItem actionItem = mActionItems.get(position);
-        if (position == mActionItems.size()) {
+        int itemViewType = getItemViewType(position);
+        if (mTheme.equals("全部")) {
+            fromItemLayout((ActionItemViewHolder) holder, actionItem, position);
         } else {
-            fromAddItemLayout((ActionItemViewHolder) holder, actionItem, position);
+            if (itemViewType == OTHER) {
+                fromItemLayout((ActionItemViewHolder) holder, actionItem, position);
+            } else if (itemViewType == ADD) {
+                fromAddItemLayout((ActionAddViewHolder) holder);
+            }
         }
     }
 
@@ -75,12 +93,22 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return mActionItems != null ? mActionItems.size() : 0;
     }
 
-    private void fromAddItemLayout(ActionItemViewHolder holder, ActionItem actionItem, int position) {
+    private void fromAddItemLayout(ActionAddViewHolder holder) {
+    }
+
+    private void fromItemLayout(ActionItemViewHolder holder, ActionItem actionItem, int position) {
         if (position != 0) {
             holder.mActionGroup.setText(actionItem.getItem_group());
             holder.mActionName.setText(actionItem.getItem_name());
-            holder.mHeadStatus.setText(actionItem.getItem_isOpen());
-            Glide.with(mContext).load(actionItem.getItem_pic()).into(holder.mActionPic);
+            //判断手臂夹状态`
+            if (actionItem.getItem_isOpen().equals("1")) {
+                holder.mHeadStatus.setText("手臂夹开");
+            } else {
+                holder.mHeadStatus.setText("手臂夹关");
+            }
+            if (actionItem.getItem_pic() != null) {
+                Glide.with(mContext).load(actionItem.getItem_pic()).into(holder.mActionPic);
+            }
         }
     }
 
@@ -92,6 +120,10 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.mOnItemLongClickListener = onItemLongClickListener;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return mActionItems.get(position).getType();
+    }
 
     @Override
     public void onClick(View view) {
@@ -146,7 +178,7 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * @param t
      */
     public void addItem(ActionItem t) {
-//        mActionItems.add(t);
+        mActionItems.add(t);
         notifyDataSetChanged();
 
     }
@@ -204,7 +236,7 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             int size = list.size();
             int begin = mActionItems.size();
             for (int i = 0; i < size; i++) {
-//                mActionItems.add(list.get(i));
+                mActionItems.add(list.get(i));
                 notifyItemInserted(i + begin);
             }
         }
@@ -217,18 +249,5 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public interface OnItemLongClickListener {
         void onLongClick(int position);
     }
-//    @Override
-//    protected void convert(BaseRecyclerViewHolder viewHolder, ActionItem item, int pos) {
-//        viewHolder.getTextView(R.id.tv_actionName).setText(item.getItem_name());
-//        viewHolder.getTextView(R.id.tv_actionGroup).setText(item.getItem_group());
-//        Picasso.with(mContext).load(new File(item.getItem_pic())).into(viewHolder.getImageView(R.id.iv_actionPic));
-//        //判断手臂夹状态
-//        if (item.getItem_isOpen().equals("1")) {
-//            viewHolder.getTextView(R.id.tv_headStatus).setText("手臂夹开");
-//        } else {
-//            viewHolder.getTextView(R.id.tv_headStatus).setText("手臂夹关");
-//        }
-//
-//    }
 
 }

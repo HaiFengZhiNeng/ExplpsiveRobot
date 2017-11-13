@@ -44,20 +44,20 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
     private static final int MSG_T = 2;
     private static final int MSG_B = 3;
 
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case MSG_R:
-                    if(index < total){
-                        index ++;
+                    if (index < total) {
+                        index++;
                         load();
                     }
                     break;
                 case MSG_L:
-                    if(index > 0){
-                        index --;
+                    if (index > 0) {
+                        index--;
                         load();
                     }
                     break;
@@ -96,17 +96,17 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
     public void load(File url) {
         fileList = new ArrayList<>();
 
-        if(url.exists() && !url.isFile()){
+        if (url.exists() && !url.isFile()) {
 
             File[] files = url.listFiles();
-            for(int i =0; i < files.length;i++){
+            for (int i = 0; i < files.length; i++) {
                 File file = files[i];
-                if(file.getAbsolutePath().endsWith(".jpg")){
-                 fileList.add(file);
+                if (file.getAbsolutePath().endsWith(".png")) {
+                    fileList.add(file);
                 }
             }
         }
-        if(fileList != null && fileList.size() > 0) {
+        if (fileList != null && fileList.size() > 0) {
             index = 0;
             total = fileList.size();
             load();
@@ -114,7 +114,7 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
     }
 
     private void load() {
-        Glide.with(context).load(fileList.get(index)).diskCacheStrategy(DiskCacheStrategy.ALL).crossFade().centerCrop().override(300, 300).into(this);
+        Glide.with(context).load(fileList.get(index)).diskCacheStrategy(DiskCacheStrategy.ALL).crossFade().centerCrop().into(this);
 
     }
 
