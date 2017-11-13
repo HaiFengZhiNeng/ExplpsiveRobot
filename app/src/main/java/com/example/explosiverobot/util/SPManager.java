@@ -89,6 +89,7 @@ public class SPManager {
      * 照明灯前开
      */
     public static String controlLampFrontOpen() {
+
         return head + control + lamp + unTick + lampNumFront + lampOpen + crc;
     }
 

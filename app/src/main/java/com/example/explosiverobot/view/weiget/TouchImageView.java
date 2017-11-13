@@ -62,6 +62,9 @@ public class TouchImageView extends ImageView {
                 if (!isDown) {
                     isDown = true;
                     mHandler.sendEmptyMessageDelayed(0, delayYime);
+                    if(onTimeListener != null){
+                        onTimeListener.onImageDown();
+                    }
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -86,6 +89,8 @@ public class TouchImageView extends ImageView {
     }
 
     public interface OnImageTimeListener {
+        void onImageDown();
+
         void onImageTimecount(View view, int count);
 
         void onImageDownFinish(View view);

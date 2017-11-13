@@ -1,1 +1,1 @@
-include ':app', ':amapsdk', ':print'
+include ':app', ':amapsdk', ':print', ':scout'
