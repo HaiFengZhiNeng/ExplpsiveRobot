@@ -11,6 +11,6 @@
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_startpage" />
+        android:src="@mipmap/ic_splash" />
 
 </LinearLayout>

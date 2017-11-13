@@ -110,19 +110,14 @@
             </LinearLayout>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/ic_top_title" />
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text=""
+            android:text="EOD ROBOT"
             android:textColor="@color/color_white"
             android:textSize="26sp" />
 
@@ -131,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
-            android:layout_toRightOf="@+id/iv_title"
+            android:layout_toRightOf="@+id/tv_title"
             android:orientation="horizontal">
 
             <TextView
@@ -440,7 +435,7 @@
                             android:layout_marginLeft="10dp"
                             android:orientation="vertical">
 
-                            <com.example.explosiverobot.view.weiget.MainTouchTextView
+                            <com.example.explosiverobot.view.weiget.TouchTextView
                                 android:id="@+id/tv_foot_front_top"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -452,7 +447,7 @@
                                 android:text="向上"
                                 android:textColor="@color/color_white" />
 
-                            <com.example.explosiverobot.view.weiget.MainTouchTextView
+                            <com.example.explosiverobot.view.weiget.TouchTextView
                                 android:id="@+id/tv_foot_front_bottom"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -486,7 +481,7 @@
                             android:layout_marginLeft="10dp"
                             android:orientation="vertical">
 
-                            <com.example.explosiverobot.view.weiget.MainTouchTextView
+                            <com.example.explosiverobot.view.weiget.TouchTextView
                                 android:id="@+id/tv_foot_back_top"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -498,7 +493,7 @@
                                 android:text="向上"
                                 android:textColor="@color/color_white" />
 
-                            <com.example.explosiverobot.view.weiget.MainTouchTextView
+                            <com.example.explosiverobot.view.weiget.TouchTextView
                                 android:id="@+id/tv_foot_back_bottom"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

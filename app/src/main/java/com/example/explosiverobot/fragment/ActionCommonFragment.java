@@ -43,15 +43,11 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
 
     @BindView(R.id.ry_actionAll)
     RecyclerView ryActionAll;
-    @BindView(R.id.iv_addAction)
-    ImageView ivAddAction;
     @BindView(R.id.smartRefreshLayout)
     SwipeRefreshLayout smartRefreshLayout;
     Unbinder unbinder;
     @BindView(R.id.tv_noInfo)
     TextView tvNoInfo;
-    @BindView(R.id.rl_addAction)
-    RelativeLayout rlAddAction;
     Unbinder unbinder1;
     //Tab本地数据
     private ActionItemDbManager actionItemDbManager;
@@ -85,14 +81,13 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     protected void initData() {
+        actionItems.add(new ActionItem("哈哈", "", "1", "动作"));
         actionAdapter = new ActionAdapter(getActivity(), actionItems);
         ryActionAll.setAdapter(actionAdapter);
         if ("全部".equals(theme_name)) {
             actionItems = actionItemDbManager.loadAll();
-            rlAddAction.setVisibility(View.GONE);
         } else {
             actionItems = actionItemDbManager.queryByItemName(theme_name);
-            rlAddAction.setVisibility(View.VISIBLE);
         }
 
         if (actionItems != null && actionItems.size() > 0) {
@@ -101,18 +96,17 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
 
             actionAdapter.refreshData(actionItems);
             ryActionAll.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-            actionAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+            actionAdapter.setmOnClickimageListener(new ActionAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(View view, int position) {
-
+                public void onClick(int position) {
+                    showToast("222222222");
                 }
             });
 
-            actionAdapter.setOnItemLongClickListener(new BaseRecyclerAdapter.OnItemLongClickListener() {
+            actionAdapter.setmOnLongClickimageListener(new ActionAdapter.OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(View view, int position) {
-                    showDialog(position);
-                    return false;
+                public void onLongClick(int position) {
+                    showToast("sfasdfa");
                 }
             });
         } else {
@@ -125,18 +119,17 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     protected void setListener(View view) {
-        ivAddAction.setOnClickListener(this);
         smartRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_addAction:
-                Bundle bundle = new Bundle();
-                bundle.putString("tabName", theme_name);
-                JumpItent.jump(ActionCommonFragment.this, getActivity(), AddActionActivity.class, bundle, ADD_ACTION_REQUEST_TCODE);
-                break;
+//            case R.id.iv_addAction:
+//                Bundle bundle = new Bundle();
+//                bundle.putString("tabName", theme_name);
+//                JumpItent.jump(ActionCommonFragment.this, getActivity(), AddActionActivity.class, bundle, ADD_ACTION_REQUEST_TCODE);
+//                break;
         }
     }
 

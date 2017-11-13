@@ -12,11 +12,15 @@
         android:layout_height="@dimen/dimen_120"
         android:background="@color/color_top_background"
         android:gravity="center">
-
-        <ImageView
+        <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_top_title" />
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="EOD ROBOT"
+            android:textColor="@color/color_white"
+            android:textSize="26sp" />
     </RelativeLayout>
 
     <LinearLayout

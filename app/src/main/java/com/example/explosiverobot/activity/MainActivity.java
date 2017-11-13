@@ -27,9 +27,9 @@ import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.SPManager;
-import com.example.explosiverobot.view.weiget.MainTouchTextView;
 import com.example.explosiverobot.view.weiget.MyImageView;
 import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
+import com.example.explosiverobot.view.weiget.TouchTextView;
 import com.seabreeze.log.Print;
 
 import java.io.File;
@@ -44,7 +44,7 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
-public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, MainTouchTextView.OnTextTimeListener, PagerSlidingTabStrip.OnPagerSlidingTabStripChanged {
+public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener, PagerSlidingTabStrip.OnPagerSlidingTabStripChanged {
 
     public String TAG = this.getClass().getSimpleName();
 
@@ -69,22 +69,20 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     ToggleButton togBack;
     //脚掌前向上
     @BindView(R.id.tv_foot_front_top)
-    MainTouchTextView tvFootFrontTop;
+    TouchTextView tvFootFrontTop;
     //脚掌前向下
     @BindView(R.id.tv_foot_front_bottom)
-    MainTouchTextView tvFootFrontBottom;
+    TouchTextView tvFootFrontBottom;
     //脚掌后向上
     @BindView(R.id.tv_foot_back_top)
-    MainTouchTextView tvFootBackTop;
+    TouchTextView tvFootBackTop;
     //脚掌后向下
     @BindView(R.id.tv_foot_back_bottom)
-    MainTouchTextView tvFootBackBottom;
+    TouchTextView tvFootBackBottom;
     @BindView(R.id.tv_state)
     TextView tvState;
     @BindView(R.id.tv_order)
     TextView tvOrder;
-    @BindView(R.id.tv_foot_back_bottom)
-    MainTouchTextView tvFootBackBottom;
 
     private boolean isConnect;
 
@@ -351,6 +349,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         pDialog.show();
         pDialog.setCancelable(false);
         new CountDownTimer(500 * 7, 500) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 // you can change the progress bar color by ProgressHelper every 800 millis
                 i++;
@@ -379,6 +378,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
                 }
             }
 
+            @Override
             public void onFinish() {
                 i = -1;
                 if (isConnect) {

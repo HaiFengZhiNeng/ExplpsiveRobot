@@ -65,16 +65,16 @@ public class TouchTextView extends TextView {
 
     private void setUnpress() {
         GradientDrawable gd = new GradientDrawable();
-        int roundRadius = 15; // 8dp 圆角半径
-        gd.setCornerRadius(roundRadius);
+//        int roundRadius = 15; // 8dp 圆角半径
+//        gd.setCornerRadius(roundRadius);
         gd.setColor(getResources().getColor(R.color.steelblue));
         setBackgroundDrawable(gd);
     }
 
     private void setPress() {
         GradientDrawable gd = new GradientDrawable();
-        int roundRadius = 15; // 8dp 圆角半径
-        gd.setCornerRadius(roundRadius);
+//        int roundRadius = 15; // 8dp 圆角半径
+//        gd.setCornerRadius(roundRadius);
         gd.setColor(getResources().getColor(R.color.antiquewhite));
         setBackgroundDrawable(gd);
     }
