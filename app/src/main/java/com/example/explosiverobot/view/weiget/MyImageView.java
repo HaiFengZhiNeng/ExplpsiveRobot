@@ -1,15 +1,20 @@
 package com.example.explosiverobot.view.weiget;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.autonavi.ae.gmap.gesture.MoveGestureDetector;
+import com.autonavi.ae.gmap.gesture.RotateGestureDetector;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.seabreeze.log.Print;
@@ -27,6 +32,11 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
     private Context context;
 
     private GestureDetector detector;
+
+    private float mScaleSpan = 1.0f;
+    private float mRotationDegrees = 0.f;
+    private float mFocusX = 0.f;
+    private float mFocusY = 0.f;
 
     private float downX;
     private float downY;
@@ -53,12 +63,16 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
                     if (index < total) {
                         index++;
                         load();
+                        offsetsByX = 0;
+                        offsetsByY = 0;
                     }
                     break;
                 case MSG_L:
                     if (index > 0) {
                         index--;
                         load();
+                        offsetsByX = 0;
+                        offsetsByY = 0;
                     }
                     break;
                 case MSG_T:
@@ -88,10 +102,12 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
 
     private void init(Context context) {
         this.context = context;
+
         detector = new GestureDetector(context, this);
         detector.setOnDoubleTapListener(this);
 
     }
+
 
     public void load(File url) {
         fileList = new ArrayList<>();
@@ -114,16 +130,22 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
     }
 
     private void load() {
-        Glide.with(context).load(fileList.get(index)).diskCacheStrategy(DiskCacheStrategy.ALL).crossFade().centerCrop().into(this);
+        if (index < fileList.size()) {
+            Glide.with(context).load(fileList.get(index)).diskCacheStrategy(DiskCacheStrategy.ALL).crossFade().centerCrop().into(this);
+        }
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getRawX();
                 downY = event.getRawY();
+
+                Log.e("GG", "downX" + downX);
+                Log.e("GG", "downY" + downY);
                 break;
             case MotionEvent.ACTION_MOVE:
                 offsetX = downX - event.getRawX();
@@ -132,8 +154,10 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
                 offsetsByX += offsetX;
                 offsetsByY += offsetY;
 
-                if (offsetsByX > 200 || offsetsByY > 200) {
+                Log.e("GG", "offsetsByX " + offsetsByX);
+                Log.e("GG", "offsetsByY " + offsetsByY);
 
+//                if (offsetsByX > 200 || offsetsByY > 200) {
                     int orientation = getOrientation(offsetsByX, offsetsByY);
                     switch (orientation) {
                         case 'r'://左
@@ -166,7 +190,7 @@ public class MyImageView extends ImageView implements GestureDetector.OnGestureL
                             mHandler.sendEmptyMessage(MSG_B);
                             break;
                     }
-                }
+//                }
         }
         return true;
     }

@@ -75,7 +75,7 @@ public class TouchTextView extends TextView {
         GradientDrawable gd = new GradientDrawable();
 //        int roundRadius = 15; // 8dp 圆角半径
 //        gd.setCornerRadius(roundRadius);
-        gd.setColor(getResources().getColor(R.color.antiquewhite));
+        gd.setColor(getResources().getColor(R.color.color_main_right_pressed));
         setBackgroundDrawable(gd);
     }
 

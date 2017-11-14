@@ -191,6 +191,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/iv_setting"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -304,30 +305,70 @@
                 </LinearLayout>
 
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp">
 
                     <RelativeLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="308dp"
                         android:layout_height="wrap_content"
-                        android:background="@mipmap/ic_circle_back"></RelativeLayout>
+                        android:layout_marginTop="30dp"
+                        android:layout_centerHorizontal="true">
 
-                    <com.example.explosiverobot.view.weiget.MyImageView
-                        android:id="@+id/iv_robot_bg"
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:id="@+id/iv_sportTop"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:src="@mipmap/ic_top" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_bigCircle"
+                        android:layout_width="358dp"
+                        android:layout_height="294dp"
+                        android:layout_centerInParent="true"
+                        android:background="@mipmap/ic_circle_back">
+
+                        <RelativeLayout
+                            android:layout_width="340dp"
+                            android:layout_height="280dp"
+                            android:layout_centerInParent="true"
+                            android:background="@mipmap/ic_modle_back">
+
+                            <com.example.explosiverobot.view.weiget.MyImageView
+                                android:id="@+id/iv_robot_bg"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerInParent="true"
+                                android:visibility="visible" />
+                        </RelativeLayout>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="258dp"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_robot" />
-                </LinearLayout>
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/rl_bigCircle">
+
+                        <ImageView
+                            android:id="@+id/iv_sportDown"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_centerInParent="true"
+                            android:src="@mipmap/ic_down" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
             </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
+                android:layout_weight="0.4"
                 android:gravity="center"
                 android:orientation="vertical">
 

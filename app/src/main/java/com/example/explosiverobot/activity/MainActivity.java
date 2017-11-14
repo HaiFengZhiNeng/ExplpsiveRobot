@@ -10,23 +10,33 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.explosiverobot.R;
+import com.example.explosiverobot.adapter.ActionAdapter;
 import com.example.explosiverobot.adapter.ActionViewPagerAdapter;
 import com.example.explosiverobot.base.activity.BaseActivity;
 import com.example.explosiverobot.base.config.AppConstants;
+import com.example.explosiverobot.db.manager.ActionItemDbManager;
 import com.example.explosiverobot.db.manager.ActionTabDbManager;
 import com.example.explosiverobot.fragment.ActionCommonFragment;
+import com.example.explosiverobot.modle.ActionItem;
 import com.example.explosiverobot.modle.ActionTab;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.util.JumpItent;
+import com.example.explosiverobot.util.PermissionsChecker;
+import com.example.explosiverobot.util.PreferencesUtils;
 import com.example.explosiverobot.util.SPManager;
+import com.example.explosiverobot.util.WriteSd;
+import com.example.explosiverobot.view.weiget.CustomToast;
+import com.example.explosiverobot.view.weiget.MainPopWindow;
 import com.example.explosiverobot.view.weiget.MyImageView;
 import com.example.explosiverobot.view.weiget.PagerSlidingTabStrip;
 import com.example.explosiverobot.view.weiget.TouchTextView;
@@ -83,6 +93,12 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     TextView tvState;
     @BindView(R.id.tv_order)
     TextView tvOrder;
+    @BindView(R.id.iv_setting)
+    ImageView ivSetting;
+    @BindView(R.id.iv_sportTop)
+    ImageView ivSportTop;
+    @BindView(R.id.iv_sportDown)
+    ImageView ivSportDown;
 
     private boolean isConnect;
 
@@ -103,6 +119,9 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     private ActionTabDbManager mActionDbManager;
     private long actionId = 0;
 
+    private ActionItemDbManager actionItemDbManager;
+    private MainPopWindow mainPopWindow;
+
     @Override
     protected int getContentViewId() {
         return R.layout.activity_main;
@@ -112,11 +131,13 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     protected void init(Bundle savedInstanceState) {
 
         mActionDbManager = new ActionTabDbManager();
+        actionItemDbManager = new ActionItemDbManager();
         mLbmManager = LocalBroadcastManager.getInstance(this);
         Intent startIntent = new Intent(this, UdpService.class);
         startService(startIntent);
 
-        initTopTab();
+        initLocal();
+//        initTopTab();
 
         showDialog();
 
@@ -132,6 +153,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         etInputGroupName.setFocusableInTouchMode(true);
         etInputGroupName.requestFocus();
         etInputGroupName.requestFocusFromTouch();
+        mainPopWindow = new MainPopWindow(this, itemSelectItemsOnClick);
     }
 
     @Override
@@ -195,16 +217,16 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 //        moveTaskToBack(true);
     }
 
-    @OnClick({R.id.tv_add_group, R.id.iv_robot_bg, R.id.tog_back, R.id.tog_front, R.id.ll_recovery})
+    @OnClick({R.id.tv_add_group, R.id.iv_robot_bg, R.id.tog_back, R.id.tog_front, R.id.ll_recovery, R.id.iv_setting, R.id.iv_sportDown, R.id.iv_sportTop})
     public void onClick(View view) {
         switch (view.getId()) {
             //添加分组
             case R.id.tv_add_group:
                 addGroup();
                 break;
-            case R.id.iv_robot_bg:
-                startTasgAvtivity();
-//                sendLocal(NetClient.GET_IP);
+            case R.id.iv_setting:
+                mainPopWindow.showAsDropDown(ivSetting);//在v的下面
+                mainPopWindow.showAtLocation(ivSetting, Gravity.NO_GRAVITY, 0, 0);
                 break;
             case R.id.tog_back:
                 // 当按钮第一次被点击时候响应的事件
@@ -244,6 +266,14 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             case R.id.ll_recovery:
                 sendLocal(SPManager.controlReset());
                 break;
+            // 向下
+            case R.id.iv_sportDown:
+                CustomToast.showToast(this, "向下运动");
+                break;
+            //向上
+            case R.id.iv_sportTop:
+                CustomToast.showToast(this, "向上运动");
+                break;
         }
     }
 
@@ -252,7 +282,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
      * 顶部Tab
      */
     private void initTopTab() {
-        addActionTab();
+//        addActionTab();
     }
 
     /**
@@ -303,6 +333,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     }
 
     private void addTitle() {
+        mActionTabsList = mActionDbManager.loadAll();
         for (int i = 0; i < mActionTabsList.size(); i++) {
             mTitleList.add(mActionTabsList.get(i).getTab_name());
         }
@@ -419,9 +450,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         mLbmManager.sendBroadcast(intent);
     }
 
-    private void startTasgAvtivity() {
-        JumpItent.jump(MainActivity.this, TaskActivity.class);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -489,5 +517,62 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
+    }
+
+
+    View.OnClickListener itemSelectItemsOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.tv_work:
+                    startTasgAvtivity();
+                    break;
+                case R.id.tv_shape:
+                    mainPopWindow.dismiss();
+                    break;
+            }
+        }
+    };
+
+    private void startTasgAvtivity() {
+        JumpItent.jump(MainActivity.this, TaskActivity.class);
+    }
+
+    public void initLocal() {
+        boolean isSaveLocal = PreferencesUtils.getBoolean(this, "saveLoacal", false);
+        if (!isSaveLocal) {
+            PreferencesUtils.putBoolean(this, "saveLoacal", true);
+            ++mGroupNum;
+            mActionTabsList.add(new ActionTab(mGroupNum + "", "全部"));
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", "全部"));
+
+            ++mGroupNum;
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", "运动"));
+            mActionTabsList.add(new ActionTab(mGroupNum + "", "运动"));
+            ++mGroupNum;
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", "操纵"));
+            mActionTabsList.add(new ActionTab(mGroupNum + "", "操纵"));
+            ++mGroupNum;
+            mActionTabsList.add(new ActionTab(mGroupNum + "", "装载"));
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", "装载"));
+            ++mGroupNum;
+            mActionTabsList.add(new ActionTab(mGroupNum + "", "其他"));
+            mActionDbManager.insert(new ActionTab(mGroupNum + "", "其他"));
+            WriteSd writeSd = new WriteSd(this);
+            writeSd.isExit();
+            actionItemDbManager.insert(new ActionItem("运动一", "localimg/ic_drive_one", "2", "运动", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("运动二", "localimg/ic_drive_two ", "1", "运动", ActionAdapter.OTHER));
+
+            actionItemDbManager.insert(new ActionItem("操纵一", "ic_drive_one", "1", "操纵", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("操纵二", "ic_drive_one", "2", "操纵", ActionAdapter.OTHER));
+
+            actionItemDbManager.insert(new ActionItem("装载一", "ic_drive_one", "1", "装载", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("装载二", "ic_drive_one", "2", "装载", ActionAdapter.OTHER));
+
+            actionItemDbManager.insert(new ActionItem("其他一", "ic_drive_one", "1", "其他", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("其他二", "ic_drive_one", "2", "其他", ActionAdapter.OTHER));
+
+        }
+        addTitle();
     }
 }

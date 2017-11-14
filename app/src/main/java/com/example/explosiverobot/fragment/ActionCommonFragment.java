@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.activity.AddActionActivity;
+import com.example.explosiverobot.activity.TaskActivity;
 import com.example.explosiverobot.adapter.ActionAdapter;
 import com.example.explosiverobot.base.adapter.BaseRecyclerAdapter;
 import com.example.explosiverobot.base.fragment.BaseFragment;
@@ -101,12 +102,16 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
             actionAdapter.setmOnClickimageListener(new ActionAdapter.OnItemClickListener() {
                 @Override
                 public void onClick(int position) {
-                    if (position == actionItems.size() - 1) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("tabName", theme_name);
-                        JumpItent.jump(ActionCommonFragment.this, getActivity(), AddActionActivity.class, bundle, ADD_ACTION_REQUEST_TCODE);
+                    if (!theme_name.equals("全部")) {
+                        if (position == actionItems.size() - 1) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("tabName", theme_name);
+                            JumpItent.jump(ActionCommonFragment.this, getActivity(), AddActionActivity.class, bundle, ADD_ACTION_REQUEST_TCODE);
+                        } else {
+                            JumpItent.jump(getActivity(), TaskActivity.class);
+                        }
                     } else {
-
+                        JumpItent.jump(getActivity(), TaskActivity.class);
                     }
                 }
             });
@@ -114,7 +119,7 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
             actionAdapter.setmOnLongClickimageListener(new ActionAdapter.OnItemLongClickListener() {
                 @Override
                 public void onLongClick(int position) {
-                    showToast("sfasdfa");
+                    showDialog(position);
                 }
             });
         } else {
@@ -185,9 +190,6 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
         // 开始刷新，设置当前为刷新状态
         smartRefreshLayout.setRefreshing(true);
         Log.e("GG", theme_name + "");
-        actionItems.clear();
-        actionAdapter = new ActionAdapter(getActivity(), actionItems, theme_name);
-        ryActionAll.setAdapter(actionAdapter);
         if ("全部".equals(theme_name)) {
             actionItems = actionItemDbManager.loadAll();
         } else {

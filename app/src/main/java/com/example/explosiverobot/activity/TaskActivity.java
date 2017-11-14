@@ -10,10 +10,12 @@ import android.os.Message;
 import android.support.annotation.IdRes;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SwitchCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -43,9 +45,11 @@ import com.example.explosiverobot.modle.Tele;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.util.GpsUtils;
+import com.example.explosiverobot.util.JumpItent;
 import com.example.explosiverobot.util.SPManager;
 import com.example.explosiverobot.view.surface.DrawSurfaceView;
 import com.example.explosiverobot.view.weiget.CircleViewByImage;
+import com.example.explosiverobot.view.weiget.MainPopWindow;
 import com.example.explosiverobot.view.weiget.TouchImageView;
 import com.example.explosiverobot.view.weiget.TouchTextView;
 import com.seabreeze.log.Print;
@@ -99,12 +103,12 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     TouchImageView icFrontUpper;
     @BindView(R.id.ic_front_lower)
     TouchImageView icFrontLower;
-//    @BindView(R.id.ic_after_upper)
+    //    @BindView(R.id.ic_after_upper)
 //    ImageView icAfterUpper;
 //    @BindView(R.id.ic_after_lower)
 //    ImageView icAfterLower;
     @BindView(R.id.ic_after_upper)
-TouchImageView icAfterUpper;
+    TouchImageView icAfterUpper;
     @BindView(R.id.ic_after_lower)
     TouchImageView icAfterLower;
     @BindView(R.id.tv_speed_high_front)
@@ -161,8 +165,6 @@ TouchImageView icAfterUpper;
     TouchTextView ttvGrabCounter;
     @BindView(R.id.control_circle_view)
     CircleViewByImage controlCircleView;
-    @BindView(R.id.btn_searchCamera)
-    Button btnSearchCamera;
     @BindView(R.id.tv_camera_state)
     TextView tvCameraState;
     @BindView(R.id.btn_z)
@@ -201,6 +203,8 @@ TouchImageView icAfterUpper;
     Button btng;
     @BindView(R.id.btn_h)
     Button btnh;
+    @BindView(R.id.iv_setting)
+    ImageView ivSetting;
 
     private MyRender myRender;
 
@@ -235,6 +239,9 @@ TouchImageView icAfterUpper;
     private double mRotation2 = 0.0;
     private double mRotation3 = 0.0;
     private double mChangeCistance = 0.0;
+
+
+    private MainPopWindow mainPopWindow;
 
     private Handler mDrawHandler = new Handler() {
         @Override
@@ -406,6 +413,8 @@ TouchImageView icAfterUpper;
     @Override
     protected void initData() {
         Tele.getInstance().setTele0();
+
+        mainPopWindow = new MainPopWindow(this, itemSelectItemsOnClick);
     }
 
     @Override
@@ -585,8 +594,8 @@ TouchImageView icAfterUpper;
             R.id.ic_front_upper, R.id.ic_front_lower,
 //            R.id.ic_after_upper, R.id.ic_after_lower,
             R.id.tv_speed_high, R.id.tv_speed_medium, R.id.tv_speed_low,
-            R.id.ib_hori_tour, R.id.ib_vert_tour, R.id.tog_back, R.id.tog_front,
-            R.id.btn_searchCamera,
+            R.id.ib_hori_tour, R.id.ib_vert_tour, R.id.tog_back, R.id.tog_front, R.id.iv_setting,
+//            R.id.btn_searchCamera,
             R.id.btn_z,
             R.id.btn_Z,
             R.id.btn_x,
@@ -756,13 +765,13 @@ TouchImageView icAfterUpper;
                     Print.e("照明灯前关");
                 }
                 break;
-            case R.id.btn_searchCamera:
-                if (!isSearched) {
-                    isSearched = true;
-                    new Thread(new SearchThread()).start();
-//                    updateListHandler.postDelayed(updateThread, 30000);
-                }
-                break;
+//            case R.id.btn_searchCamera:
+//                if (!isSearched) {
+//                    isSearched = true;
+//                    new Thread(new SearchThread()).start();
+////                    updateListHandler.postDelayed(updateThread, 30000);
+//                }
+//                break;
             case R.id.btn_z:
                 sendLocal("z");
                 break;
@@ -816,6 +825,10 @@ TouchImageView icAfterUpper;
                 break;
             case R.id.btn_h:
                 sendLocal("h");
+                break;
+            case R.id.iv_setting:
+                mainPopWindow.showAsDropDown(ivSetting);//在v的下面
+                mainPopWindow.showAtLocation(ivSetting, Gravity.NO_GRAVITY, 0, 0);
                 break;
         }
     }
@@ -1194,7 +1207,7 @@ TouchImageView icAfterUpper;
 
 
     private void cameraState() {
-        if(tag == 1) {
+        if (tag == 1) {
             sweetAlertDialog.setTitleText("连接成功!")
                     .setConfirmText("确定")
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -1204,7 +1217,7 @@ TouchImageView icAfterUpper;
                         }
                     })
                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-        }else if(tag == 0){
+        } else if (tag == 0) {
             sweetAlertDialog.setTitleText("连接失败!")
                     .setConfirmText("确定")
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -1217,8 +1230,8 @@ TouchImageView icAfterUpper;
         }
     }
 
-    private void showDialog(String msg){
-        if(sweetAlertDialog == null){
+    private void showDialog(String msg) {
+        if (sweetAlertDialog == null) {
 
             sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
                     .setTitleText(msg);
@@ -1228,8 +1241,8 @@ TouchImageView icAfterUpper;
         dialogHandler.postDelayed(runnable, 300);
     }
 
-    private void dismissDialog(){
-        if(sweetAlertDialog != null && sweetAlertDialog.isShowing()){
+    private void dismissDialog() {
+        if (sweetAlertDialog != null && sweetAlertDialog.isShowing()) {
             sweetAlertDialog.dismiss();
             dialogHandler.removeCallbacks(runnable);
         }
@@ -1321,5 +1334,23 @@ TouchImageView icAfterUpper;
             updateListHandler.sendMessage(msg);
         }
     };
+
+    View.OnClickListener itemSelectItemsOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.tv_work:
+                    mainPopWindow.dismiss();
+                    break;
+                case R.id.tv_shape:
+                    startMainActivity();
+                    break;
+            }
+        }
+    };
+
+    private void startMainActivity() {
+        JumpItent.jump(TaskActivity.this, MainActivity.class);
+    }
 
 }

@@ -3,6 +3,7 @@ package com.example.explosiverobot.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +70,7 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
 
         }
-        view.setTag(viewType);
+//        view.setTag(viewType);
         view.setOnClickListener(this);
         view.setOnLongClickListener(this);
         return holder;
@@ -83,7 +86,7 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             if (itemViewType == OTHER) {
                 fromItemLayout((ActionItemViewHolder) holder, actionItem, position);
             } else if (itemViewType == ADD) {
-                fromAddItemLayout((ActionAddViewHolder) holder);
+                fromAddItemLayout((ActionAddViewHolder) holder, actionItem, position);
             }
         }
     }
@@ -93,23 +96,30 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return mActionItems != null ? mActionItems.size() : 0;
     }
 
-    private void fromAddItemLayout(ActionAddViewHolder holder) {
+    private void fromAddItemLayout(ActionAddViewHolder holder, ActionItem actionItem, int position) {
+        holder.itemView.setTag(position);
     }
 
     private void fromItemLayout(ActionItemViewHolder holder, ActionItem actionItem, int position) {
-        if (position != 0) {
-            holder.mActionGroup.setText(actionItem.getItem_group());
-            holder.mActionName.setText(actionItem.getItem_name());
-            //判断手臂夹状态`
-            if (actionItem.getItem_isOpen().equals("1")) {
-                holder.mHeadStatus.setText("手臂夹开");
-            } else {
-                holder.mHeadStatus.setText("手臂夹关");
-            }
-            if (actionItem.getItem_pic() != null) {
-                Glide.with(mContext).load(actionItem.getItem_pic()).into(holder.mActionPic);
-            }
+        holder.mActionGroup.setText(actionItem.getItem_group());
+        holder.mActionName.setText(actionItem.getItem_name());
+        //判断手臂夹状态`
+        if (actionItem.getItem_isOpen().equals("1")) {
+            holder.mHeadStatus.setText("手臂夹开");
+        } else {
+            holder.mHeadStatus.setText("手臂夹关");
         }
+        if (actionItem.getItem_pic() != null) {
+            try {
+                InputStream inputStream = mContext.getAssets().open("ic_drive_one.png");
+//                byte [] img = inputStream.read();
+                Glide.with(mContext).load(actionItem.getItem_pic()).into(holder.mActionPic);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            Uri uri = Uri.parse("android:resource://com.example.explosiverobot/" + R.raw.ic_drive_one);
+        }
+        holder.itemView.setTag(position);
     }
 
     public void setmOnClickimageListener(OnItemClickListener onItemClickListener) {
