@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         initLocal();
 //        initTopTab();
 
-        showDialog();
+//        showDialog();
 
         initShow();
     }

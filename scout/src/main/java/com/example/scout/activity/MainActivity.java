@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import com.example.scout.R;
 import com.example.scout.common.BaseActivity;
 import com.example.scout.view.CircleViewByImage;
+import com.linkcard.media.LinkVideoCore;
 import com.seabreeze.log.Print;
 
 import butterknife.BindView;
@@ -35,6 +36,8 @@ public class MainActivity extends BaseActivity {
     ImageView ivUp;
     @BindView(R.id.iv_down)
     ImageView ivDown;
+
+    private LinkVideoCore linkVideoCore;
 
     @Override
     protected int getLayoutId() {
@@ -91,7 +94,8 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_front_lighting:
-
+                isPausing = true;
+                doPlay();
                 break;
             case R.id.ll_after_lighting:
 
@@ -115,8 +119,17 @@ public class MainActivity extends BaseActivity {
 
                 break;
         }
-
-
     }
+
+    private boolean isPausing = false;
+
+    private void doPlay() {
+        if (this.isPausing) {
+            this.linkVideoCore.stopPlayback();
+        } else {
+            this.linkVideoCore.startPlayback();
+        }
+    }
+
 
 }

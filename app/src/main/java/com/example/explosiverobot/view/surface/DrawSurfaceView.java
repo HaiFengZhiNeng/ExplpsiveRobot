@@ -144,4 +144,12 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void onReset() {
         mDrawingThread.reset();
     }
+
+    public void onDrawAngle(float d1, float d2, float d3){
+        mDrawingThread.onDrawAngle(d1, d2, d3);
+    }
+
+    public void onDrawF(float i) {
+        mDrawingThread.onDrawF(i);
+    }
 }

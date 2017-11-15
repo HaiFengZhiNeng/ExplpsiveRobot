@@ -20,6 +20,7 @@ import com.example.explosiverobot.listener.DrawInterface;
 import com.example.explosiverobot.modle.Spot;
 import com.example.explosiverobot.util.GsonUtil;
 import com.example.explosiverobot.util.PreferencesUtils;
+import com.seabreeze.log.Print;
 
 import java.math.BigDecimal;
 
@@ -42,101 +43,111 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private SurfaceHolder mDrawingSurface;
     private Paint mPaint;
     private Handler mReceiver;
-
-    // 定义一个记录图像是否开始渲染的旗帜
-    private boolean mRunning;
-
-    private int mScreenW;        //屏幕宽度
-    private int mScreenH;        //屏幕高度
-
-    private int basePosX;
-    private int basePosY;
-
-    private int groundY;
-
-    private double shortProportion;
-    private double longProportion;
-
-    private int carHeight;
-    private int carWidth;
-    private Bitmap armBaseBitmap;
-    private Rect mArmBaseDestRect;
-
-    private Bitmap resetBitmap;
-
-    private Bitmap armFirstBitmap;
-    private Matrix mFirstMatrix;
-    private float mRotation1;
-    private double firstDegreeMax;
-    private double firstDegreeMin;
-
-    private Bitmap armSecondBitmap;
-    private Matrix mSecondMatrix;
-    private float mRotation2;
-    private double secondDegreeMax;
-    private double secondDegreeMin;
-
-    private Bitmap armEndBitmap;
-    private Matrix mEndMatrix;
-    private float mRotation3;
-    private double endDegreeMax;
-    private double endDegreeMin;
-
-    private Spot braceSpot;
-    private Spot triangleSpot;
-    private double originalBraceDistance;
-
-    private double myRotation;
-    /**
-     * 第一条线的长度
-     */
-    private int r0;
-    /**
-     * 第二条线的长度
-     */
-    private int r1;
-    /**
-     * 第三条线的长度
-     */
-    private int r2;
-    /**
-     * 定义触摸的范围
-     */
-    private int rtouch = 70;
-    /**
-     * 固定点坐标
-     */
-    private Spot originSpot;
-    private Spot levelSpot;
-    /**
-     * 第一条线末端位置，第二条线的圆心
-     */
-    private Spot firstSpot;
-    private Spot firstSpotTail;
-    /**
-     * 第二条线的圆心
-     */
-    private Spot secondSpot;
-    /**
-     * 第二条线末端位置，第三条线的圆心
-     */
-    private Spot endingSpot;
-    /**
-     * 第三条线的末端位置
-     */
-    private Spot touchSpot;
-    private Spot mySpot;
-
-    /**
-     * 回调接口
-     */
+    //回调
     private DrawInterface mDrawInterface;
 
     private boolean isDrawing;
 
+    // 定义一个记录图像是否开始渲染的旗帜
+    private boolean mRunning;
+
+    //整个图像基础位置
+    private int basePosX;
+    private int basePosY;
+    //定义地盘车的宽高
+    private int carW;
+    private int carH;
+    //地盘车最低点
+    private int groundY;
+    //基座bitmap
+    private Bitmap armBBitmap;
+    //第一条
+    private Bitmap armSBitmap;
+    //第二条
+    private Bitmap armFBitmap;
+    //第三条
+    private Bitmap armEBitmap;
+    //基座位置
+    private Rect mArmBaseDestRect;
+    //重置
+    private Bitmap resetBitmap;
+
+    //定义机械臂旋转最大最小角度
+    private double degreeFMax = 60;
+    private double degreeFMin = 15;
+    private double degreeSMax = 180;
+    private double degreeSMin = 100;
+    private double degreeEMax = 180;
+    private double degreeEMin = 45;
+    //定义触摸的范围
+    private int rtouch = 70;
+
+    private Matrix mFMatrix = new Matrix();
+    private Matrix mSMatrix = new Matrix();
+    private Matrix mEMatrix = new Matrix();
+
+    //上方推点
+    private Spot pushSpot;
+    //下方支点
+    private Spot braceSpot;
+    //第一条线末点到上方推点间距离与第一条线长度比例
+    private double shortProportion = 0.25;
+    //第一条线起点到上方推点间距离与第一条线长度比例
+    private double longProportion = 0.95;
+    //第一条线起点到支撑点x轴上比例
+    private double braceXProportion = 0.35;
+    //第一条线起点到支撑点y轴上比例
+    private double braceYProportion = 0.29;
+    //第一条线的长度
+    private int rF;
+    //第二条线的长度
+    private int rS;
+    //第三条线的长度
+    private int rE;
+    //固定点坐标
+    private Spot baseSpot;
+
+    //固定坐标点的水平点
+    private Spot levelSpot;
+    //第一条线两点
+    private Spot startFSpot;
+    private Spot endFSpot;
+    private Spot fYSpot;
+    //第二条线两点
+    private Spot startSSpot;
+    private Spot endSSpot;
+    private Spot sYSpot;
+    //第二条线两点
+    private Spot startESpot;
+    private Spot endESpot;
+    private Spot eYSpot;
+    //备份点
+    private Spot startFSpotTemp;
+    private Spot endFSpotTemp;
+    private Spot startSSpotTemp;
+    private Spot endSSpotTemp;
+    private Spot startESpotTemp;
+    private Spot endESpotTemp;
+
+    private double rotateF;
+    private double rotateS;
+    private double rotateE;
+
+    private Spot firstSpotTail;
+    private double originalBraceDistance;
+
+    private double myRotation;
+
     private double mCallRotation1;
+
     private double mCallRotation2;
     private double mCallRotation3;
+
+    private float mRotation3;
+    private float mRotation2;
+    private float mRotation1;
+    //    private Spot touchSpot;
+    private Spot mySpot;
 
     private long curTime;
 
@@ -145,102 +156,191 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         mContext = context;
         mSurfaceView = surfaceView;
         mDrawingSurface = holder;
-        mScreenW = screenW;
-        mScreenH = screenH;
 
+        setPaint();
+        loadBitmap();
+        setBasePos(screenW, screenH);
+
+        loadRadius();
+
+        definitionF();
+        definitionS();
+        definitionE();
+
+        mySpot = new Spot(0, 0);
+
+        definitionPushAAndBrace();
+
+        computeRotate();
+
+//        mRotation1 = PreferencesUtils.getFloat(mContext, "mRotation1", 0);
+//        mRotation2 = PreferencesUtils.getFloat(mContext, "mRotation2", 0);
+//        mRotation3 = PreferencesUtils.getFloat(mContext, "mRotation3", 0);
+//        myRotation = PreferencesUtils.getFloat(mContext, "myRotation", 0);
+    }
+
+    /**
+     * 画笔
+     */
+    private void setPaint() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(5f);
         mPaint.setTextSize(30);
         mPaint.setColor(Color.rgb(255, 203, 15));
         mPaint.setTextAlign(Paint.Align.LEFT);
-
-        basePosX = (int) (screenW * 0.3);
-        basePosY = (int) (screenH * 0.7);
-
-        originSpot = new Spot(basePosX, basePosY);
-        levelSpot = new Spot(originSpot.getX() + carWidth, originSpot.getY());
-        //基座
-        armBaseBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_base);
-
-        carWidth = armBaseBitmap.getWidth() * 2;
-        carHeight = armBaseBitmap.getHeight() / 3;
-
-        groundY = (int) (originSpot.getY() + armBaseBitmap.getHeight() * 5 / 6 + carHeight);
-
-        leftBase = (int) (originSpot.getX() - armBaseBitmap.getWidth() * 2 / 3);
-        topBase = (int) (originSpot.getY() - armBaseBitmap.getHeight() / 6);
-        rightBase = (int) (originSpot.getX() + armBaseBitmap.getWidth() / 3);
-        bottomBase = (int) (originSpot.getY() + armBaseBitmap.getHeight() * 5 / 6);
-        mArmBaseDestRect = new Rect(leftBase, topBase, rightBase, bottomBase);
-
-        //第一条机械臂
-        armFirstBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_first);
-        //第二条机械臂
-        armSecondBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_second);
-        //第三条机械臂
-        armEndBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_end);
-
-        resetBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.ic_recovery);
-
-        firstDegreeMax = 60;
-        firstDegreeMin = 15;
-        secondDegreeMax = 180;
-        secondDegreeMin = 100;
-        endDegreeMax = 180;
-        endDegreeMin = 45;
-
-        mFirstMatrix = new Matrix();
-        mSecondMatrix = new Matrix();
-        mEndMatrix = new Matrix();
-
-        r0 = armFirstBitmap.getHeight() * 4 / 5 - armSecondBitmap.getWidth() / 2;
-        r1 = armSecondBitmap.getHeight() * 8 / 9 - armEndBitmap.getWidth() / 2;
-        r2 = armEndBitmap.getHeight() - armEndBitmap.getWidth();
-
-        firstSpot = takeForKey("firstSpot");
-        if(firstSpot == null) {
-            firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
-                    basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
-        }
-
-        secondSpot = firstSpot;
-
-        endingSpot = takeForKey("endingSpot");
-        if(endingSpot == null) {
-            endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
-                    firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
-        }
-
-        touchSpot = takeForKey("touchSpot");
-        if(touchSpot == null) {
-            touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
-        }
-
-        mySpot = new Spot(0, 0);
-
-        shortProportion = 12.5 / 48.5;
-        longProportion = 46.5 / 48.5;
-
-        double d1 = r0 / 48.5 * 16.5;
-        double d2 = r0 / 48.5 * 14;
-
-        triangleSpot = belowLinePoint(originSpot, firstSpot, r0 * longProportion, r0 * shortProportion);
-
-        braceSpot = new Spot((int) (originSpot.getX() + d1), (int) (originSpot.getY() + Math.sqrt(d1 * d1 - d2 * d2)));
-        originalBraceDistance = getDistance(braceSpot, triangleSpot);
-
-        firstSpotTail = angleAcquisitionPoint(originSpot, firstSpot, degreeToRadian(firstDegreeMax - firstDegreeMin));
-
-        mRotation1 = PreferencesUtils.getFloat(mContext, "mRotation1", 0);
-        mRotation2 = PreferencesUtils.getFloat(mContext, "mRotation2", 0);
-        mRotation3 = PreferencesUtils.getFloat(mContext, "mRotation3", 0);
-        myRotation = PreferencesUtils.getFloat(mContext, "myRotation", 0);
     }
 
-    private Spot belowLinePoint(Spot spot1, Spot spot2, double r1, double r2) {
-        double[] intersectionTriangle = circleCircleIntersection(spot1, spot2, r1, r2);
-        if(intersectionTriangle != null) {
+    /**
+     * 加载bitmap
+     */
+    private void loadBitmap() {
+        armBBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_base);
+        armFBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_first);
+        armSBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_second);
+        armEBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.arm_end);
+        resetBitmap = BitmapFactory.decodeResource(mSurfaceView.getResources(), R.mipmap.ic_recovery);
+    }
+
+    /**
+     * 定义基础位置
+     */
+    private void setBasePos(int screenW, int screenH) {
+        basePosX = (int) (screenW * 0.3);
+        basePosY = (int) (screenH * 0.7);
+        baseSpot = new Spot(basePosX, basePosY);
+        //地盘车
+        carW = armBBitmap.getWidth() * 2;
+        carH = armBBitmap.getHeight() / 3;
+
+        levelSpot = new Spot(basePosX + carW, basePosY);
+
+        groundY = (int) (basePosY + armBBitmap.getHeight() * 7 / 6);
+
+        leftBase = (int) (basePosX - armBBitmap.getWidth() * 2 / 3);
+        topBase = (int) (basePosY - armBBitmap.getHeight() / 6);
+        rightBase = (int) (basePosX + armBBitmap.getWidth() / 3);
+        bottomBase = (int) (basePosY + armBBitmap.getHeight() * 5 / 6);
+        mArmBaseDestRect = new Rect(leftBase, topBase, rightBase, bottomBase);
+    }
+
+    /**
+     * 获取半径
+     */
+    private void loadRadius() {
+        rF = armFBitmap.getHeight() * 4 / 5 - armSBitmap.getWidth() / 2;
+        rS = armSBitmap.getHeight() * 8 / 9 - armEBitmap.getWidth() / 2;
+        rE = armEBitmap.getHeight() - armEBitmap.getWidth();
+    }
+
+    /**
+     * 获取第一条线两点位置
+     */
+    private void definitionF() {
+        startFSpot = takeForKey("startFSpot");
+        endFSpot = takeForKey("endFSpot");
+        if (startFSpot == null) {
+            startFSpot = baseSpot;
+        }
+        if (endFSpot == null) {
+            endFSpot = new Spot(basePosX + rF * Math.cos(degreeToRadian(degreeFMax)), basePosY - rF * Math.sin(degreeToRadian(degreeFMax)));
+        }
+        fYSpot = new Spot(startFSpot.getX(), startFSpot.getY() - rF);
+    }
+
+    /**
+     * 获取第二条线两点位置
+     */
+    private void definitionS() {
+        startSSpot = takeForKey("startSSpot");
+        endSSpot = takeForKey("endSSpot");
+        if (startSSpot == null) {
+            startSSpot = new Spot(basePosX + rF * Math.cos(degreeToRadian(degreeFMax)),
+                    basePosY - rF * Math.sin(degreeToRadian(degreeFMax)));
+            ;
+        }
+        if (endSSpot == null) {
+            endSSpot = new Spot(startSSpot.getX() + rS * Math.sin(degreeToRadian(270 - degreeSMax - degreeFMax)),
+                    startSSpot.getY() - rS * Math.cos(degreeToRadian(270 - degreeSMax - degreeFMax)));
+        }
+        sYSpot = new Spot(startSSpot.getX(), startSSpot.getY() - rS);
+    }
+
+    /**
+     * 获取第三条线上两点位置
+     */
+    private void definitionE() {
+        startESpot = takeForKey("startESpot");
+        if (startESpot == null) {
+            startESpot = new Spot(endFSpot.getX() + rS * Math.sin(degreeToRadian(270 - degreeSMax - degreeFMax)),
+                    endFSpot.getY() - rS * Math.cos(degreeToRadian(270 - degreeSMax - degreeFMax)));
+        }
+        endESpot = takeForKey("endESpot");
+        if (endESpot == null) {
+            endESpot = new Spot(endFSpot.getX() + rS * Math.sin(degreeToRadian(270 - degreeSMax - degreeFMax)) + rE,
+                    endFSpot.getY() - rS * Math.cos(degreeToRadian(270 - degreeSMax - degreeFMax)));
+        }
+        eYSpot = new Spot(startESpot.getX(), startESpot.getY() - rE);
+    }
+
+    /**
+     * 计算第一条臂所推的长度
+     */
+    private void definitionPushAAndBrace() {
+        //计算三角形中推点的位置
+        pushSpot = belowLinePoint(startFSpot, endFSpot, rF * longProportion, rF * shortProportion);
+
+        braceSpot = new Spot((int) (startFSpot.getX() + rF * braceXProportion),
+                (int) (baseSpot.getY() + Math.sqrt(rF * rF * braceXProportion * braceXProportion
+                        - rF * rF * braceYProportion * braceYProportion)));
+        originalBraceDistance = getDistance(braceSpot, pushSpot);
+
+        firstSpotTail = angleRotatePoint(baseSpot, endFSpot, degreeToRadian(degreeFMax - degreeFMin));
+    }
+
+    /**
+     * 由点计算角度
+     */
+    private void computeRotate() {
+        rotateF = 90 - radianToDegree(pointYAngle(startFSpot, endFSpot));
+        if(startSSpot.getY() > endSSpot.getY()) {
+            rotateS = 90 - radianToDegree(pointYAngle(startSSpot, endSSpot));
+        }else if(startSSpot.getY() < endSSpot.getY()){
+            rotateS = 90 + radianToDegree(pointYAngle(startSSpot, endSSpot));
+        }else{
+            rotateS = 90;
+        }
+        if(startESpot.getY() > endESpot.getY()) {
+            rotateE = 90 - radianToDegree(pointYAngle(startESpot, endESpot));
+        }else if(startESpot.getY() < endESpot.getY()){
+            rotateE = 90 + radianToDegree(pointYAngle(startESpot, endESpot));
+        }else{
+            rotateE = 90;
+        }
+        Print.e("rotateF : " + rotateF + ", rotateS : " + rotateS + ", rotateE : " + rotateE);
+    }
+
+    /**
+     * 由角度计算各个点的位置
+     */
+    public void calculationPointFromAngle(double rotateF, double rotateS, double rotateE) {
+        startFSpot = baseSpot;
+        fYSpot = new Spot(startFSpot.getX(), startFSpot.getY() - rF);
+        endFSpot = angleRotatePoint(startFSpot, fYSpot, degreeToRadian(rotateF));
+        startSSpot = endFSpot;
+        sYSpot = new Spot(startSSpot.getX(), startSSpot.getY() - rS);
+        endSSpot = angleRotatePoint(startSSpot, sYSpot, degreeToRadian(rotateS));
+        startESpot = endSSpot;
+        eYSpot = new Spot(startESpot.getX(), startESpot.getY() - rE);
+        endESpot = angleRotatePoint(startESpot, eYSpot, degreeToRadian(rotateE));
+    }
+
+    /**
+     * 两个圆相交，xy都取大的
+     */
+    private Spot belowLinePoint(Spot spot1, Spot spot2, double rS, double rE) {
+        double[] intersectionTriangle = circleCircleIntersection(spot1, spot2, rS, rE);
+        if (intersectionTriangle != null) {
             float[] intersectionFloatTriangle = new float[4];
             for (int i = 0; i < intersectionTriangle.length; i++) {
                 BigDecimal b = new BigDecimal(Double.toString(intersectionTriangle[i]));
@@ -248,7 +348,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             }
             return new Spot(intersectionFloatTriangle[0] > intersectionFloatTriangle[2] ? intersectionFloatTriangle[0] : intersectionFloatTriangle[2],
                     intersectionFloatTriangle[1] > intersectionFloatTriangle[3] ? intersectionFloatTriangle[1] : intersectionFloatTriangle[3]);
-        }else{
+        } else {
             return null;
         }
     }
@@ -258,72 +358,60 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      *
      * @param canvas
      */
-    private void drawSpot(Canvas canvas, double rotation1, double rotation2, double rotation3, boolean isCorrect) {
+    private void drawSpot(Canvas canvas) {
 
-        if (isCorrect) {
-
-            mRotation1 = (float) (mRotation1 + radianToDegree(rotation1));
-            mRotation2 = (float) (mRotation2 + radianToDegree(rotation2));
-            mRotation3 = (float) (mRotation3 + radianToDegree(rotation3));
-            myRotation = myRotation + rotation3;
-        }
-
+        //绘制重置
         canvas.drawBitmap(resetBitmap, 10, 10, mPaint);
-
+        //绘制地盘车
         mPaint.setColor(Color.MAGENTA);
-//        canvas.drawRect((float) leftBase, (float) topBase + armBaseBitmap.getHeight(),
-//                (float) rightBase + carWidth, (float) bottomBase + carHeight, mPaint);
-
-//        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) triangleSpot.getX(), (float) triangleSpot.getY(), mPaint);
-        //画基座
+        canvas.drawRect((float) leftBase, (float) topBase + armBBitmap.getHeight(),
+                (float) rightBase + carW, (float) bottomBase + carH, mPaint);
+        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) pushSpot.getX(), (float) pushSpot.getY(), mPaint);
+        //绘制基座
         mPaint.setColor(Color.WHITE);
-        canvas.drawBitmap(armBaseBitmap, null, mArmBaseDestRect, mPaint);
-//        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
-
+        canvas.drawBitmap(armBBitmap, null, mArmBaseDestRect, mPaint);
+        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
         //画第一条
         mPaint.setColor(Color.BLUE);
-        mFirstMatrix.reset();
-        float dxFirst = (float) (originSpot.getX() - armFirstBitmap.getWidth() / 2);
-        float dyFirst = (float) (originSpot.getY() - armFirstBitmap.getHeight() * 4 / 5);
-        mFirstMatrix.postTranslate(dxFirst, dyFirst);
-        float pxFirst = (float) originSpot.getX();
-        float pyFirst = (float) originSpot.getY();
-        mFirstMatrix.postRotate(mRotation1, pxFirst, pyFirst);
-        canvas.drawBitmap(armFirstBitmap, mFirstMatrix, mPaint);
-//        canvas.drawCircle(pxFirst, pyFirst, r0, mPaint);
-//        canvas.drawLine(pxFirst, pyFirst, (float) firstSpot.getX(), (float) firstSpot.getY(), mPaint);
-
+        mFMatrix.reset();
+        float dxFirst = (float) (startFSpot.getX() - armFBitmap.getWidth() / 2);
+        float dyFirst = (float) (startFSpot.getY() - armFBitmap.getHeight() * 4 / 5);
+        mFMatrix.postTranslate(dxFirst, dyFirst);
+        float pxFirst = (float) startFSpot.getX();
+        float pyFirst = (float) startFSpot.getY();
+        mFMatrix.postRotate((float) rotateF, pxFirst, pyFirst);
+        canvas.drawBitmap(armFBitmap, mFMatrix, mPaint);
+        canvas.drawCircle(pxFirst, pyFirst, rF, mPaint);
+        canvas.drawLine(pxFirst, pyFirst, (float) endFSpot.getX(), (float) endFSpot.getY(), mPaint);
         //画第二条
         mPaint.setColor(Color.RED);
-        mSecondMatrix.reset();
-        float dxSecond = (float) (secondSpot.getX() - armSecondBitmap.getWidth() / 2);
-        float dySecond = (float) (secondSpot.getY() - armSecondBitmap.getHeight() * 8 / 9);
-        mSecondMatrix.postTranslate(dxSecond, dySecond);
-        float pxSecond = (float) secondSpot.getX();
-        float pySecond = (float) secondSpot.getY();
-        mSecondMatrix.postRotate(mRotation2, pxSecond, pySecond);
-        canvas.drawBitmap(armSecondBitmap, mSecondMatrix, mPaint);
-//        canvas.drawCircle(pxSecond, pySecond, r1, mPaint);
-//        canvas.drawCircle((float) basePosX, (float) basePosY, rtouch, mPaint);
-//        canvas.drawLine(pxSecond, pySecond, (float) endingSpot.getX(), (float) endingSpot.getY(), mPaint);
-
+        mSMatrix.reset();
+        float dxSecond = (float) (startSSpot.getX() - armSBitmap.getWidth() / 2);
+        float dySecond = (float) (startSSpot.getY() - armSBitmap.getHeight() * 8 / 9);
+        mSMatrix.postTranslate(dxSecond, dySecond);
+        float pxSecond = (float) startSSpot.getX();
+        float pySecond = (float) startSSpot.getY();
+        mSMatrix.postRotate((float) rotateS, pxSecond, pySecond);
+        canvas.drawBitmap(armSBitmap, mSMatrix, mPaint);
+        canvas.drawCircle(pxSecond, pySecond, rS, mPaint);
+        canvas.drawLine(pxSecond, pySecond, (float) endSSpot.getX(), (float) endSSpot.getY(), mPaint);
         //画第三条
         mPaint.setColor(Color.GREEN);
-        mEndMatrix.reset();
-        float dxEnd = (float) (endingSpot.getX() - armEndBitmap.getWidth() / 2);
-        float dyEnd = (float) (endingSpot.getY() - armEndBitmap.getHeight() * 14 / 16);
-        mEndMatrix.postTranslate(dxEnd, dyEnd);
-        float pxEnd = (float) endingSpot.getX();
-        float pyEnd = (float) endingSpot.getY();
-        mEndMatrix.postRotate(mRotation3, pxEnd, pyEnd);
-        canvas.drawBitmap(armEndBitmap, mEndMatrix, mPaint);
-//        canvas.drawCircle(pxEnd, pyEnd, r2, mPaint);
-//        canvas.drawLine(pxEnd, pyEnd, (float) touchSpot.getX(), (float) touchSpot.getY(), mPaint);
+        mEMatrix.reset();
+        float dxEnd = (float) (startESpot.getX() - armEBitmap.getWidth() / 2);
+        float dyEnd = (float) (startESpot.getY() - armEBitmap.getHeight() * 14 / 16);
+        mEMatrix.postTranslate(dxEnd, dyEnd);
+        float pxEnd = (float) startESpot.getX();
+        float pyEnd = (float) startESpot.getY();
+        mEMatrix.postRotate((float) rotateE, pxEnd, pyEnd);
+        canvas.drawBitmap(armEBitmap, mEMatrix, mPaint);
+        canvas.drawCircle(pxEnd, pyEnd, rE, mPaint);
+        canvas.drawLine(pxEnd, pyEnd, (float) endESpot.getX(), (float) endESpot.getY(), mPaint);
 
         mPaint.setColor(Color.YELLOW);
-        mySpot.setX(endingSpot.getX());
-        mySpot.setY(endingSpot.getY() - r2);
-        mySpot = angleAcquisitionPoint(endingSpot, mySpot, myRotation);
+//        mySpot.setX(startESpot.getX());
+//        mySpot.setY(startESpot.getY() - rE);
+//        mySpot = angleAcquisitionPoint(startESpot, mySpot, myRotation);
 //        canvas.drawCircle((float) mySpot.getX(), (float) mySpot.getY(), 50, mPaint);
 
         mPaint.setColor(Color.BLACK);
@@ -332,320 +420,243 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         isDrawing = false;
     }
 
-    private void drawSpot(Canvas canvas, Spot spot) {
-        if (spot == null) {
-            if(PreferencesUtils.getBoolean(mContext, "drawIsFirst")) {
+    /**
+     * 备份6个点
+     */
+    private void backupSpot() {
+        startFSpotTemp = startFSpot;
+        endFSpotTemp = endFSpot;
+        startSSpotTemp = startSSpot;
+        endSSpotTemp = endSSpot;
+        startESpotTemp = startESpot;
+        endESpotTemp = endESpot;
+    }
 
-                drawSpot(canvas, 0, 0, 0, false);
-            }else{
-                drawSpot(canvas, degreeToRadian(90 - firstDegreeMax), degreeToRadian(90 - firstDegreeMax), Math.PI / 2, true);
-            }
-            return;
-        }
-        mCallRotation1 = 0.0;
-        mCallRotation2 = 0.0;
-        mCallRotation3 = 0.0;
+    private void reductionSpot() {
+          startFSpot=startFSpotTemp;
+          endFSpot=endFSpotTemp;
+          startSSpot=startSSpotTemp;
+          endSSpot=endSSpotTemp;
+          startESpot=startESpotTemp;
+         endESpot=endESpotTemp;
+    }
 
-        Spot temporaryFirstSpot = firstSpot;
-        Spot temporarySecondSpot = secondSpot;
-        Spot temporaryendingSpot = endingSpot;
-        Spot temporaryTouchSpot = touchSpot;
-        Spot temporaryMySpot = mySpot;
-        double temporaryRotation = myRotation;
 
-        double rotation1 = 0.0;
-        double rotation2 = 0.0;
-        double rotation3 = 0.0;
-        //点击的点到第三条线末端的位置
-        double distanceTouch = getDistance(spot, touchSpot);
-        //点击的点到第二个圆中心点的距离
-        double distanceMax = getDistance(spot, secondSpot);
-        //点击的点到第三个圆的中心的距离
-        double distanceEnd = getDistance(spot, endingSpot);
-
+    private void touchE() {
         //触摸点再第三条线的触摸范围之内，且再最大半径以内
-        if (distanceTouch < rtouch && distanceMax < r1 + r2 && distanceMax > rtouch) {
-            //计算以第二圆和第三圆的交点
-            double[] intersection = circleCircleIntersection(secondSpot, spot, r1, r2);
-            if (intersection == null) {
-                System.err.println("intersection null");
-                return;
-            }
-            //double转换成float
-            float[] intersectionFloat = new float[4];
-            for (int i = 0; i < intersection.length; i++) {
-                BigDecimal b = new BigDecimal(Double.toString(intersection[i]));
-                intersectionFloat[i] = b.floatValue();
-            }
-            //得到两个点的坐标值
-            Spot spot1 = new Spot(intersectionFloat[0], intersectionFloat[1]);
-            Spot spot2 = new Spot(intersectionFloat[2], intersectionFloat[3]);
-            //得到两点到上一次交点的距离
-            double distance1 = getDistance(spot1, endingSpot);
-            double distance2 = getDistance(spot2, endingSpot);
-            //判断距离，取最小值
-            if (distance1 > distance2) {
-                endingSpot = spot2;
-            } else {
-                endingSpot = spot1;
-            }
+        //计算以第二圆和第三圆的交点
+        double[] intersection = circleCircleIntersection(startSSpot, endESpot, rS, rE);
+        if (intersection == null) {
+            return;
+        }
+        //double转换成float
+        float[] intersectionFloat = new float[4];
+        for (int i = 0; i < intersection.length; i++) {
+            BigDecimal b = new BigDecimal(Double.toString(intersection[i]));
+            intersectionFloat[i] = b.floatValue();
+        }
+        //得到两个点的坐标值
+        Spot spot1 = new Spot(intersectionFloat[0], intersectionFloat[1]);
+        Spot spot2 = new Spot(intersectionFloat[2], intersectionFloat[3]);
+        //得到两点到上一次交点的距离
+        double distance1 = getDistance(spot1, endSSpot);
+        double distance2 = getDistance(spot2, endSSpot);
+        //判断距离，取最小值
+        if (distance1 > distance2) {
+            endSSpot = spot2;
+        } else {
+            endSSpot = spot1;
+        }
+        startESpot = endSSpot;
+    }
 
-            rotation2 = pointAcquisitionAngle(secondSpot, temporaryendingSpot, endingSpot);
-            rotation2 = positiveNegative(secondSpot, temporaryendingSpot, endingSpot) ? rotation2 : -rotation2;
+    private void touchFe(Spot spot) {
 
-            rotation3 = pointCrossAngle(temporaryendingSpot, temporaryTouchSpot, endingSpot, spot);
+        //触摸点到中心点的距离
+        double distance = getDistance(startFSpot, spot);
+        //由触摸点得到在中心圆上实际点的坐标
+        Spot temporarySpot = getOuterCircle(startFSpot, distance, rF, spot);
+        //由中心圆实际点的坐标计算出应该旋转的角度
+        double rotation = pointAcquisitionAngle(startFSpot, endFSpot, temporarySpot);
+        //判断触摸的方向
+        int orientation = getOrientation(spot.getX() - endFSpot.getX(), spot.getY() - endFSpot.getY());
+        //判断旋转方向
+        rotation = rotationDirection(spot, startFSpot, endFSpot, rotation, orientation);
 
-            mySpot.setX(endingSpot.getX());
-            mySpot.setY(endingSpot.getY() - r2);
-            mySpot = angleAcquisitionPoint(endingSpot, mySpot, rotation3 + myRotation);
-            double distanceCheck1 = getDistance(spot, mySpot);
+        //由角度计算出个点位置
+        endFSpot = angleRotatePoint(startFSpot, endFSpot, rotation);
+        startSSpot = angleRotatePoint(startFSpot, startSSpot, rotation);
+        endSSpot = angleRotatePoint(startFSpot, endSSpot, rotation);
+        startESpot = angleRotatePoint(startFSpot, startESpot, rotation);
+        endESpot = angleRotatePoint(startFSpot, endESpot, rotation);
 
-            myRotation = temporaryRotation;
-            mySpot.setX(endingSpot.getX());
-            mySpot.setY(endingSpot.getY() - r2);
-            mySpot = angleAcquisitionPoint(endingSpot, mySpot, -rotation3 + myRotation);
+    }
 
-            double distanceCheck2 = getDistance(spot, mySpot);
-            if (distanceCheck1 < distanceCheck2) {
-                rotation3 = rotation3;
-            } else {
-                rotation3 = -rotation3;
-            }
-            touchSpot = spot;
+    private void touchEe(Spot spot) {
+        //触摸点到中心点的距离
+        double distanceb = getDistance(startSSpot, spot);
+        //由触摸点得到在中心圆上实际点的坐标
+        Spot temporarySpot = getOuterCircle(startSSpot, distanceb, rS, spot);
+        //由中心圆实际点的坐标计算出应该旋转的角度
+        double rotation = pointAcquisitionAngle(startSSpot, endSSpot, temporarySpot);
+        //判断触摸的方向
+        int orientation = getOrientation(spot.getX() - endSSpot.getX(), spot.getY() - endSSpot.getY());
+        //判断旋转方向
+        rotation = rotationDirection(spot, startSSpot, endSSpot, rotation, orientation);
 
-            mCallRotation1 = rotation1;
-            mCallRotation2 = rotation2;
-            mCallRotation3 = rotation3;
+        //由角度计算出个点位置
+        startESpot = angleRotatePoint(startSSpot, startESpot, rotation);
+        endESpot = angleRotatePoint(startSSpot, endESpot, rotation);
 
-        } else if (distanceMax > r1 + r2 && distanceMax < r1 + r2 + rtouch) {//触摸点再最大半径之外再可控范围之内
+        endSSpot = startESpot;
+    }
 
 
-            //交点 同心圆坐标求解
-            double distance = getDistance(spot, secondSpot);
-            endingSpot = getOuterCircle(secondSpot, distance, r1, spot);
+    private void drawSpot(Canvas canvas, Spot spot) {
+        backupSpot();
+        //点击的点到第三条线末端的位置
+        double distanceTouch = getDistance(spot, endESpot);
+        //点击的点到第二个圆中心点的距离
+        double distanceMax = getDistance(spot, startSSpot);
+        //点击的点到第三个圆的中心的距离
+        double distanceEnd = getDistance(spot, startESpot);
+        //触摸点再第三条线的触摸范围之内，且再最大半径以内
+        if (distanceTouch < rtouch && distanceMax < rS + rE && distanceMax > rtouch) {
+            endESpot = spot;
+            touchE();
+
+        } else if (distanceMax > rS + rE && distanceMax < rS + rE + rtouch) {//触摸点再最大半径之外再可控范围之内
+
+            //触摸点到第二个圆心点的距离
+            double distance = getDistance(spot, startSSpot);
+            //计算第二线的结束点位置
+            endSSpot = getOuterCircle(startSSpot, distance, rS, spot);
+            startESpot = endSSpot;
             //尾点
-            touchSpot = getOuterCircle(secondSpot, r1, r2 + r1, endingSpot);
+            endESpot = getOuterCircle(startSSpot, rS, rE + rS, startESpot);
 
-            rotation2 = pointAcquisitionAngle(secondSpot, temporaryendingSpot, endingSpot);
-            rotation2 = positiveNegative(secondSpot, temporaryendingSpot, endingSpot) ? rotation2 : -rotation2;
+        } else if (distanceMax < rtouch) {//第一条线的末点
 
-            rotation3 = pointCrossAngle(temporaryendingSpot, temporaryTouchSpot, endingSpot, touchSpot);
+            touchFe(spot);
+        } else if (distanceEnd < rtouch) {
 
-            mySpot.setX(endingSpot.getX());
-            mySpot.setY(endingSpot.getY() - r2);
-            mySpot = angleAcquisitionPoint(endingSpot, mySpot, rotation3 + myRotation);
-            double distanceCheck1 = getDistance(touchSpot, mySpot);
-
-            myRotation = temporaryRotation;
-            mySpot.setX(endingSpot.getX());
-            mySpot.setY(endingSpot.getY() - r2);
-            mySpot = angleAcquisitionPoint(endingSpot, mySpot, -rotation3 + myRotation);
-
-            double distanceCheck2 = getDistance(touchSpot, mySpot);
-            if (distanceCheck1 < distanceCheck2) {
-                myRotation = temporaryRotation;
-                rotation3 = rotation3;
-            } else {
-                myRotation = temporaryRotation;
-                rotation3 = -rotation3;
-            }
-
-            mCallRotation1 = rotation1;
-            mCallRotation2 = rotation2;
-            mCallRotation3 = rotation3;
-
-        } else if (distanceMax < rtouch) {//接近第二个圆  no
-
-            if(firstSpotTail.getY() < spot.getY()){
-                spot = firstSpotTail;
-            }else {
-
-                //触摸点到中心点的距离
-                double distanceb = getDistance(originSpot, spot);
-                //由触摸点得到在中心圆上实际点的坐标
-                Spot temporarySpot = getOuterCircle(originSpot, distanceb, r0, spot);
-                //由中心圆实际点的坐标计算出应该旋转的角度
-                double rotation = pointAcquisitionAngle(originSpot, firstSpot, temporarySpot);
-                //触摸点与原点的差值
-                double dx = spot.getX() - firstSpot.getX();
-                double dy = spot.getY() - firstSpot.getY();
-                //差值大于1再进行判断
-                if (Math.abs(dx) > 1 && Math.abs(dy) > 1) {
-                    //判断触摸的方向
-                    int orientation = getOrientation(dx, dy);
-                    //判断旋转方向
-                    rotation = rotationDirection(spot, originSpot, firstSpot, rotation, orientation);
-
-                    //由角度计算出个点位置
-//                Spot testSpor = angleAcquisitionPoint(originSpot, firstSpot, degreeToRadian(5));
-                    firstSpot = angleAcquisitionPoint(originSpot, firstSpot, rotation);
-                    secondSpot = angleAcquisitionPoint(originSpot, secondSpot, rotation);
-                    endingSpot = angleAcquisitionPoint(originSpot, endingSpot, rotation);
-                    touchSpot = angleAcquisitionPoint(originSpot, touchSpot, rotation);
-
-                    rotation1 = rotation;
-                    rotation2 = rotation;
-                    rotation3 = rotation;
-
-                    mCallRotation1 = rotation1;
-                    mCallRotation2 = 0.0;
-                    mCallRotation3 = 0.0;
-                }
-            }
-        }else if(distanceEnd < rtouch){
-
-            //触摸点到中心点的距离
-            double distanceb = getDistance(firstSpot, spot);
-            //由触摸点得到在中心圆上实际点的坐标
-            Spot temporarySpot = getOuterCircle(firstSpot, distanceb, r1, spot);
-            //由中心圆实际点的坐标计算出应该旋转的角度
-            double rotation = pointAcquisitionAngle(firstSpot, endingSpot, temporarySpot);
-            //触摸点与原点的差值
-            double dx = spot.getX() - endingSpot.getX();
-            double dy = spot.getY() - endingSpot.getY();
-            //差值大于1再进行判断
-            if (Math.abs(dx) > 1 && Math.abs(dy) > 1) {
-                //判断触摸的方向
-                int orientation = getOrientation(dx, dy);
-                //判断旋转方向
-                rotation = rotationDirection(spot, firstSpot, endingSpot, rotation, orientation);
-                //由角度计算出个点位置
-                secondSpot = angleAcquisitionPoint(firstSpot, secondSpot, rotation);
-                endingSpot = angleAcquisitionPoint(firstSpot, endingSpot, rotation);
-                touchSpot = angleAcquisitionPoint(firstSpot, touchSpot, rotation);
-
-                rotation2 = rotation;
-                rotation3 = rotation;
-
-                mCallRotation1 = 0.0;
-                mCallRotation2 = rotation2;
-                mCallRotation3 = 0.0;
-            }
+            touchEe(spot);
         }
-        myRotation = temporaryRotation;
-        mySpot = temporaryMySpot;
 
-        if(touchSpot.getX() < rightBase + carWidth){
-            if(pointToYDistance(touchSpot.getY(), topBase + armBaseBitmap.getHeight())) {
-                firstSpot = temporaryFirstSpot;
-                secondSpot = temporarySecondSpot;
-                endingSpot = temporaryendingSpot;
-                touchSpot = temporaryTouchSpot;
-                drawSpot(canvas, 0, 0, 0, false);
+        if (endESpot.getX() < rightBase + carW) {
+            if (pointToYDistance(endESpot.getY(), topBase + armBBitmap.getHeight())) {
+                reductionSpot();
+                computeRotate();
+                drawSpot(canvas);
                 return;
             }
         }
+        if (cannotTouchLand(canvas)) return;
 
-        if (pointToYDistance(touchSpot.getY(), groundY)) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
+        if (judgeF(canvas)) return;
+        if (judgeS(canvas)) return;
+        if (judgeE(canvas)) return;
+
+
+//        pushSpot = belowLinePoint(baseSpot, endFSpot, rF * longProportion, rF * shortProportion);
+//        double braceDistance = getDistance(braceSpot, pushSpot);
+//        double changeCistance = originalBraceDistance - braceDistance;
+//        originalBraceDistance = braceDistance;
+//
+//
+//        if (mDrawInterface != null) {
+//            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance * 48.5 / rF);
+//        }
+        computeRotate();
+        drawSpot(canvas);
+    }
+
+    private boolean judgeE(Canvas canvas) {
+        //secondSpot连接endingSpot的直线在圆心为endingSpot上的交点
+        Spot endNeedleSpotRes = lineCircleIntersection(startESpot,
+                new Spot(startSSpot.getX(), 2 * startESpot.getY() - startSSpot.getY()), rE);
+        Spot endNeedleSpotRes0 = new Spot(endNeedleSpotRes.getX(),
+                startESpot.getY() - (endNeedleSpotRes.getY() - startESpot.getY()));
+        if (endNeedleSpotRes0.getX() > startSSpot.getX() && endNeedleSpotRes0.getY() < startSSpot.getY()
+                && endESpot.getX() > startSSpot.getX() && endESpot.getY() < startSSpot.getY()) {
+            if (endNeedleSpotRes0.getX() > endESpot.getX()) {
+                reductionSpot();
+                computeRotate();
+                drawSpot(canvas);
+                return true;
+            }
         }
 
-        if (pointToYDistance(endingSpot.getY(), groundY)) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
+        Spot endNeedleSpotRes65 = angleRotatePoint(startESpot, endNeedleSpotRes0, degreeToRadian((degreeEMax - degreeEMin) / 2));
+        double endDegree = radianToDegree(pointAcquisitionAngle(startESpot, endESpot, endNeedleSpotRes65));
+        if (endDegree > (degreeEMax - degreeEMin) / 2) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
         }
+        return false;
+    }
 
-        if (pointToYDistance(secondSpot.getY(), groundY)) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-
-        if (pointToYDistance(firstSpot.getY(), groundY)) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-
-        double firstDegree = radianToDegree(pointAcquisitionAngle(originSpot, firstSpot, levelSpot));
-        if (firstDegree < firstDegreeMin) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-        if (firstDegree > firstDegreeMax + 1) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
-        }
-
+    private boolean judgeS(Canvas canvas) {
         //originSpot连接firstSpot的直线在圆心为secondSpot上的交点
-        Spot secondNeedleSpotRes = lineCircleIntersection(secondSpot,
-                new Spot(originSpot.getX(), 2 * secondSpot.getY() - originSpot.getY()), r1);
+        Spot secondNeedleSpotRes = lineCircleIntersection(startSSpot,
+                new Spot(startFSpot.getX(), 2 * startSSpot.getY() - startFSpot.getY()), rS);
         //android上准确点的位置
         Spot secondNeedleSpotRes0 = new Spot(secondNeedleSpotRes.getX(),
-                secondSpot.getY() - (secondNeedleSpotRes.getY() - secondSpot.getY()));
+                startSSpot.getY() - (secondNeedleSpotRes.getY() - startSSpot.getY()));
         //求出圆心secondSpot圆上点homeopathicNeedleSpotRes0顺时针旋转40度的点
-        Spot secondNeedleSpot40 = angleAcquisitionPoint(secondSpot, secondNeedleSpotRes0, degreeToRadian((secondDegreeMax - secondDegreeMin) / 2));
-        double secondDegree = radianToDegree(pointAcquisitionAngle(secondSpot, endingSpot, secondNeedleSpot40));
-        if (secondDegree > (secondDegreeMax - secondDegreeMin) / 2 + 1) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
+        Spot secondNeedleSpot40 = angleRotatePoint(startSSpot, secondNeedleSpotRes0, degreeToRadian((degreeSMax - degreeSMin) / 2));
+        double secondDegree = radianToDegree(pointAcquisitionAngle(startSSpot, startESpot, secondNeedleSpot40));
+        if (secondDegree > (degreeSMax - degreeSMin) / 2 + 1) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
         }
+        return false;
+    }
 
-        //secondSpot连接endingSpot的直线在圆心为endingSpot上的交点
-        Spot endNeedleSpotRes = lineCircleIntersection(endingSpot,
-                new Spot(secondSpot.getX(), 2 * endingSpot.getY() - secondSpot.getY()), r2);
-        Spot endNeedleSpotRes0 = new Spot(endNeedleSpotRes.getX(),
-                endingSpot.getY() - (endNeedleSpotRes.getY() - endingSpot.getY()));
-        if(endNeedleSpotRes0.getX() > secondSpot.getX() && endNeedleSpotRes0.getY() < secondSpot.getY()
-                && touchSpot.getX() > secondSpot.getX() && touchSpot.getY() < secondSpot.getY()){
-            if(endNeedleSpotRes0.getX() > touchSpot.getX()){
-                firstSpot = temporaryFirstSpot;
-                secondSpot = temporarySecondSpot;
-                endingSpot = temporaryendingSpot;
-                touchSpot = temporaryTouchSpot;
-                drawSpot(canvas, 0, 0, 0, false);
-                return;
-            }
+    private boolean judgeF(Canvas canvas) {
+        double firstDegree = radianToDegree(pointAcquisitionAngle(startFSpot, endFSpot, levelSpot));
+        if (firstDegree < degreeFMin) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
         }
-
-        Spot endNeedleSpotRes65 = angleAcquisitionPoint(endingSpot, endNeedleSpotRes0, degreeToRadian((endDegreeMax - endDegreeMin) / 2));
-        double endDegree = radianToDegree(pointAcquisitionAngle(endingSpot, touchSpot, endNeedleSpotRes65));
-        if (endDegree > (endDegreeMax - endDegreeMin) / 2) {
-            firstSpot = temporaryFirstSpot;
-            secondSpot = temporarySecondSpot;
-            endingSpot = temporaryendingSpot;
-            touchSpot = temporaryTouchSpot;
-            drawSpot(canvas, 0, 0, 0, false);
-            return;
+        if (firstDegree > degreeFMax + 1) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
         }
+        return false;
+    }
 
-        triangleSpot = belowLinePoint(originSpot, firstSpot, r0 * longProportion, r0 * shortProportion);;
-        double braceDistance = getDistance(braceSpot, triangleSpot);
-        double changeCistance = originalBraceDistance - braceDistance;
-        originalBraceDistance = braceDistance;
-
-
-        if (mDrawInterface != null) {
-            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance * 48.5/r0);
+    /**
+     * 不能触地
+     */
+    private boolean cannotTouchLand(Canvas canvas) {
+        if (pointToYDistance(endESpot.getY(), groundY)) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
         }
-        drawSpot(canvas, rotation1, rotation2, rotation3, true);
+        if (pointToYDistance(endSSpot.getY(), groundY)) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
+        }
+        if (pointToYDistance(endFSpot.getY(), groundY)) {
+            reductionSpot();
+            computeRotate();
+            drawSpot(canvas);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -695,8 +706,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                     try {
                         synchronized (mDrawingSurface) {
                             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
-                            drawSpot(canvas, null);
+                            drawSpot(canvas);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -735,15 +745,13 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     /**
      * 传入spot，绘制
-     *
-     * @param spot
      */
     public void setSpot(Spot spot) {
-        if(spot.getX() > 10 && spot.getX() < 10 + resetBitmap.getHeight() && spot.getY() > 10 && spot.getY() < 10 + resetBitmap.getHeight()) {
-            if(mDrawInterface != null) {
+        if (spot.getX() > 10 && spot.getX() < 10 + resetBitmap.getHeight() && spot.getY() > 10 && spot.getY() < 10 + resetBitmap.getHeight()) {
+            if (mDrawInterface != null) {
                 mDrawInterface.onReset();
             }
-        }else{
+        } else {
             if (!isDrawing) {
                 isDrawing = true;
                 // 通过 Message 参数将位置传给处理程序
@@ -753,30 +761,40 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         }
     }
 
-    public void setSpotUp(Spot spot){
+    public void setSpotUp(Spot spot) {
         setSpot(spot);
-        if(mDrawInterface != null){
+        if (mDrawInterface != null) {
             mDrawInterface.onMotionEventUp();
         }
     }
 
+    /**
+     * 重置
+     */
     public void reset() {
-        if(System.currentTimeMillis() - curTime > 500) {
+        if (System.currentTimeMillis() - curTime > 500) {
             curTime = System.currentTimeMillis();
 
-            firstSpot = new Spot(basePosX + r0 * Math.cos(degreeToRadian(firstDegreeMax)),
-                    basePosY - r0 * Math.sin(degreeToRadian(firstDegreeMax)));
-            secondSpot = firstSpot;
-            endingSpot = new Spot(firstSpot.getX() + r1 * Math.sin(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)),
-                    firstSpot.getY() - r1 * Math.cos(degreeToRadian(270 - secondDegreeMax - firstDegreeMax)));
-            touchSpot = new Spot(endingSpot.getX() + r2, endingSpot.getY());
-            mRotation1 = 0;
-            mRotation2 = 0;
-            mRotation3 = 0;
-            myRotation = 0;
-            PreferencesUtils.putBoolean(mContext, "drawIsFirst", false);
+            calculationPointFromAngle(30, 30, 90);
+            computeRotate();
             mReceiver.sendEmptyMessage(MSG_DRAW);
         }
+    }
+
+    /**
+     * 由角度绘制
+     */
+    public void onDrawAngle(double d1, double d2, double d3) {
+        calculationPointFromAngle(d1, d2, d3);
+        computeRotate();
+        mReceiver.sendEmptyMessage(MSG_DRAW);
+    }
+
+    public void onDrawF(double i) {
+        calculationPointFromAngle(rotateF + i, rotateS, rotateE);
+        computeRotate();
+        mReceiver.sendEmptyMessage(MSG_DRAW);
+
     }
 
     public void setDrawInterface(DrawInterface drawInterface) {
@@ -784,19 +802,15 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
     public void save() {
-        PreferencesUtils.putString(mContext, "firstSpot", GsonUtil.GsonString(firstSpot));
-        PreferencesUtils.putString(mContext, "endingSpot", GsonUtil.GsonString(endingSpot));
-        PreferencesUtils.putString(mContext, "touchSpot", GsonUtil.GsonString(touchSpot));
-
-        PreferencesUtils.putFloat(mContext, "mRotation1", mRotation1);
-        PreferencesUtils.putFloat(mContext, "mRotation2", mRotation2);
-        PreferencesUtils.putFloat(mContext, "mRotation3", mRotation3);
-        PreferencesUtils.putFloat(mContext, "myRotation", (float) myRotation);
-
-        PreferencesUtils.putBoolean(mContext, "drawIsFirst", true);
+        PreferencesUtils.putString(mContext, "startFSpot", GsonUtil.GsonString(startFSpot));
+        PreferencesUtils.putString(mContext, "endFSpot", GsonUtil.GsonString(endFSpot));
+        PreferencesUtils.putString(mContext, "startSSpot", GsonUtil.GsonString(startSSpot));
+        PreferencesUtils.putString(mContext, "endSSpot", GsonUtil.GsonString(endSSpot));
+        PreferencesUtils.putString(mContext, "startESpot", GsonUtil.GsonString(startESpot));
+        PreferencesUtils.putString(mContext, "endESpot", GsonUtil.GsonString(endESpot));
     }
 
-    public Spot takeForKey(String key){
+    public Spot takeForKey(String key) {
         return GsonUtil.GsonToBean(PreferencesUtils.getString(mContext, key), Spot.class);
     }
 
@@ -807,7 +821,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * @param spot2
      * @return
      */
-    private double[] circleCircleIntersection(Spot spot1, Spot spot2, double r1, double r2) {
+    private double[] circleCircleIntersection(Spot spot1, Spot spot2, double rS, double rE) {
 
         double x1 = spot1.getX();
         double y1 = spot1.getY();
@@ -823,11 +837,11 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         //如果 y1!=y2
         if (y1 != y2) {
             //为了方便代入
-            double A = (x1 * x1 - x2 * x2 + y1 * y1 - y2 * y2 + r2 * r2 - r1 * r1) / (2 * (y1 - y2));
+            double A = (x1 * x1 - x2 * x2 + y1 * y1 - y2 * y2 + rE * rE - rS * rS) / (2 * (y1 - y2));
             double B = (x1 - x2) / (y1 - y2);
             a = 1 + B * B;
             b = -2 * (x1 + (A - y1) * B);
-            c = x1 * x1 + (A - y1) * (A - y1) - r1 * r1;
+            c = x1 * x1 + (A - y1) * (A - y1) - rS * rS;
             //下面使用判定式 判断是否有解
             delta = b * b - 4 * a * c;
             if (delta > 0) {
@@ -844,10 +858,10 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             }
         } else if (x1 != x2) {
             //当y1=y2时，x的两个解相等
-            x_1 = x_2 = (x1 * x1 - x2 * x2 + r2 * r2 - r1 * r1) / (2 * (x1 - x2));
+            x_1 = x_2 = (x1 * x1 - x2 * x2 + rE * rE - rS * rS) / (2 * (x1 - x2));
             a = 1;
             b = -2 * y1;
-            c = y1 * y1 - r1 * r1 + (x_1 - x1) * (x_1 - x1);
+            c = y1 * y1 - rS * rS + (x_1 - x1) * (x_1 - x1);
             delta = b * b - 4 * a * c;
             if (delta > 0) {
                 y_1 = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
@@ -914,20 +928,20 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * 求穿过同心圆圆心的直线上同一侧的点的坐标，已知一点坐标
      *
      * @param origin 圆心坐标
-     * @param r1     已知坐标的圆的半径
-     * @param r2     未知坐标的圆的半径
+     * @param rS     已知坐标的圆的半径
+     * @param rE     未知坐标的圆的半径
      * @param spot   已知的坐标
      * @return 位置的坐标
      */
-    private Spot getOuterCircle(Spot origin, double r1, double r2, Spot spot) {
+    private Spot getOuterCircle(Spot origin, double rS, double rE, Spot spot) {
         double x = spot.getX();
         double y = spot.getY();
 
         double x1 = x - origin.getX();
         double y1 = y - origin.getY();
 
-        double x2 = x1 * r2 / r1;
-        double y2 = y1 * r2 / r1;
+        double x2 = x1 * rE / rS;
+        double y2 = y1 * rE / rS;
 
         return new Spot((float) x2 + origin.getX(), (float) y2 + origin.getY());
     }
@@ -967,6 +981,30 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             k2 = Integer.MAX_VALUE;
         }
         return Math.abs(Math.atan(Math.abs(k1 - k2) / (1 + k1 * k2)));
+
+    }
+
+    /**
+     * 直线与y轴的角度
+     */
+    private double pointYAngle(Spot spot0, Spot spot1) {
+
+        if (spot0 == null) {
+            return 0;
+        }
+        double x0 = spot0.getX();
+        double y0 = spot0.getY();
+        double x1 = spot1.getX();
+        double y1 = spot1.getY();
+
+        double k1;
+
+        if (x1 != x0) {
+            k1 = (y1 - y0) / (x1 - x0);
+        } else {
+            k1 = Integer.MAX_VALUE;
+        }
+        return Math.atan(Math.abs(k1));
 
     }
 
@@ -1100,10 +1138,10 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      *
      * @param spot0
      * @param spot1
-     * @param c
+     * @param c 弧度
      * @return
      */
-    private Spot angleAcquisitionPoint(Spot spot0, Spot spot1, double c) {
+    private Spot radianRotatePoint(Spot spot0, Spot spot1, double c) {
 
         double x0 = spot0.getX();
         double y0 = spot0.getY();
@@ -1116,18 +1154,23 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
     /**
-     * 手指触摸的方位
      *
-     * @param dx
-     * @param dy
+     * @param spot0
+     * @param spot1
+     * @param c 角度
      * @return
      */
-    private int getOrientation(double dx, double dy) {
-        if (Math.abs(dx) < Math.abs(dy)) {
-            return dy > 0 ? 'b' : 't';
-        } else {
-            return dx > 0 ? 'r' : 'l';
-        }
+    private Spot angleRotatePoint(Spot spot0, Spot spot1, double c) {
+
+        double x0 = spot0.getX();
+        double y0 = spot0.getY();
+
+        double x1 = spot1.getX();
+        double y1 = spot1.getY();
+
+        double x2 = (x1 - x0) * Math.cos(c) - (y1 - y0) * Math.sin(c) + x0;
+        double y2 = (x1 - x0) * Math.sin(c) + (y1 - y0) * Math.cos(c) + y0;
+        return new Spot((float) Math.abs(x2), (float) Math.abs(y2));
     }
 
     /**
@@ -1221,6 +1264,21 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
     /**
+     * 手指触摸的方位
+     *
+     * @param dx
+     * @param dy
+     * @return
+     */
+    private int getOrientation(double dx, double dy) {
+        if (Math.abs(dx) < Math.abs(dy)) {
+            return dy > 0 ? 'b' : 't';
+        } else {
+            return dx > 0 ? 'r' : 'l';
+        }
+    }
+
+    /**
      * 小角度变化角度旋转方向
      *
      * @param spot0
@@ -1306,7 +1364,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      *
      * @return
      */
-    public static double radianToDegree(double radian) {
+    private double radianToDegree(double radian) {
         return radian * 180 / Math.PI;
     }
 
@@ -1317,7 +1375,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      * @param degree
      * @return
      */
-    public static double degreeToRadian(double degree) {
+    private double degreeToRadian(double degree) {
         return degree * Math.PI / 180;
     }
 

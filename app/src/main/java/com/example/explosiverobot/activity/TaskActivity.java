@@ -205,6 +205,10 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     Button btnh;
     @BindView(R.id.iv_setting)
     ImageView ivSetting;
+    @BindView(R.id.ttv_arm_03_up)
+    TouchTextView ttvArm03Up;
+    @BindView(R.id.ttv_arm_03_down)
+    TouchTextView ttvArm03Down;
 
     private MyRender myRender;
 
@@ -469,6 +473,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         ttvHeadCounter.setOnTimeListener(this);
         ttvGrabClockwise.setOnTimeListener(this);
         ttvGrabCounter.setOnTimeListener(this);
+        ttvArm03Up.setOnTimeListener(this);
+        ttvArm03Down.setOnTimeListener(this);
 
         controlCircleView.setCallback(new CircleViewByImage.ActionCallback() {
             @Override
@@ -513,7 +519,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
 
         connectIpcamera();
-        showDialog("相机连接中...");
+//        showDialog("相机连接中...");
     }
 
     @Override
@@ -922,6 +928,14 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                 sendLocal("h");
                 Print.e("06臂松");
                 break;
+            case R.id.ttv_arm_03_up:
+                sendLocal("");
+                mDrawSurfaceView.onDrawF(-3);
+                break;
+            case R.id.ttv_arm_03_down:
+                sendLocal("");
+                mDrawSurfaceView.onDrawF(3);
+                break;
         }
     }
 
@@ -1208,6 +1222,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     private void cameraState() {
         if (tag == 1) {
+            if(sweetAlertDialog != null){
             sweetAlertDialog.setTitleText("连接成功!")
                     .setConfirmText("确定")
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -1218,15 +1233,16 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                     })
                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
         } else if (tag == 0) {
-            sweetAlertDialog.setTitleText("连接失败!")
-                    .setConfirmText("确定")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            dismissDialog();
-                        }
-                    })
-                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                sweetAlertDialog.setTitleText("连接失败!")
+                        .setConfirmText("确定")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                dismissDialog();
+                            }
+                        })
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+            }
         }
     }
 

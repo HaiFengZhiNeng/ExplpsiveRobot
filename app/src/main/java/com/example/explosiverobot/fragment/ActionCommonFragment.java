@@ -11,15 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.activity.AddActionActivity;
 import com.example.explosiverobot.activity.TaskActivity;
 import com.example.explosiverobot.adapter.ActionAdapter;
-import com.example.explosiverobot.base.adapter.BaseRecyclerAdapter;
 import com.example.explosiverobot.base.fragment.BaseFragment;
 import com.example.explosiverobot.db.manager.ActionItemDbManager;
 import com.example.explosiverobot.modle.ActionItem;
