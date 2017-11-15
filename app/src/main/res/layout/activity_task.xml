@@ -208,13 +208,12 @@
             android:layout_height="match_parent"
             android:layout_weight="3">
 
-            <android.opengl.GLSurfaceView
+               <android.opengl.GLSurfaceView
                 android:id="@+id/gl_surface_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:longClickable="true" />
-
             <com.example.explosiverobot.view.surface.DrawSurfaceView
                 android:id="@+id/draw_suface_view"
                 android:layout_width="match_parent"

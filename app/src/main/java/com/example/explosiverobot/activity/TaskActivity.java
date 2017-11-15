@@ -384,7 +384,6 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     private Handler dialogHandler = new Handler();
 
-
     @Override
     protected int getContentViewId() {
         return R.layout.activity_task;
