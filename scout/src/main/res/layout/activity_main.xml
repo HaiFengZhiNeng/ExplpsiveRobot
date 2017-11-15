@@ -4,19 +4,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
+    <!--<android.opengl.GLSurfaceView-->
+        <!--android:id="@+id/show_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:longClickable="true" />-->
+
+    <com.example.scout.view.VideoSurfaceView
         android:id="@+id/show_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white" />
+        android:layout_height="match_parent" />
 
     <LinearLayout
+        android:id="@+id/ll_control"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color_main_bottom"
+        android:background="#0e000000"
         android:orientation="horizontal">
-        <View style="@style/seize"/>
+        <!--<View style="@style/seize"/>-->
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测试"/>
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -55,9 +68,10 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_front_lighting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_light_close" />
+                        android:background="@mipmap/ic_light_close" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -77,9 +91,11 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_after_lighting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_light_close" />
+                        android:background="@mipmap/ic_light_close"
+                         />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -105,9 +121,10 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_front_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_camera_close" />
+                        android:background="@mipmap/ic_camera_open" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -126,9 +143,10 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_after_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_camera_close" />
+                        android:background="@mipmap/ic_camera_close" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -147,9 +165,10 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_lift_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_camera_close" />
+                        android:background="@mipmap/ic_camera_close" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -168,9 +187,10 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_right_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_camera_close" />
+                        android:background="@mipmap/ic_camera_close" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -189,20 +209,36 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
+            <com.example.scout.view.TouchImageView
                 android:id="@+id/iv_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_up" />
+                android:background="@mipmap/ic_up" />
 
-            <ImageView
+            <com.example.scout.view.TouchImageView
                 android:id="@+id/iv_down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_down" />
+                android:background="@mipmap/ic_down" />
         </LinearLayout>
 
         <View style="@style/seize"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/btn_ssid"
+                android:text="ssid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btn_pass"
+                android:text="pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
     </LinearLayout>
 </RelativeLayout>

@@ -12,7 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.udp.NetClient;
-import com.example.explosiverobot.udp.OnListenerUDPServer;
+import com.example.explosiverobot.listener.OnListenerUDPServer;
 import com.example.explosiverobot.udp.SocketManager;
 import com.example.explosiverobot.udp.UdpReceiver;
 import com.seabreeze.log.Print;
