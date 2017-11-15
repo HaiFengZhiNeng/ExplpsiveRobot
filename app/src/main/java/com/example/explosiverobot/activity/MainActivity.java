@@ -31,10 +31,8 @@ import com.example.explosiverobot.modle.ActionTab;
 import com.example.explosiverobot.receiver.UDPAcceptReceiver;
 import com.example.explosiverobot.service.UdpService;
 import com.example.explosiverobot.util.JumpItent;
-import com.example.explosiverobot.util.PermissionsChecker;
 import com.example.explosiverobot.util.PreferencesUtils;
 import com.example.explosiverobot.util.SPManager;
-import com.example.explosiverobot.util.WriteSd;
 import com.example.explosiverobot.view.weiget.CustomToast;
 import com.example.explosiverobot.view.weiget.MainPopWindow;
 import com.example.explosiverobot.view.weiget.MyImageView;
@@ -265,6 +263,10 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             //复位
             case R.id.ll_recovery:
                 sendLocal(SPManager.controlReset());
+                File file = new File(Environment.getExternalStorageDirectory() + "/aapaibao/");
+                if (file.exists()) {
+                    ivRobotBg.load(file);
+                }
                 break;
             // 向下
             case R.id.iv_sportDown:
@@ -541,6 +543,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     public void initLocal() {
         boolean isSaveLocal = PreferencesUtils.getBoolean(this, "saveLoacal", false);
         if (!isSaveLocal) {
+
             PreferencesUtils.putBoolean(this, "saveLoacal", true);
             ++mGroupNum;
             mActionTabsList.add(new ActionTab(mGroupNum + "", "全部"));
@@ -558,20 +561,19 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
             ++mGroupNum;
             mActionTabsList.add(new ActionTab(mGroupNum + "", "其他"));
             mActionDbManager.insert(new ActionTab(mGroupNum + "", "其他"));
-            WriteSd writeSd = new WriteSd(this);
-            writeSd.isExit();
-            actionItemDbManager.insert(new ActionItem("运动一", "localimg/ic_drive_one", "2", "运动", ActionAdapter.OTHER));
-            actionItemDbManager.insert(new ActionItem("运动二", "localimg/ic_drive_two ", "1", "运动", ActionAdapter.OTHER));
 
-            actionItemDbManager.insert(new ActionItem("操纵一", "ic_drive_one", "1", "操纵", ActionAdapter.OTHER));
-            actionItemDbManager.insert(new ActionItem("操纵二", "ic_drive_one", "2", "操纵", ActionAdapter.OTHER));
 
-            actionItemDbManager.insert(new ActionItem("装载一", "ic_drive_one", "1", "装载", ActionAdapter.OTHER));
-            actionItemDbManager.insert(new ActionItem("装载二", "ic_drive_one", "2", "装载", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("运动一", "/storage/emulated/0/aapaibao/0_0.png", "2", "运动", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("运动二", "/storage/emulated/0/aapaibao/0_1.png", "1", "运动", ActionAdapter.OTHER));
 
-            actionItemDbManager.insert(new ActionItem("其他一", "ic_drive_one", "1", "其他", ActionAdapter.OTHER));
-            actionItemDbManager.insert(new ActionItem("其他二", "ic_drive_one", "2", "其他", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("操纵一", "/storage/emulated/0/aapaibao/0_2.png", "1", "操纵", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("操纵二", "/storage/emulated/0/aapaibao/0_3.png", "2", "操纵", ActionAdapter.OTHER));
 
+            actionItemDbManager.insert(new ActionItem("装载一", "/storage/emulated/0/aapaibao/0_4.png", "1", "装载", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("装载二", "/storage/emulated/0/aapaibao/0_5.png", "2", "装载", ActionAdapter.OTHER));
+
+            actionItemDbManager.insert(new ActionItem("其他一", "/storage/emulated/0/aapaibao/0_6.png", "1", "其他", ActionAdapter.OTHER));
+            actionItemDbManager.insert(new ActionItem("其他二", "/storage/emulated/0/aapaibao/0_7.png", "2", "其他", ActionAdapter.OTHER));
         }
         addTitle();
     }

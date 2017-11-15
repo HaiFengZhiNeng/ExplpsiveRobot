@@ -110,14 +110,7 @@ public class ActionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             holder.mHeadStatus.setText("手臂夹关");
         }
         if (actionItem.getItem_pic() != null) {
-            try {
-                InputStream inputStream = mContext.getAssets().open("ic_drive_one.png");
-//                byte [] img = inputStream.read();
-                Glide.with(mContext).load(actionItem.getItem_pic()).into(holder.mActionPic);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-//            Uri uri = Uri.parse("android:resource://com.example.explosiverobot/" + R.raw.ic_drive_one);
+            Glide.with(mContext).load(actionItem.getItem_pic()).into(holder.mActionPic);
         }
         holder.itemView.setTag(position);
     }

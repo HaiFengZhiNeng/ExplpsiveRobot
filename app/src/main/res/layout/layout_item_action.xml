@@ -12,7 +12,8 @@
         android:id="@+id/iv_actionPic"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="@color/color_white" />
+        android:background="@color/color_white"
+        android:src="@mipmap/ic_drive_one" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -37,7 +38,7 @@
             android:lines="1"
             android:text=""
             android:textColor="@color/color_white"
-            android:textSize="15sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
