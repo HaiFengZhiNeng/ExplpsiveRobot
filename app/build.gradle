@@ -9,6 +9,7 @@ def keystoreAliasPSW = ''
 def keyfile = file('keystore.path')
 def isExists = ''
 
+
 Properties properties = new Properties()
 // local.properties file in the root director keystore.path
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
