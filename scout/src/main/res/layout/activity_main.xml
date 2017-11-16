@@ -196,7 +196,33 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <View style="@style/seize"/>
+        <!--<View style="@style/seize"/>-->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:text="速度"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/iv_speeh_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/ic_up" />
+
+            <ImageView
+                android:id="@+id/iv_speeh_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/ic_down" />
+        </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -204,18 +230,24 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <TextView
+                android:text="机械臂"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <com.example.scout.view.TouchImageView
-                android:id="@+id/iv_up"
+                android:id="@+id/iv_arm_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@mipmap/ic_up" />
 
             <com.example.scout.view.TouchImageView
-                android:id="@+id/iv_down"
+                android:id="@+id/iv_arm_down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@mipmap/ic_down" />
         </LinearLayout>
+
 
         <View style="@style/seize"/>
 

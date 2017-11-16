@@ -56,10 +56,14 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     LinearLayout llRightImage;
     @BindView(R.id.iv_right_image)
     ImageView ivRightImage;
-    @BindView(R.id.iv_up)
-    TouchImageView ivUp;
-    @BindView(R.id.iv_down)
-    TouchImageView ivDown;
+    @BindView(R.id.iv_arm_up)
+    TouchImageView ivArmUp;
+    @BindView(R.id.iv_arm_down)
+    TouchImageView ivArmDown;
+    @BindView(R.id.iv_speeh_up)
+    ImageView ivSpeehUp;
+    @BindView(R.id.iv_speeh_down)
+    ImageView ivSpeehDown;
     @BindView(R.id.btn_ssid)
     Button btnSsid;
     @BindView(R.id.btn_pass)
@@ -98,8 +102,8 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     @Override
     protected void setListener() {
         moveView.setCallback(this);
-        ivUp.setOnTimeListener(this);
-        ivDown.setOnTimeListener(this);
+        ivArmUp.setOnTimeListener(this);
+        ivArmDown.setOnTimeListener(this);
     }
 
 
@@ -113,7 +117,7 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
 
     @OnClick({R.id.show_view, R.id.ll_front_lighting, R.id.ll_after_lighting, R.id.ll_front_image,
             R.id.ll_after_image, R.id.ll_lift_image, R.id.ll_right_image,
-            R.id.btn_ssid, R.id.btn_pass})
+            R.id.btn_ssid, R.id.btn_pass, R.id.iv_speeh_down, R.id.iv_speeh_up})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.show_view:
@@ -220,6 +224,12 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
                     }
                 });
                 break;
+            case R.id.iv_speeh_up:
+                TcpSocketManager.getInstance().sendTextMessageByTcp("7", null);
+                break;
+            case R.id.iv_speeh_down:
+                TcpSocketManager.getInstance().sendTextMessageByTcp("9", null);
+                break;
             case R.id.btn_ssid:
                 modifySsid();
                 break;
@@ -238,11 +248,11 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     @Override
     public void onImageTimecount(View view, int count) {
         switch (view.getId()) {
-            case R.id.iv_up:
+            case R.id.iv_arm_up:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("1", null);
                 Print.e("up");
                 break;
-            case R.id.iv_down:
+            case R.id.iv_arm_down:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("3", null);
                 Print.e("down");
                 break;
@@ -252,10 +262,12 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     @Override
     public void onImageDownFinish(View view) {
         switch (view.getId()) {
-            case R.id.iv_up:
+            case R.id.iv_arm_up:
+                TcpSocketManager.getInstance().sendTextMessageByTcp("0", null);
                 Print.e("up finish");
                 break;
-            case R.id.iv_down:
+            case R.id.iv_arm_down:
+                TcpSocketManager.getInstance().sendTextMessageByTcp("0", null);
                 Print.e("down finish");
                 break;
         }

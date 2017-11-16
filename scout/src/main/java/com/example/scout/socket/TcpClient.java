@@ -38,9 +38,10 @@ public class TcpClient implements Runnable {
     }
 
     public void send(String msg) {
-        pw.print(msg);
-        pw.flush();
-
+        if(pw != null) {
+            pw.print(msg);
+            pw.flush();
+        }
     }
 
     @Override
@@ -81,12 +82,13 @@ public class TcpClient implements Runnable {
         }
         while (isRun) {
             try {
+                if(is != null) {
+                    rcvLen = is.read(buff);
+                    rcvMsg = new String(buff, 0, rcvLen, "utf-8");
 
-                rcvLen = is.read(buff);
-                rcvMsg = new String(buff, 0, rcvLen, "utf-8");
-
-                if (mTcpTextSendListener != null) {
-                    mTcpTextSendListener.onReadSuccess(rcvMsg);
+                    if (mTcpTextSendListener != null) {
+                        mTcpTextSendListener.onReadSuccess(rcvMsg);
+                    }
                 }
             } catch (IOException e) {
                 if (mTcpTextSendListener != null) {

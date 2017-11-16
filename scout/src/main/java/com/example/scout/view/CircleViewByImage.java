@@ -46,7 +46,7 @@ public class CircleViewByImage extends FrameLayout {
     private float firstY;//按下去时y的坐标
     private boolean isShortTime;
 
-    private long delayYime = 1000;
+    private long delayYime = 500;
     
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
