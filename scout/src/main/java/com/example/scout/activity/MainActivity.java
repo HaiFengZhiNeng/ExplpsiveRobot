@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import com.example.scout.R;
 import com.example.scout.common.BaseActivity;
 import com.example.scout.common.Constants;
+import com.example.scout.socket.TcpCallback;
 import com.example.scout.socket.TcpSocketManager;
 import com.example.scout.view.CircleViewByImage;
 import com.example.scout.view.TouchImageView;
@@ -21,8 +22,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 
-public class MainActivity extends BaseActivity implements TouchImageView.OnImageTimeListener, CircleViewByImage.ActionCallback,
-        TcpSocketManager.TCPTextSendListener{
+public class MainActivity extends BaseActivity implements TouchImageView.OnImageTimeListener,
+        CircleViewByImage.ActionCallback {
 
 
     @BindView(R.id.show_view)
@@ -59,8 +60,6 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     TouchImageView ivUp;
     @BindView(R.id.iv_down)
     TouchImageView ivDown;
-    @BindView(R.id.btn)
-    Button btn;
     @BindView(R.id.btn_ssid)
     Button btnSsid;
     @BindView(R.id.btn_pass)
@@ -101,20 +100,13 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
         moveView.setCallback(this);
         ivUp.setOnTimeListener(this);
         ivDown.setOnTimeListener(this);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                sendMessage("132");
-
-                TcpSocketManager.getInstance().sendTextMessageByTcp("FF00");
-            }
-        });
     }
 
 
     @Override
     protected void onDestroy() {
         linkVideoCore.sysuninit();
+        TcpSocketManager.getInstance().endTcp();
         super.onDestroy();
     }
 
@@ -135,53 +127,98 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
                 break;
             case R.id.ll_front_lighting:
                 if (isFrontOpen) {
-                    isFrontOpen = false;
-                    ivFrontLighting.setBackgroundResource(R.mipmap.ic_light_close);
-                    Print.e("前灯关");
+                    TcpSocketManager.getInstance().sendTextMessageByTcp("f", new TcpCallback() {
+
+                        @Override
+                        public void onSuccess(String t) {
+                            isFrontOpen = false;
+                            ivFrontLighting.setBackgroundResource(R.mipmap.ic_light_close);
+                            Print.e("前灯关");
+                        }
+
+                    });
                 } else {
-                    isFrontOpen = true;
-                    ivFrontLighting.setBackgroundResource(R.mipmap.ic_light_open);
-                    Print.e("前灯开");
+
+                    TcpSocketManager.getInstance().sendTextMessageByTcp("F", new TcpCallback() {
+                        @Override
+                        public void onSuccess(String t) {
+                            isFrontOpen = true;
+                            ivFrontLighting.setBackgroundResource(R.mipmap.ic_light_open);
+                            Print.e("前灯开");
+                        }
+
+                    });
                 }
                 break;
             case R.id.ll_after_lighting:
                 if (isAfterOpen) {
-                    isAfterOpen = false;
-                    ivAfterLighting.setBackgroundResource(R.mipmap.ic_light_close);
-                    Print.e("后灯关");
+                    TcpSocketManager.getInstance().sendTextMessageByTcp("g", new TcpCallback() {
+                        @Override
+                        public void onSuccess(String t) {
+                            isAfterOpen = false;
+                            ivAfterLighting.setBackgroundResource(R.mipmap.ic_light_close);
+                            Print.e("后灯关");
+                        }
+                    });
+
                 } else {
-                    isAfterOpen = true;
-                    ivAfterLighting.setBackgroundResource(R.mipmap.ic_light_open);
-                    Print.e("后灯开");
+                    TcpSocketManager.getInstance().sendTextMessageByTcp("G", new TcpCallback() {
+                        @Override
+                        public void onSuccess(String t) {
+                            isAfterOpen = true;
+                            ivAfterLighting.setBackgroundResource(R.mipmap.ic_light_open);
+                            Print.e("后灯开");
+                        }
+                    });
                 }
                 break;
             case R.id.ll_front_image:
-                ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                Print.e("前影像");
+                TcpSocketManager.getInstance().sendTextMessageByTcp("a", new TcpCallback() {
+                    @Override
+                    public void onSuccess(String t) {
+                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_open);
+                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        Print.e("前影像");
+                    }
+                });
                 break;
             case R.id.ll_after_image:
-                ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                Print.e("后影像");
+                TcpSocketManager.getInstance().sendTextMessageByTcp("b", new TcpCallback() {
+                    @Override
+                    public void onSuccess(String t) {
+                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_open);
+                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        Print.e("后影像");
+                    }
+                });
                 break;
             case R.id.ll_lift_image:
-                ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                Print.e("左影像");
+                TcpSocketManager.getInstance().sendTextMessageByTcp("c", new TcpCallback() {
+                    @Override
+                    public void onSuccess(String t) {
+                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_open);
+                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        Print.e("左影像");
+                    }
+                });
                 break;
             case R.id.ll_right_image:
-                ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                ivRightImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                Print.e("右影像");
+                TcpSocketManager.getInstance().sendTextMessageByTcp("d", new TcpCallback() {
+                    @Override
+                    public void onSuccess(String t) {
+                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_open);
+                        Print.e("右影像");
+                    }
+                });
                 break;
             case R.id.btn_ssid:
                 modifySsid();
@@ -193,7 +230,6 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     }
 
 
-
     @Override
     public void onImageDown() {
 
@@ -203,9 +239,11 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     public void onImageTimecount(View view, int count) {
         switch (view.getId()) {
             case R.id.iv_up:
+                TcpSocketManager.getInstance().sendTextMessageByTcp("1", null);
                 Print.e("up");
                 break;
             case R.id.iv_down:
+                TcpSocketManager.getInstance().sendTextMessageByTcp("3", null);
                 Print.e("down");
                 break;
         }
@@ -225,30 +263,35 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
 
     @Override
     public void forwardMove() {//上
+        TcpSocketManager.getInstance().sendTextMessageByTcp("2", null);
         Print.e("上");
     }
 
     @Override
     public void backMove() {//下
+        TcpSocketManager.getInstance().sendTextMessageByTcp("8", null);
         Print.e("下");
     }
 
     @Override
     public void leftMove() {//左
+        TcpSocketManager.getInstance().sendTextMessageByTcp("4", null);
         Print.e("左");
     }
 
     @Override
     public void rightMove() {
+        TcpSocketManager.getInstance().sendTextMessageByTcp("6", null);
         Print.e("右");//右
     }
 
     @Override
     public void actionUp() {//**
+        TcpSocketManager.getInstance().sendTextMessageByTcp("5", null);
         Print.e("离开");
     }
 
-    private void sendMessage(String instructions){
+    private void sendMessage(String instructions) {
         Print.e("");
         OkHttpUtils
                 .get()
@@ -306,13 +349,4 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
                 });
     }
 
-    @Override
-    public void onFail(Exception e) {
-        Print.e(e.toString());
-    }
-
-    @Override
-    public void onSuccess(String result) {
-        Print.e(result);
-    }
 }

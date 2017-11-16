@@ -1,28 +1,17 @@
 package com.example.scout.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLSurfaceView.EGLConfigChooser;
-import android.opengl.GLSurfaceView.EGLContextFactory;
-import android.opengl.GLSurfaceView.Renderer;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.SurfaceHolder;
 
 import com.linkcard.media.LinkVideoCore;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.TimeUnit;
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 public class VideoSurfaceView extends GLSurfaceView implements GLSurfaceView.Renderer {
@@ -50,6 +39,8 @@ public class VideoSurfaceView extends GLSurfaceView implements GLSurfaceView.Ren
 //      setEGLContextFactory(new ContextFactory());
         //设置EglConfig，一般颜色深度等等，利用此方法设置。不设置就用默认的
 //      setEGLConfigChooser(localConfigChooser);
+
+        getHolder().setFormat(PixelFormat.TRANSLUCENT);
         setRenderer(this);//调用此方法会开启一个新的线程，即GL线程
         setRenderMode(0);////渲染的时候要求调用requestRender，必须在setRenderer后调用
 

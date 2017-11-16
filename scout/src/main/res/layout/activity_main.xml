@@ -23,12 +23,7 @@
         android:layout_height="wrap_content"
         android:background="#0e000000"
         android:orientation="horizontal">
-        <!--<View style="@style/seize"/>-->
-        <Button
-            android:id="@+id/btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="测试"/>
+        <View style="@style/seize"/>
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -225,6 +220,7 @@
         <View style="@style/seize"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">

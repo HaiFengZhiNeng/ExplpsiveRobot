@@ -40,7 +40,7 @@ public class TouchImageView extends ImageView {
 
     private boolean isDown;
     
-    private long delayYime = 300;
+    private long delayYime = 1000;
 
     public TouchImageView(Context context) {
         super(context);
