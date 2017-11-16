@@ -242,7 +242,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     private double mRotation1 = 0.0;
     private double mRotation2 = 0.0;
     private double mRotation3 = 0.0;
-    private double mChangeCistance = 0.0;
+//    private double mChangeCistance = 0.0;
 
 
     private MainPopWindow mainPopWindow;
@@ -1128,29 +1128,30 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
     @Override
     public void rotatioCallbackn(double rotation1, double rotation2, double rotation3, double changeCistance) {
-        mChangeCistance = mChangeCistance + changeCistance;
-        if (Math.abs(mChangeCistance) > Constants.lenght) {
-            if (mChangeCistance > 0.0) {
-                mChangeCistance = mChangeCistance - Constants.lenght;
-                Print.e("机械臂 02 收缩 " + Constants.lenght);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, Constants.just + Constants.lenght));
-            } else {
-                mChangeCistance = mChangeCistance + Constants.lenght;
-                Print.e("机械臂 02 延长 " + Constants.lenght);
-                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, Constants.loss + Constants.lenght));
-            }
-        }
+        Print.e("机械臂 rotation1 : "+ rotation1 +" , rotation2 : "+ rotation2+" , rotation3 : "+ rotation3);
+//        mChangeCistance = mChangeCistance + changeCistance;
+//        if (Math.abs(mChangeCistance) > Constants.lenght) {
+//            if (mChangeCistance > 0.0) {
+//                mChangeCistance = mChangeCistance - Constants.lenght;
+//                Print.e("机械臂 02 收缩 " + Constants.lenght);
+//                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, Constants.just + Constants.lenght));
+//            } else {
+//                mChangeCistance = mChangeCistance + Constants.lenght;
+//                Print.e("机械臂 02 延长 " + Constants.lenght);
+//                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, Constants.loss + Constants.lenght));
+//            }
+//        }
 
         mRotation2 = mRotation2 + rotation2;
-        if (Math.abs(mRotation2) > degreeToRadian(Constants.degree)) {
+        if (Math.abs(mRotation2) > Constants.degree) {
             if (mRotation2 > 0.0) {
-                mRotation2 = mRotation2 - degreeToRadian(Constants.degree);
+                mRotation2 = mRotation2 - Constants.degree;
 //                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, degreeToRadian(degree)));
 //                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, Constants.just + Constants.degree));
                 sendLocal("i");
                 Print.e("机械臂 03 顺时针旋转 5 ");
             } else {
-                mRotation2 = mRotation2 + degreeToRadian(Constants.degree);
+                mRotation2 = mRotation2 + Constants.degree;
 //                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics03, Constants.loss + Constants.degree));
                 sendLocal("m");
                 Print.e("机械臂 03 逆时针旋转 5 ");
@@ -1158,14 +1159,14 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
 
         mRotation3 = mRotation3 + rotation3;
-        if (Math.abs(mRotation3) > degreeToRadian(Constants.degree)) {
+        if (Math.abs(mRotation3) > Constants.degree) {
             if (mRotation3 > 0.0) {
-                mRotation3 = mRotation3 - degreeToRadian(Constants.degree);
+                mRotation3 = mRotation3 - Constants.degree;
 //                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, Constants.just + Constants.degree));
                 sendLocal("b");
                 Print.e("机械臂 04 顺时针旋转5度 ");
             } else {
-                mRotation3 = mRotation3 + degreeToRadian(Constants.degree);
+                mRotation3 = mRotation3 + Constants.degree;
 //                sendLocal(SPManager.controlarmMechanics(SPManager.armMechanics04, Constants.loss + Constants.degree));
                 sendLocal("n");
                 Print.e("机械臂 04 逆时针旋转5度 ");
@@ -1174,16 +1175,23 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     }
 
     @Override
+    public void rotatioReset(double rotation1, double rotation2, double rotation3, double changeCistance) {
+        mRotation1 = rotation1;
+        mRotation2 = rotation2;
+        mRotation3 = rotation3;
+    }
+
+    @Override
     public void onMotionEventUp() {
-        if (Math.abs(mChangeCistance) > Constants.lenghtMin) {
-            if (mChangeCistance > 0.0) {
-                mChangeCistance = mChangeCistance - Constants.lenghtMin;
-                Print.e("机械臂 02 收缩 " + Constants.lenghtMin);
-            } else {
-                mChangeCistance = mChangeCistance + Constants.lenghtMin;
-                Print.e("机械臂 02 延长 3 " + Constants.lenghtMin);
-            }
-        }
+//        if (Math.abs(mChangeCistance) > Constants.lenghtMin) {
+//            if (mChangeCistance > 0.0) {
+//                mChangeCistance = mChangeCistance - Constants.lenghtMin;
+//                Print.e("机械臂 02 收缩 " + Constants.lenghtMin);
+//            } else {
+//                mChangeCistance = mChangeCistance + Constants.lenghtMin;
+//                Print.e("机械臂 02 延长 3 " + Constants.lenghtMin);
+//            }
+//        }
 
 
         if (Math.abs(mRotation2) > degreeToRadian(Constants.degreeMin)) {

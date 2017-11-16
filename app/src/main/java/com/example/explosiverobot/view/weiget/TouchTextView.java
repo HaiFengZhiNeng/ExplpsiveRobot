@@ -42,7 +42,7 @@ public class TouchTextView extends TextView {
 
     private boolean isDown;
     
-    private long delayYime = 2000;
+    private long delayYime = 500;
 
     public TouchTextView(Context context) {
         super(context);

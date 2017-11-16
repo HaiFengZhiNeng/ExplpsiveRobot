@@ -2,6 +2,9 @@ package com.example.scout.socket;
 
 import com.seabreeze.log.Print;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TcpSocketManager {
 
-    public final static int SEND_PORT = 2002;
+    public final static int SEND_PORT = 2005;
     public final static String SEND_ADDRESS = "192.168.11.123";
 
     private static TcpSocketManager mInstance;
@@ -62,13 +65,14 @@ public class TcpSocketManager {
 
         private boolean isSendMsg;
         private StringBuffer buffer;
+        private String info;
 
         public SendRunnable(int port) {
             this.mPort = port;
             buffer = new StringBuffer();
         }
 
-        public void setData(String msg){
+        public void setData(String msg) {
             buffer.append(msg);
             isSendMsg = true;
         }
@@ -78,8 +82,8 @@ public class TcpSocketManager {
             try {
                 Socket tcpSocket = new Socket(SEND_ADDRESS, mPort);
                 OutputStream outputStream = tcpSocket.getOutputStream();
-//                InputStream inputStream = tcpSocket.getInputStream();
-//                        BufferedReader mInput = new BufferedReader(new InputStreamReader(inputStream));
+                InputStream inputStream = tcpSocket.getInputStream();
+                BufferedReader mInput = new BufferedReader(new InputStreamReader(inputStream));
 
                 while (true) {
 
@@ -95,9 +99,16 @@ public class TcpSocketManager {
 
 //                        outputStream.write(tcpMsg.getBytes());
                         byte[] b = hexStringToBytes(tcpMsg);
+                        tcpMsg = "ab";
                         Print.e(tcpMsg);
-                        outputStream.write(b);
+                        outputStream.write(tcpMsg.getBytes());
                         outputStream.flush();
+
+//                        PrintWriter printWriter=new PrintWriter(outputStream);//将输出流包装成打印流
+//                                   printWriter.print("服务端你好，我是Balla_兔子");
+//                        printWriter.flush();
+//                        tcpSocket.shutdownOutput();//关闭输出流
+
 
 //                        String line = mInput.readLine();
 //                        if (mTcpTextSendListener != null)
@@ -107,6 +118,15 @@ public class TcpSocketManager {
 //                    tcpSocket.close();
                     }
                 }
+
+//                while (true) {
+//                    String temp ;//临时变量
+//                    while ((temp = mInput.readLine()) != null) {
+//                        info += temp;
+//                        System.out.println("客户端接收服务端发送信息：" + info);
+//                    }
+//                }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 if (mTcpTextSendListener != null)
@@ -124,7 +144,7 @@ public class TcpSocketManager {
         void onSuccess(String result);
     }
 
-    public  static byte[] hexStringToBytes(String hexString) {
+    public static byte[] hexStringToBytes(String hexString) {
         if (hexString == null || hexString.equals("")) {
             return null;
         }

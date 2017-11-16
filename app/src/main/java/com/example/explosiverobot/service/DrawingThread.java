@@ -133,6 +133,15 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private double rotateS;
     private double rotateE;
 
+    private double rotateFTemp;
+    private double rotateSTemp;
+    private double rotateETemp;
+
+    private boolean isTouchFe;
+    private boolean isTouchSe;
+    private boolean isTouchEe;
+    private boolean isFirst;
+
     private Spot firstSpotTail;
     private double originalBraceDistance;
 
@@ -173,6 +182,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
         computeRotate();
 
+        isFirst = true;
 //        mRotation1 = PreferencesUtils.getFloat(mContext, "mRotation1", 0);
 //        mRotation2 = PreferencesUtils.getFloat(mContext, "mRotation2", 0);
 //        mRotation3 = PreferencesUtils.getFloat(mContext, "mRotation3", 0);
@@ -303,18 +313,18 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      */
     private void computeRotate() {
         rotateF = 90 - radianToDegree(pointYAngle(startFSpot, endFSpot));
-        if(startSSpot.getY() > endSSpot.getY()) {
+        if (startSSpot.getY() > endSSpot.getY()) {
             rotateS = 90 - radianToDegree(pointYAngle(startSSpot, endSSpot));
-        }else if(startSSpot.getY() < endSSpot.getY()){
+        } else if (startSSpot.getY() < endSSpot.getY()) {
             rotateS = 90 + radianToDegree(pointYAngle(startSSpot, endSSpot));
-        }else{
+        } else {
             rotateS = 90;
         }
-        if(startESpot.getY() > endESpot.getY()) {
+        if (startESpot.getY() > endESpot.getY()) {
             rotateE = 90 - radianToDegree(pointYAngle(startESpot, endESpot));
-        }else if(startESpot.getY() < endESpot.getY()){
+        } else if (startESpot.getY() < endESpot.getY()) {
             rotateE = 90 + radianToDegree(pointYAngle(startESpot, endESpot));
-        }else{
+        } else {
             rotateE = 90;
         }
         Print.e("rotateF : " + rotateF + ", rotateS : " + rotateS + ", rotateE : " + rotateE);
@@ -416,7 +426,22 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
         mPaint.setColor(Color.BLACK);
 //        canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
+//        if(!isFirst) {
+            if (rotateF - rotateFTemp != 0) {
+                mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, 0, 0, -1);
+            } else {
+                if (isTouchSe) {
+                    isTouchEe = false;
+                    mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, rotateS - rotateSTemp, 0, -1);
+                } else {
+                    mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, rotateS - rotateSTemp, rotateE - rotateETemp, -1);
 
+                }
+            }
+//        }else{
+//            isFirst = false;
+//            mDrawInterface.rotatioCallbackn(rotateF, rotateS , rotateE , -1);
+//        }
         isDrawing = false;
     }
 
@@ -430,19 +455,23 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         endSSpotTemp = endSSpot;
         startESpotTemp = startESpot;
         endESpotTemp = endESpot;
+
+        rotateFTemp = rotateF;
+        rotateSTemp = rotateS;
+        rotateETemp = rotateE;
     }
 
     private void reductionSpot() {
-          startFSpot=startFSpotTemp;
-          endFSpot=endFSpotTemp;
-          startSSpot=startSSpotTemp;
-          endSSpot=endSSpotTemp;
-          startESpot=startESpotTemp;
-         endESpot=endESpotTemp;
+        startFSpot = startFSpotTemp;
+        endFSpot = endFSpotTemp;
+        startSSpot = startSSpotTemp;
+        endSSpot = endSSpotTemp;
+        startESpot = startESpotTemp;
+        endESpot = endESpotTemp;
     }
 
 
-    private void touchE() {
+    private void touchEe() {
         //触摸点再第三条线的触摸范围之内，且再最大半径以内
         //计算以第二圆和第三圆的交点
         double[] intersection = circleCircleIntersection(startSSpot, endESpot, rS, rE);
@@ -492,7 +521,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
     }
 
-    private void touchEe(Spot spot) {
+    private void touchSe(Spot spot) {
         //触摸点到中心点的距离
         double distanceb = getDistance(startSSpot, spot);
         //由触摸点得到在中心圆上实际点的坐标
@@ -512,8 +541,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
 
-    private void drawSpot(Canvas canvas, Spot spot) {
-        backupSpot();
+    private void loadDrawSpot(Spot spot) {
         //点击的点到第三条线末端的位置
         double distanceTouch = getDistance(spot, endESpot);
         //点击的点到第二个圆中心点的距离
@@ -523,7 +551,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         //触摸点再第三条线的触摸范围之内，且再最大半径以内
         if (distanceTouch < rtouch && distanceMax < rS + rE && distanceMax > rtouch) {
             endESpot = spot;
-            touchE();
+            touchEe();
 
         } else if (distanceMax > rS + rE && distanceMax < rS + rE + rtouch) {//触摸点再最大半径之外再可控范围之内
 
@@ -539,23 +567,13 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 
             touchFe(spot);
         } else if (distanceEnd < rtouch) {
-
-            touchEe(spot);
+            isTouchSe = true;
+            touchSe(spot);
         }
 
-        if (endESpot.getX() < rightBase + carW) {
-            if (pointToYDistance(endESpot.getY(), topBase + armBBitmap.getHeight())) {
-                reductionSpot();
-                computeRotate();
-                drawSpot(canvas);
-                return;
-            }
+        if (judgeModel()) {
+            return;
         }
-        if (cannotTouchLand(canvas)) return;
-
-        if (judgeF(canvas)) return;
-        if (judgeS(canvas)) return;
-        if (judgeE(canvas)) return;
 
 
 //        pushSpot = belowLinePoint(baseSpot, endFSpot, rF * longProportion, rF * shortProportion);
@@ -568,10 +586,25 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
 //            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance * 48.5 / rF);
 //        }
         computeRotate();
-        drawSpot(canvas);
     }
 
-    private boolean judgeE(Canvas canvas) {
+    private boolean judgeModel() {
+        if (endESpot.getX() < rightBase + carW) {
+            if (pointToYDistance(endESpot.getY(), topBase + armBBitmap.getHeight())) {
+                reductionSpot();
+                computeRotate();
+                return true;
+            }
+        }
+        if (cannotTouchLand()) return true;
+
+        if (judgeF()) return true;
+        if (judgeS()) return true;
+        if (judgeE()) return true;
+        return false;
+    }
+
+    private boolean judgeE() {
         //secondSpot连接endingSpot的直线在圆心为endingSpot上的交点
         Spot endNeedleSpotRes = lineCircleIntersection(startESpot,
                 new Spot(startSSpot.getX(), 2 * startESpot.getY() - startSSpot.getY()), rE);
@@ -582,7 +615,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             if (endNeedleSpotRes0.getX() > endESpot.getX()) {
                 reductionSpot();
                 computeRotate();
-                drawSpot(canvas);
+                Print.e("judgeE");
                 return true;
             }
         }
@@ -592,13 +625,13 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         if (endDegree > (degreeEMax - degreeEMin) / 2) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
+            Print.e("judgeE");
             return true;
         }
         return false;
     }
 
-    private boolean judgeS(Canvas canvas) {
+    private boolean judgeS() {
         //originSpot连接firstSpot的直线在圆心为secondSpot上的交点
         Spot secondNeedleSpotRes = lineCircleIntersection(startSSpot,
                 new Spot(startFSpot.getX(), 2 * startSSpot.getY() - startFSpot.getY()), rS);
@@ -611,24 +644,24 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         if (secondDegree > (degreeSMax - degreeSMin) / 2 + 1) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
+            Print.e("judgeS");
             return true;
         }
         return false;
     }
 
-    private boolean judgeF(Canvas canvas) {
+    private boolean judgeF() {
         double firstDegree = radianToDegree(pointAcquisitionAngle(startFSpot, endFSpot, levelSpot));
         if (firstDegree < degreeFMin) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
+            Print.e("judgeF");
             return true;
         }
         if (firstDegree > degreeFMax + 1) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
+            Print.e("judgeF");
             return true;
         }
         return false;
@@ -637,23 +670,20 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     /**
      * 不能触地
      */
-    private boolean cannotTouchLand(Canvas canvas) {
+    private boolean cannotTouchLand() {
         if (pointToYDistance(endESpot.getY(), groundY)) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
             return true;
         }
         if (pointToYDistance(endSSpot.getY(), groundY)) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
             return true;
         }
         if (pointToYDistance(endFSpot.getY(), groundY)) {
             reductionSpot();
             computeRotate();
-            drawSpot(canvas);
             return true;
         }
         return false;
@@ -692,7 +722,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                     try {
                         synchronized (mDrawingSurface) {
                             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                            drawSpot(canvas, spot);
+                            backupSpot();
+                            loadDrawSpot(spot);
+                            drawSpot(canvas);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -706,6 +738,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
                     try {
                         synchronized (mDrawingSurface) {
                             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                            backupSpot();
+                            mDrawInterface.rotatioReset(rotateF - rotateFTemp, rotateS - rotateSTemp, rotateE - rotateETemp, -1);
                             drawSpot(canvas);
                         }
                     } catch (Exception e) {
@@ -746,7 +780,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     /**
      * 传入spot，绘制
      */
-    public void setSpot(Spot spot) {
+    public void touchMoveSpot(Spot spot) {
         if (spot.getX() > 10 && spot.getX() < 10 + resetBitmap.getHeight() && spot.getY() > 10 && spot.getY() < 10 + resetBitmap.getHeight()) {
             if (mDrawInterface != null) {
                 mDrawInterface.onReset();
@@ -762,7 +796,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
     public void setSpotUp(Spot spot) {
-        setSpot(spot);
+        touchMoveSpot(spot);
         if (mDrawInterface != null) {
             mDrawInterface.onMotionEventUp();
         }
@@ -775,7 +809,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         if (System.currentTimeMillis() - curTime > 500) {
             curTime = System.currentTimeMillis();
 
-            calculationPointFromAngle(30, 30, 90);
+            calculationPointFromAngle(30, 45, 90);
             computeRotate();
             mReceiver.sendEmptyMessage(MSG_DRAW);
         }
@@ -787,12 +821,15 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     public void onDrawAngle(double d1, double d2, double d3) {
         calculationPointFromAngle(d1, d2, d3);
         computeRotate();
+        if (judgeModel()) return;
         mReceiver.sendEmptyMessage(MSG_DRAW);
     }
 
     public void onDrawF(double i) {
         calculationPointFromAngle(rotateF + i, rotateS, rotateE);
         computeRotate();
+        backupSpot();
+        if (judgeModel()) return;
         mReceiver.sendEmptyMessage(MSG_DRAW);
 
     }
@@ -1138,7 +1175,7 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
      *
      * @param spot0
      * @param spot1
-     * @param c 弧度
+     * @param c     弧度
      * @return
      */
     private Spot radianRotatePoint(Spot spot0, Spot spot1, double c) {
@@ -1154,10 +1191,9 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     }
 
     /**
-     *
      * @param spot0
      * @param spot1
-     * @param c 角度
+     * @param c     角度
      * @return
      */
     private Spot angleRotatePoint(Spot spot0, Spot spot1, double c) {

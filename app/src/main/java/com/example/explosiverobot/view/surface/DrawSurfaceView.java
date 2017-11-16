@@ -113,7 +113,7 @@ public class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 if(isSlow){
                     cx = (int) event.getX();
                     cy = (int) event.getY();
-                    mDrawingThread.setSpot(new Spot(cx, cy));
+                    mDrawingThread.touchMoveSpot(new Spot(cx, cy));
                 }
                 break;
             case MotionEvent.ACTION_UP:
