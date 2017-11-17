@@ -1,0 +1,122 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_top_background</item>
+        <item name="colorPrimaryDark">@color/color_top_background</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="TranslucentTheme" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="task_top_tv">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="task_top_tv_selector" parent="task_top_tv">
+        <item name="android:background">@color/task_while</item>
+        <item name="android:textColor">@color/color_black</item>
+    </style>
+
+    <style name="task_top_tv_unselector" parent="task_top_tv">
+        <item name="android:background">@color/task_deep</item>
+        <item name="android:textColor">@color/color_white</item>
+    </style>
+
+    <style name="task_bottom_tv">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="task_bottom_tv_selector" parent="task_bottom_tv">
+        <item name="android:background">@color/task_deepblue</item>
+        <item name="android:textColor">@color/color_white</item>
+    </style>
+
+    <style name="task_bottom_tv_unselector" parent="task_bottom_tv">
+        <item name="android:background">@color/task_deep</item>
+        <item name="android:textColor">@color/color_white</item>
+    </style>
+
+    <style name="task_vertical_line">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/color_white</item>
+    </style>
+
+    <style name="task_line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/color_white</item>
+    </style>
+
+    <style name="SwitchCompat.Text" parent="Theme.AppCompat.Light">
+        <item name="android:textColor">@color/color_white</item>
+        <item name="android:textSize">9dp</item>
+    </style>
+
+    <style name="SwitchStyle" parent="AppTheme">
+        <item name="colorAccent">@color/task_deepblue</item>
+    </style>
+
+    <style name="SwitchCompatControl">
+        <!--开启时的颜色-->
+        <item name="colorControlActivated">@color/color_black</item>
+        <!--关闭时的颜色-->
+        <item name="colorSwitchThumbNormal">@color/task_deepblue</item>
+        <!--关闭时的轨迹颜色取30%的颜色-->
+        <item name="android:colorForeground">@color/task_deepblue</item>
+    </style>
+
+    <!-- dialog Activity -->
+    <style name="dialog_activity" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>//将背景设置成透明的
+        <item name="android:windowCloseOnTouchOutside">true</item>//设置窗体外面允不允许点击
+    </style>
+
+
+    <style name="line_setting">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/task_deepblue</item>
+    </style>
+
+
+    <style name="line_addaction">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/color_tab_unselect</item>
+    </style>
+
+    <style name="CustomRadioBtn">
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:background">@drawable/radiobutton_background</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/radiobutton_textcolor</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

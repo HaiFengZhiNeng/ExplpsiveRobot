@@ -3,10 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ExplpsiveRobot.iml" filepath="$PROJECT_DIR$/ExplpsiveRobot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LargeEOD/LargeEOD.iml" filepath="$PROJECT_DIR$/LargeEOD/LargeEOD.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Seabreeze/scout.iml" filepath="$PROJECT_DIR$/Seabreeze/scout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SuperLargeEOD/SuperLargeEOD.iml" filepath="$PROJECT_DIR$/SuperLargeEOD/SuperLargeEOD.iml" />
       <module fileurl="file://$PROJECT_DIR$/amapsdk/amapsdk.iml" filepath="$PROJECT_DIR$/amapsdk/amapsdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/print/print.iml" filepath="$PROJECT_DIR$/print/print.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scout/scout.iml" filepath="$PROJECT_DIR$/scout/scout.iml" />
     </modules>
   </component>
 </project>

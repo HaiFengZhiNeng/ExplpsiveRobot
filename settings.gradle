@@ -1,1 +1,1 @@
-include ':app', ':amapsdk', ':print', ':scout'
+include ':LargeEOD', ':amapsdk', ':print', ':Seabreeze', ':SuperLargeEOD'

@@ -8,10 +8,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/LargeEOD" />
+            <option value="$PROJECT_DIR$/Seabreeze" />
+            <option value="$PROJECT_DIR$/SuperLargeEOD" />
             <option value="$PROJECT_DIR$/amapsdk" />
-            <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/print" />
-            <option value="$PROJECT_DIR$/scout" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
