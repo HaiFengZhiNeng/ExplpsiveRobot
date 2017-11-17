@@ -2,7 +2,6 @@ package com.example.superEod;
 
 import android.app.Application;
 
-import com.seabreeze.log.BuildConfig;
 import com.seabreeze.log.Print;
 import com.seabreeze.log.inner.ConsoleTree;
 import com.seabreeze.log.inner.FileTree;

@@ -56,7 +56,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.MyActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape"/>
 
         <service android:name=".service.BridgeService" />
+        <service android:name=".service.UdpService" />
     </application>
 </manifest>

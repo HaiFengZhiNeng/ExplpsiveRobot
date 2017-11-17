@@ -98,10 +98,18 @@ public class TcpClient implements Runnable {
 
         }
         try {
-            pw.close();
-            is.close();
-            dis.close();
-            socket.close();
+            if(pw != null) {
+                pw.close();
+            }
+            if(is != null) {
+                is.close();
+            }
+            if(dis != null) {
+                dis.close();
+            }
+            if(socket != null) {
+                socket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             if (mTcpTextSendListener != null) {

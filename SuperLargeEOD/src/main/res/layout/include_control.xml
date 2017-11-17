@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/re_control"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/task_deep"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/my_text"
+                android:text="基座"
+                />
+
+            <TextView
+                android:id="@+id/l"
+                style="@style/my_text"
+                android:text="顺时针" />
+
+            <TextView
+                android:id="@+id/j"
+                style="@style/my_text"
+                android:text="逆时针" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/my_text"
+                android:text="机械臂 1 "
+                />
+
+            <TextView
+                android:id="@+id/w"
+                style="@style/my_text"
+                android:text="上" />
+
+            <TextView
+                android:id="@+id/s"
+                style="@style/my_text"
+                android:text="下" />
+            <TextView
+                android:id="@+id/a"
+                style="@style/my_text"
+                android:text="停" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/my_text"
+                android:text="机械臂 2 "
+                />
+
+            <TextView
+                android:id="@+id/i"
+                style="@style/my_text"
+                android:text="上" />
+
+            <TextView
+                android:id="@+id/m"
+                style="@style/my_text"
+                android:text="下" />
+            <TextView
+                android:id="@+id/k"
+                style="@style/my_text"
+                android:text="停" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/my_text"
+                android:text="机械臂 3 "
+                />
+
+            <TextView
+                android:id="@+id/b"
+                style="@style/my_text"
+                android:text="顺时针" />
+
+            <TextView
+                android:id="@+id/n"
+                style="@style/my_text"
+                android:text="逆时针" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/my_text"
+                android:text="机械臂 4 "
+                />
+
+            <TextView
+                android:id="@+id/p"
+                style="@style/my_text"
+                android:text="顺时针" />
+
+            <TextView
+                android:id="@+id/o"
+                style="@style/my_text"
+                android:text="逆时针" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/my_text"
+                android:text="机械臂 5 "
+                />
+
+            <TextView
+                android:id="@+id/g"
+                style="@style/my_text"
+                android:text="顺时针" />
+
+            <TextView
+                android:id="@+id/h"
+                style="@style/my_text"
+                android:text="逆时针" />
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -53,7 +53,7 @@ public class UdpService extends Service implements OnListenerUDPServer {
 //        client.sendUdpSocketToByIp();
 
         client.registerUdpServer(new UdpReceiver(this));
-        SocketManager.getInstance().setUdpIp("192.168.1.102");
+        SocketManager.getInstance().setUdpIp("192.168.1.111");
         sendLocal("udp connect");
 
         mUdpSendReceiver = new UdpSendReceiver();

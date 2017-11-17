@@ -47,7 +47,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
@@ -512,13 +511,6 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
     public void onPageChanged(int position) {
         Log.e("GG pagetrip 当前positon", position + "");
         Log.e("GG pagetrip 当前positon", mActionTabsList.get(position).getTab_name());
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 
 
