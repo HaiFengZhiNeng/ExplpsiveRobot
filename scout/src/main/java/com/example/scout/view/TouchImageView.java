@@ -63,7 +63,7 @@ public class TouchImageView extends ImageView {
                     isDown = true;
                     mHandler.sendEmptyMessageDelayed(0, delayYime);
                     if(onTimeListener != null){
-                        onTimeListener.onImageDown();
+                        onTimeListener.onImageDown(this);
                     }
                 }
                 break;
@@ -74,6 +74,8 @@ public class TouchImageView extends ImageView {
                 if (onTimeListener != null) {
                     if(mCount != 0) {
                         mHandler.removeMessages(0);
+                        onTimeListener.onImageDownFinish(this);
+                    }else{
                         onTimeListener.onImageDownFinish(this);
                     }
                 }
@@ -89,7 +91,7 @@ public class TouchImageView extends ImageView {
     }
 
     public interface OnImageTimeListener {
-        void onImageDown();
+        void onImageDown(View view);
 
         void onImageTimecount(View view, int count);
 

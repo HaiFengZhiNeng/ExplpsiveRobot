@@ -145,19 +145,6 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
     private Spot firstSpotTail;
     private double originalBraceDistance;
 
-    private double myRotation;
-
-    private double mCallRotation1;
-
-    private double mCallRotation2;
-    private double mCallRotation3;
-
-    private float mRotation3;
-    private float mRotation2;
-    private float mRotation1;
-    //    private Spot touchSpot;
-    private Spot mySpot;
-
     private long curTime;
 
     public DrawingThread(Context context, SurfaceView surfaceView, SurfaceHolder holder, int screenW, int screenH) {
@@ -176,17 +163,11 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         definitionS();
         definitionE();
 
-        mySpot = new Spot(0, 0);
-
         definitionPushAAndBrace();
 
         computeRotate();
 
         isFirst = true;
-//        mRotation1 = PreferencesUtils.getFloat(mContext, "mRotation1", 0);
-//        mRotation2 = PreferencesUtils.getFloat(mContext, "mRotation2", 0);
-//        mRotation3 = PreferencesUtils.getFloat(mContext, "mRotation3", 0);
-//        myRotation = PreferencesUtils.getFloat(mContext, "myRotation", 0);
     }
 
     /**
@@ -374,13 +355,13 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         canvas.drawBitmap(resetBitmap, 10, 10, mPaint);
         //绘制地盘车
         mPaint.setColor(Color.MAGENTA);
-        canvas.drawRect((float) leftBase, (float) topBase + armBBitmap.getHeight(),
-                (float) rightBase + carW, (float) bottomBase + carH, mPaint);
-        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) pushSpot.getX(), (float) pushSpot.getY(), mPaint);
+//        canvas.drawRect((float) leftBase, (float) topBase + armBBitmap.getHeight(),
+//                (float) rightBase + carW, (float) bottomBase + carH, mPaint);
+//        canvas.drawLine((float) braceSpot.getX(), (float) braceSpot.getY(), (float) pushSpot.getX(), (float) pushSpot.getY(), mPaint);
         //绘制基座
         mPaint.setColor(Color.WHITE);
         canvas.drawBitmap(armBBitmap, null, mArmBaseDestRect, mPaint);
-        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
+//        canvas.drawCircle(leftBase, topBase, rtouch, mPaint);
         //画第一条
         mPaint.setColor(Color.BLUE);
         mFMatrix.reset();
@@ -391,8 +372,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         float pyFirst = (float) startFSpot.getY();
         mFMatrix.postRotate((float) rotateF, pxFirst, pyFirst);
         canvas.drawBitmap(armFBitmap, mFMatrix, mPaint);
-        canvas.drawCircle(pxFirst, pyFirst, rF, mPaint);
-        canvas.drawLine(pxFirst, pyFirst, (float) endFSpot.getX(), (float) endFSpot.getY(), mPaint);
+//        canvas.drawCircle(pxFirst, pyFirst, rF, mPaint);
+//        canvas.drawLine(pxFirst, pyFirst, (float) endFSpot.getX(), (float) endFSpot.getY(), mPaint);
         //画第二条
         mPaint.setColor(Color.RED);
         mSMatrix.reset();
@@ -403,8 +384,8 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         float pySecond = (float) startSSpot.getY();
         mSMatrix.postRotate((float) rotateS, pxSecond, pySecond);
         canvas.drawBitmap(armSBitmap, mSMatrix, mPaint);
-        canvas.drawCircle(pxSecond, pySecond, rS, mPaint);
-        canvas.drawLine(pxSecond, pySecond, (float) endSSpot.getX(), (float) endSSpot.getY(), mPaint);
+//        canvas.drawCircle(pxSecond, pySecond, rS, mPaint);
+//        canvas.drawLine(pxSecond, pySecond, (float) endSSpot.getX(), (float) endSSpot.getY(), mPaint);
         //画第三条
         mPaint.setColor(Color.GREEN);
         mEMatrix.reset();
@@ -415,33 +396,23 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
         float pyEnd = (float) startESpot.getY();
         mEMatrix.postRotate((float) rotateE, pxEnd, pyEnd);
         canvas.drawBitmap(armEBitmap, mEMatrix, mPaint);
-        canvas.drawCircle(pxEnd, pyEnd, rE, mPaint);
-        canvas.drawLine(pxEnd, pyEnd, (float) endESpot.getX(), (float) endESpot.getY(), mPaint);
+//        canvas.drawCircle(pxEnd, pyEnd, rE, mPaint);
+//        canvas.drawLine(pxEnd, pyEnd, (float) endESpot.getX(), (float) endESpot.getY(), mPaint);
 
         mPaint.setColor(Color.YELLOW);
-//        mySpot.setX(startESpot.getX());
-//        mySpot.setY(startESpot.getY() - rE);
-//        mySpot = angleAcquisitionPoint(startESpot, mySpot, myRotation);
-//        canvas.drawCircle((float) mySpot.getX(), (float) mySpot.getY(), 50, mPaint);
 
         mPaint.setColor(Color.BLACK);
-//        canvas.drawCircle((float) touchSpot.getX(), (float) touchSpot.getY(), rtouch, mPaint);
-//        if(!isFirst) {
-            if (rotateF - rotateFTemp != 0) {
-                mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, 0, 0, -1);
+        if (rotateF - rotateFTemp != 0) {
+            mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, 0, 0, -1);
+        } else {
+            if (isTouchSe) {
+                isTouchEe = false;
+                mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, rotateS - rotateSTemp, 0, -1);
             } else {
-                if (isTouchSe) {
-                    isTouchEe = false;
-                    mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, rotateS - rotateSTemp, 0, -1);
-                } else {
-                    mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, rotateS - rotateSTemp, rotateE - rotateETemp, -1);
+                mDrawInterface.rotatioCallbackn(rotateF - rotateFTemp, rotateS - rotateSTemp, rotateE - rotateETemp, -1);
 
-                }
             }
-//        }else{
-//            isFirst = false;
-//            mDrawInterface.rotatioCallbackn(rotateF, rotateS , rotateE , -1);
-//        }
+        }
         isDrawing = false;
     }
 
@@ -575,16 +546,6 @@ public class DrawingThread extends HandlerThread implements Handler.Callback {
             return;
         }
 
-
-//        pushSpot = belowLinePoint(baseSpot, endFSpot, rF * longProportion, rF * shortProportion);
-//        double braceDistance = getDistance(braceSpot, pushSpot);
-//        double changeCistance = originalBraceDistance - braceDistance;
-//        originalBraceDistance = braceDistance;
-//
-//
-//        if (mDrawInterface != null) {
-//            mDrawInterface.rotatioCallbackn(radianToDegree(mCallRotation1), mCallRotation2, mCallRotation3, changeCistance * 48.5 / rF);
-//        }
         computeRotate();
     }
 

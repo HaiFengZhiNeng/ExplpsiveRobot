@@ -1,9 +1,9 @@
 package com.example.scout.activity;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.scout.R;
 import com.example.scout.common.BaseActivity;
@@ -40,20 +40,12 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     LinearLayout llAfterLighting;
     @BindView(R.id.iv_after_lighting)
     ImageView ivAfterLighting;
-    @BindView(R.id.ll_front_image)
-    LinearLayout llFrontImage;
     @BindView(R.id.iv_front_image)
     ImageView ivFrontImage;
-    @BindView(R.id.ll_after_image)
-    LinearLayout llAfterImage;
     @BindView(R.id.iv_after_image)
     ImageView ivAfterImage;
-    @BindView(R.id.ll_lift_image)
-    LinearLayout llLiftImage;
     @BindView(R.id.iv_lift_image)
     ImageView ivLiftImage;
-    @BindView(R.id.ll_right_image)
-    LinearLayout llRightImage;
     @BindView(R.id.iv_right_image)
     ImageView ivRightImage;
     @BindView(R.id.iv_arm_up)
@@ -64,16 +56,17 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     ImageView ivSpeehUp;
     @BindView(R.id.iv_speeh_down)
     ImageView ivSpeehDown;
-    @BindView(R.id.btn_ssid)
-    Button btnSsid;
-    @BindView(R.id.btn_pass)
-    Button btnPass;
+    @BindView(R.id.tv_speeh_value)
+    TextView tvSpeehValue;
+
 
     private LinkVideoCore linkVideoCore;
 
     private boolean isShow;
     private boolean isFrontOpen;
     private boolean isAfterOpen;
+
+    private int speehValue = 600;
 
     @Override
     protected int getLayoutId() {
@@ -87,6 +80,8 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
         linkVideoCore.sysinit("192.168.11.123");
 
         isShow = true;
+
+        tvSpeehValue.setText(String.valueOf(speehValue));
     }
 
     @Override
@@ -115,9 +110,9 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     }
 
 
-    @OnClick({R.id.show_view, R.id.ll_front_lighting, R.id.ll_after_lighting, R.id.ll_front_image,
-            R.id.ll_after_image, R.id.ll_lift_image, R.id.ll_right_image,
-            R.id.btn_ssid, R.id.btn_pass, R.id.iv_speeh_down, R.id.iv_speeh_up})
+    @OnClick({R.id.show_view, R.id.ll_front_lighting, R.id.ll_after_lighting,
+            R.id.iv_front_image, R.id.iv_after_image, R.id.iv_lift_image, R.id.iv_right_image,
+           R.id.iv_speeh_down, R.id.iv_speeh_up})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.show_view:
@@ -132,14 +127,12 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
             case R.id.ll_front_lighting:
                 if (isFrontOpen) {
                     TcpSocketManager.getInstance().sendTextMessageByTcp("f", new TcpCallback() {
-
                         @Override
                         public void onSuccess(String t) {
                             isFrontOpen = false;
-                            ivFrontLighting.setBackgroundResource(R.mipmap.ic_light_close);
+                            ivFrontLighting.setBackgroundResource(R.mipmap.front_camera_close);
                             Print.e("前灯关");
                         }
-
                     });
                 } else {
 
@@ -147,10 +140,9 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
                         @Override
                         public void onSuccess(String t) {
                             isFrontOpen = true;
-                            ivFrontLighting.setBackgroundResource(R.mipmap.ic_light_open);
+                            ivFrontLighting.setBackgroundResource(R.mipmap.front_camera_open);
                             Print.e("前灯开");
                         }
-
                     });
                 }
                 break;
@@ -160,7 +152,7 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
                         @Override
                         public void onSuccess(String t) {
                             isAfterOpen = false;
-                            ivAfterLighting.setBackgroundResource(R.mipmap.ic_light_close);
+                            ivAfterLighting.setBackgroundResource(R.mipmap.after_camera_close);
                             Print.e("后灯关");
                         }
                     });
@@ -170,79 +162,84 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
                         @Override
                         public void onSuccess(String t) {
                             isAfterOpen = true;
-                            ivAfterLighting.setBackgroundResource(R.mipmap.ic_light_open);
+                            ivAfterLighting.setBackgroundResource(R.mipmap.after_camera_open);
                             Print.e("后灯开");
                         }
                     });
                 }
                 break;
-            case R.id.ll_front_image:
+            case R.id.iv_front_image:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("a", new TcpCallback() {
                     @Override
                     public void onSuccess(String t) {
-                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivFrontImage.setBackgroundResource(R.mipmap.front_camera_open);
+                        ivAfterImage.setBackgroundResource(R.mipmap.after_camera_close);
+                        ivLiftImage.setBackgroundResource(R.mipmap.lift_camera_close);
+                        ivRightImage.setBackgroundResource(R.mipmap.right_camera_close);
                         Print.e("前影像");
                     }
                 });
                 break;
-            case R.id.ll_after_image:
+            case R.id.iv_after_image:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("b", new TcpCallback() {
                     @Override
                     public void onSuccess(String t) {
-                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivFrontImage.setBackgroundResource(R.mipmap.front_camera_close);
+                        ivAfterImage.setBackgroundResource(R.mipmap.after_camera_open);
+                        ivLiftImage.setBackgroundResource(R.mipmap.lift_camera_close);
+                        ivRightImage.setBackgroundResource(R.mipmap.right_camera_close);
                         Print.e("后影像");
                     }
                 });
                 break;
-            case R.id.ll_lift_image:
+            case R.id.iv_lift_image:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("c", new TcpCallback() {
                     @Override
                     public void onSuccess(String t) {
-                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_open);
-                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_close);
+                        ivFrontImage.setBackgroundResource(R.mipmap.front_camera_close);
+                        ivAfterImage.setBackgroundResource(R.mipmap.after_camera_close);
+                        ivLiftImage.setBackgroundResource(R.mipmap.lift_camera_open);
+                        ivRightImage.setBackgroundResource(R.mipmap.right_camera_close);
                         Print.e("左影像");
                     }
                 });
                 break;
-            case R.id.ll_right_image:
+            case R.id.iv_right_image:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("d", new TcpCallback() {
                     @Override
                     public void onSuccess(String t) {
-                        ivFrontImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivAfterImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivLiftImage.setBackgroundResource(R.mipmap.ic_camera_close);
-                        ivRightImage.setBackgroundResource(R.mipmap.ic_camera_open);
+                        ivFrontImage.setBackgroundResource(R.mipmap.front_camera_close);
+                        ivAfterImage.setBackgroundResource(R.mipmap.after_camera_close);
+                        ivLiftImage.setBackgroundResource(R.mipmap.lift_camera_close);
+                        ivRightImage.setBackgroundResource(R.mipmap.right_camera_open);
                         Print.e("右影像");
                     }
                 });
                 break;
             case R.id.iv_speeh_up:
+                speehValue = speehValue + 100;
+                tvSpeehValue.setText(String.valueOf(speehValue));
                 TcpSocketManager.getInstance().sendTextMessageByTcp("7", null);
                 break;
             case R.id.iv_speeh_down:
+                speehValue = speehValue - 100;
+                tvSpeehValue.setText(String.valueOf(speehValue));
                 TcpSocketManager.getInstance().sendTextMessageByTcp("9", null);
-                break;
-            case R.id.btn_ssid:
-                modifySsid();
-                break;
-            case R.id.btn_pass:
-                modifyPass();
                 break;
         }
     }
 
 
     @Override
-    public void onImageDown() {
-
+    public void onImageDown(View view) {
+        switch (view.getId()) {
+            case R.id.iv_arm_up:
+                ivArmUp.setBackgroundResource(R.mipmap.arm_up_click);
+                break;
+            case R.id.iv_arm_down:
+                ivArmDown.setBackgroundResource(R.mipmap.arm_down_click);
+                break;
+        }
     }
 
     @Override
@@ -264,10 +261,12 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
         switch (view.getId()) {
             case R.id.iv_arm_up:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("0", null);
+                ivArmUp.setBackgroundResource(R.mipmap.arm_up);
                 Print.e("up finish");
                 break;
             case R.id.iv_arm_down:
                 TcpSocketManager.getInstance().sendTextMessageByTcp("0", null);
+                ivArmDown.setBackgroundResource(R.mipmap.arm_down);
                 Print.e("down finish");
                 break;
         }

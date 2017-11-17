@@ -89,6 +89,7 @@ public class TcpSocketManager implements TCPTextSendListener {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+//                Toast.makeText(mActivity, read, Toast.LENGTH_SHORT).show();
                 if (mTcpCallback != null) {
                     if (read.equals("OK")) {
                         mTcpCallback.onSuccess(read);
