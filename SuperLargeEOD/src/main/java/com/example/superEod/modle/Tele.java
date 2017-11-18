@@ -12,8 +12,8 @@ public class Tele {
 
 
     private String user0 = "admin";
-    private String pwd0 = "pb123456";
-    private String did0 = "VSTC900390VVHHV";
+    private String pwd0 = "qazmlp123";
+    private String did0 = "VSTA347062EGDGD";
 
     private String did1 = "VSTA347005YFLMR";
     private String user1 = "admin";

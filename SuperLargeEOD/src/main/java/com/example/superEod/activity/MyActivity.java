@@ -588,12 +588,16 @@ public class MyActivity extends BaseActivity implements
             return;
         bDisplayFinished = false;
 
+//        mVideodata = RotateUtils.rotateYUV420Degree90(videobuf, width, height);
         mVideodata = videobuf;
+
         Message msg = new Message();
         if (h264Data == 1) { // H264
 
             nVideoWidths = width;//1920
             nVideoHeights = height;//1080
+//            nVideoWidths = height;//1920
+//            nVideoHeights = width;//1080
             isH264 = true;
             msg.what = 1;
         }
