@@ -3,9 +3,7 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/location_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0e000000"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/iv_splash"

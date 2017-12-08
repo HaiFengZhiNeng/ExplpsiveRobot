@@ -1,5 +1,6 @@
 package com.example.scout.activity;
 
+import android.os.Process;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +18,9 @@ import com.linkcard.media.LinkVideoCore;
 import com.seabreeze.log.Print;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -59,8 +63,9 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
     @BindView(R.id.tv_speeh_value)
     TextView tvSpeehValue;
 
-
     private LinkVideoCore linkVideoCore;
+
+    private boolean quit = false; //设置退出标识
 
     private boolean isShow;
     private boolean isFrontOpen;
@@ -109,10 +114,29 @@ public class MainActivity extends BaseActivity implements TouchImageView.OnImage
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if (!quit) { //询问退出程序
+            showToast("再按一次退出程序");
+            new Timer(true).schedule(new TimerTask() { //启动定时任务
+                @Override
+                public void run() {
+                    quit = false; //重置退出标识
+                }
+            }, 2000);
+            quit = true;
+        } else { //确认退出程序
+            super.onBackPressed();
+            finish();
+            //退出时杀掉所有进程
+            Process.killProcess(Process.myPid());
+        }
+    }
 
     @OnClick({R.id.show_view, R.id.ll_front_lighting, R.id.ll_after_lighting,
             R.id.iv_front_image, R.id.iv_after_image, R.id.iv_lift_image, R.id.iv_right_image,
-           R.id.iv_speeh_down, R.id.iv_speeh_up})
+            R.id.iv_speeh_down, R.id.iv_speeh_up})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.show_view:
