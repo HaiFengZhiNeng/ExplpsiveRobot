@@ -2,6 +2,7 @@ package com.example.explosiverobot.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.activity.AddActionActivity;
 import com.example.explosiverobot.activity.TaskActivity;
@@ -28,7 +31,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by zhangyuanyuan on 2017/10/19.
@@ -142,29 +144,27 @@ public class ActionCommonFragment extends BaseFragment implements View.OnClickLi
 
     private void showDialog(final int position) {
 
-        final SweetAlertDialog pDialog = new SweetAlertDialog(mContext, SweetAlertDialog.NORMAL_TYPE);
-        pDialog.setTitleText("是否删除");
-        pDialog.setCancelText("删除所有").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        new MaterialDialog.Builder(mContext)
+                .content("是否删除")
+                .positiveText("删除所有").onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                pDialog.dismiss();
+            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                materialDialog.dismiss();
                 if (actionItemDbManager.deleteAll()) {
                     actionAdapter.clear();
                 }
             }
-        });
-        pDialog.setConfirmText("删除此条").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        })
+                .negativeText("删除此条").onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                pDialog.dismiss();
+            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                materialDialog.dismiss();
                 if (actionItemDbManager.delete(actionItems.get(position))) {
                     actionAdapter.removeItem(actionItems.get(position));
                 }
             }
-        });
-        pDialog.show();
-
-
+        })
+                .show();
     }
 
 

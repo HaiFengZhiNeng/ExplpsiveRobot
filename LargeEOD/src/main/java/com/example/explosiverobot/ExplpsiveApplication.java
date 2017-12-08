@@ -3,6 +3,7 @@ package com.example.explosiverobot;
 import android.app.Application;
 
 import com.example.explosiverobot.db.base.BaseManager;
+import com.example.explosiverobot.util.CrashHandler;
 import com.seabreeze.log.Print;
 import com.seabreeze.log.inner.ConsoleTree;
 import com.seabreeze.log.inner.FileTree;
@@ -25,6 +26,9 @@ public class ExplpsiveApplication extends Application {
         super.onCreate();
 
         instance = this;
+
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
 
         BaseManager.initOpenHelper(this);
 

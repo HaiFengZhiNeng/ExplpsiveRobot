@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SwitchCompat;
 import android.view.Gravity;
@@ -23,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -56,7 +59,6 @@ import com.seabreeze.log.Print;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
 public class TaskActivity extends BaseActivity implements AMapLocationListener,
@@ -282,35 +284,35 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                             showToast(getString(R.string.pppp_status_connecting));
                             tvCameraState.setText(getString(R.string.pppp_status_connecting));
                             tag = 2;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_connecting));
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_FAILED://3
                             Print.e(getString(R.string.pppp_status_connect_failed));
                             showToast(getString(R.string.pppp_status_connect_failed));
                             tvCameraState.setText(getString(R.string.pppp_status_connect_failed));
                             tag = 0;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_connect_failed));
                             break;
                         case ContentCommon.PPPP_STATUS_DISCONNECT://4
                             Print.e(getString(R.string.pppp_status_disconnect));
                             showToast(getString(R.string.pppp_status_disconnect));
                             tvCameraState.setText(getString(R.string.pppp_status_disconnect));
                             tag = 0;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_disconnect));
                             break;
                         case ContentCommon.PPPP_STATUS_INITIALING://1
                             Print.e(getString(R.string.pppp_status_initialing));
                             showToast(getString(R.string.pppp_status_initialing));
                             tvCameraState.setText(getString(R.string.pppp_status_initialing));
                             tag = 2;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_initialing));
                             break;
                         case ContentCommon.PPPP_STATUS_INVALID_ID://5
                             Print.e(getString(R.string.pppp_status_invalid_id));
                             showToast(getString(R.string.pppp_status_invalid_id));
                             tvCameraState.setText(getString(R.string.pppp_status_invalid_id));
                             tag = 0;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_invalid_id));
                             break;
                         case ContentCommon.PPPP_STATUS_ON_LINE://2 在线状态
                             //摄像机在线之后读取摄像机类型
@@ -321,28 +323,28 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                             tvCameraState.setText(getString(R.string.pppp_status_online));
                             priviewIpcamera();
                             tag = 1;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_online));
                             break;
                         case ContentCommon.PPPP_STATUS_DEVICE_NOT_ON_LINE://6
                             Print.e(getString(R.string.device_not_on_line));
                             showToast(getString(R.string.device_not_on_line));
                             tvCameraState.setText(getString(R.string.device_not_on_line));
                             tag = 0;
-                            cameraState();
+                            cameraState(getString(R.string.device_not_on_line));
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_TIMEOUT://7
                             Print.e(getString(R.string.pppp_status_connect_timeout));
                             showToast(getString(R.string.pppp_status_connect_timeout));
                             tvCameraState.setText(getString(R.string.pppp_status_connect_timeout));
                             tag = 0;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_connect_timeout));
                             break;
                         case ContentCommon.PPPP_STATUS_CONNECT_ERRER://8
                             Print.e(getString(R.string.pppp_status_pwd_error));
                             showToast(getString(R.string.pppp_status_pwd_error));
                             tvCameraState.setText(getString(R.string.pppp_status_pwd_error));
                             tag = 0;
-                            cameraState();
+                            cameraState(getString(R.string.pppp_status_pwd_error));
                             break;
                         default:
                             Print.e(getString(R.string.pppp_status_unknown));
@@ -379,10 +381,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         }
     };
 
-    private SweetAlertDialog sweetAlertDialog;
-    private int dialogCount;
-
-    private Handler dialogHandler = new Handler();
+    private MaterialDialog materialDialog;
 
     @Override
     protected int getContentViewId() {
@@ -435,7 +434,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         rgTele.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                showDialog("相机切换中...");
+                showIndeterminateProgressDialog(false, "相机切换中...");
                 switch (i) {
                     case R.id.rb_tele1:
                         stopIpcamera();
@@ -466,6 +465,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         });
         icFrontUpper.setOnTimeListener(this);
         icFrontLower.setOnTimeListener(this);
+        icAfterUpper.setOnTimeListener(this);
+        icAfterLower.setOnTimeListener(this);
         ttvBaseClockwise.setOnTimeListener(this);
         ttvBaseCounter.setOnTimeListener(this);
         ttvHeadClockwise.setOnTimeListener(this);
@@ -479,31 +480,36 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             @Override
             public void forwardMove() {//上
                 Print.e("上");
-                sendLocal(SPManager.controlTrackFront());
+//                sendLocal(SPManager.controlTrackFront());
+                sendLocal("2");
             }
 
             @Override
             public void backMove() {//下
                 Print.e("下");
-                sendLocal(SPManager.controlTrackBack());
+//                sendLocal(SPManager.controlTrackBack());
+                sendLocal("8");
             }
 
             @Override
             public void leftMove() {//左
                 Print.e("左");
-                sendLocal(SPManager.controlTrackLeft());
+//                sendLocal(SPManager.controlTrackLeft());
+                sendLocal("4");
             }
 
             @Override
             public void rightMove() {
                 Print.e("右");//右
-                sendLocal(SPManager.controlTrackRight());
+//                sendLocal(SPManager.controlTrackRight());
+                sendLocal("6");
             }
 
             @Override
             public void actionUp() {//**
                 Print.e("离开");
-                sendLocal(SPManager.controlTrackStop());
+//                sendLocal(SPManager.controlTrackStop());
+                sendLocal("5");
             }
         });
     }
@@ -518,7 +524,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
 
         connectIpcamera();
-        showDialog("相机连接中...");
+        showIndeterminateProgressDialog(false, "相机连接中...");
     }
 
     @Override
@@ -594,6 +600,7 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
             aMap.setMyLocationStyle(myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE));
         }
     }
+
 
     @OnClick({R.id.tv_model, R.id.tv_map, R.id.tv_util, R.id.tv_drive, R.id.tv_control, R.id.tv_inspect,
             R.id.ic_front_upper, R.id.ic_front_lower,
@@ -948,19 +955,19 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
 
                 break;
             case R.id.ttv_head_clockwise:
-                sendLocal(SPManager.controlarmMechanicStop05());
+//                sendLocal(SPManager.controlarmMechanicStop05());
                 Print.e("05停止");
                 break;
             case R.id.ttv_head_counter:
-                sendLocal(SPManager.controlarmMechanicStop05());
+//                sendLocal(SPManager.controlarmMechanicStop05());
                 Print.e("05停止");
                 break;
             case R.id.ttv_grab_clockwise:
-                sendLocal(SPManager.controlarmMechanicStop06());
+//                sendLocal(SPManager.controlarmMechanicStop06());
                 Print.e("06停止");
                 break;
             case R.id.ttv_grab_counter:
-                sendLocal(SPManager.controlarmMechanicStop06());
+//                sendLocal(SPManager.controlarmMechanicStop06());
                 Print.e("06停止");
                 break;
         }
@@ -1227,87 +1234,45 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
     }
 
 
-    private void cameraState() {
-        if (sweetAlertDialog != null) {
-            if (tag == 1) {
-
-                sweetAlertDialog.setTitleText("连接成功!")
-                        .setConfirmText("确定")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                dismissDialog();
-                            }
-                        })
-                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-            } else if (tag == 0) {
-
-                sweetAlertDialog.setTitleText("连接失败!")
-                        .setConfirmText("确定")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                dismissDialog();
-                            }
-                        })
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-            }
+    private void cameraState(String msg) {
+        if (tag == 1) {
+            dismissIndeterminateProgressDialog();
+            showBasicNoTitle(msg);
+        } else if (tag == 0) {
+            dismissIndeterminateProgressDialog();
+            showBasicNoTitle(msg);
         }
+
     }
 
-    private void showDialog(String msg) {
-        if (sweetAlertDialog == null) {
-
-            sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-                    .setTitleText(msg);
-            sweetAlertDialog.setCancelable(true);
-        }
-        sweetAlertDialog.show();
-        dialogHandler.postDelayed(runnable, 300);
+    public void showBasicNoTitle(String location) {
+        new MaterialDialog.Builder(this)
+                .content(location)
+                .negativeText("确定")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        fullScreen();
+                    }
+                })
+                .show();
     }
 
-    private void dismissDialog() {
-        if (sweetAlertDialog != null && sweetAlertDialog.isShowing()) {
-            sweetAlertDialog.dismiss();
-            dialogHandler.removeCallbacks(runnable);
-        }
-        sweetAlertDialog = null;
+
+    private void showIndeterminateProgressDialog(boolean horizontal, String title) {
+        materialDialog = new MaterialDialog.Builder(this)
+                .title(title)
+                .content("请等待")
+                .progress(true, 0)
+                .progressIndeterminateStyle(horizontal).build();
+        materialDialog.show();
     }
 
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            dialogCount++;
-            if (dialogCount == 7) {
-                dialogCount = 0;
-            }
-            dialogHandler.postDelayed(runnable, 300);
-            switch (dialogCount) {
-                case 0:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.blue_btn_bg_color));
-                    break;
-                case 1:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_50));
-                    break;
-                case 2:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
-                    break;
-                case 3:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_20));
-                    break;
-                case 4:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_blue_grey_80));
-                    break;
-                case 5:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.warning_stroke_color));
-                    break;
-                case 6:
-                    sweetAlertDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
-                    break;
-            }
+    private void dismissIndeterminateProgressDialog() {
+        if (materialDialog != null && materialDialog.isShowing()) {
+            materialDialog.dismiss();
         }
-
-    };
+    }
 
     class StartPPPPThread implements Runnable {
 
@@ -1368,7 +1333,8 @@ public class TaskActivity extends BaseActivity implements AMapLocationListener,
                     mainPopWindow.dismiss();
                     break;
                 case R.id.tv_shape:
-                    startMainActivity();
+                    finish();
+//                    startMainActivity();
                     break;
             }
         }

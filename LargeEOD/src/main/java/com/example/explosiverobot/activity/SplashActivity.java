@@ -74,18 +74,19 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
     @Override
     protected void onResume() {
         super.onResume();
-        if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
 
             if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
-                //请求权限
-                ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_REQUEST_CODE);
 
+                if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
+                    //请求权限
+                    ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_REQUEST_CODE);
+
+                } else {
+                    startAnim(); // 全部权限都已获取
+                }
             } else {
-                startAnim(); // 全部权限都已获取
+                startAnim();
             }
-        } else {
-            startAnim();
-        }
     }
 
     @Override
@@ -102,10 +103,9 @@ public class SplashActivity extends BaseActivity implements BaseHandler.HandleMe
      * 启动动画
      */
     private void startAnim() {
-        AlphaAnimation alpha = getAlphaAnimation();
-
-        startThread();
-        ivSplash.startAnimation(alpha);
+            AlphaAnimation alpha = getAlphaAnimation();
+            startThread();
+            ivSplash.startAnimation(alpha);
     }
 
     @NonNull

@@ -3,7 +3,6 @@ package com.example.explosiverobot.activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Process;
 import android.support.v4.app.Fragment;
@@ -18,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.explosiverobot.R;
 import com.example.explosiverobot.adapter.ActionAdapter;
 import com.example.explosiverobot.adapter.ActionViewPagerAdapter;
@@ -48,7 +48,6 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import vstc2.nativecaller.NativeCaller;
 
 public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPAcceptInterface, TouchTextView.OnTextTimeListener, PagerSlidingTabStrip.OnPagerSlidingTabStripChanged {
@@ -118,6 +117,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     private ActionItemDbManager actionItemDbManager;
     private MainPopWindow mainPopWindow;
+    private MaterialDialog materialDialog;
 
     @Override
     protected int getContentViewId() {
@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         initLocal();
 //        initTopTab();
 
-        showDialog();
+        showIndeterminateProgressDialog(false);
 
         initShow();
     }
@@ -375,64 +375,29 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     }
 
-    private void showDialog() {
-        final SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-                .setTitleText("正在连接中...");
-        pDialog.show();
-        pDialog.setCancelable(false);
-        new CountDownTimer(500 * 7, 500) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // you can change the progress bar color by ProgressHelper every 800 millis
-                i++;
-                switch (i) {
-                    case 0:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.blue_btn_bg_color));
-                        break;
-                    case 1:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_50));
-                        break;
-                    case 2:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
-                        break;
-                    case 3:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_deep_teal_20));
-                        break;
-                    case 4:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.material_blue_grey_80));
-                        break;
-                    case 5:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.warning_stroke_color));
-                        break;
-                    case 6:
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
-                        break;
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                i = -1;
-                if (isConnect) {
-                    pDialog.setTitleText("连接成功!")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                } else {
-                    tvState.setText("未连接");
-                    pDialog.setTitleText("连接失败!")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                }
-            }
-        }.start();
+    private void showIndeterminateProgressDialog(boolean horizontal) {
+        materialDialog = new MaterialDialog.Builder(this)
+                .title("正在连接中...")
+                .content("请等待")
+                .progress(true, 0)
+                .progressIndeterminateStyle(horizontal).build();
+        materialDialog.show();
     }
+
+    private void dismissIndeterminateProgressDialog() {
+        if (materialDialog != null && materialDialog.isShowing()) {
+            materialDialog.dismiss();
+        }
+    }
+
 
     @Override
     public void UDPAcceptMessage(String content) {
         if (isAccept) {
             if (content.equals("udp connect")) {
-                tvState.setText("已连接");
                 isConnect = true;
+                tvState.setText("已连接");
+                dismissIndeterminateProgressDialog();
             } else {
                 tvOrder.setText(content);
             }
@@ -491,11 +456,13 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
         switch (view.getId()) {
             case R.id.tv_foot_front_bottom:
                 Print.e("前轮停止");
-                sendLocal(SPManager.controlarmObstacleStop());
+//                sendLocal(SPManager.controlarmObstacleStop());
+                showToast("前脚掌向下停止");
                 break;
             case R.id.tv_foot_front_top:
                 Print.e("前轮停止");
-                sendLocal(SPManager.controlarmObstacleStop());
+//                sendLocal(SPManager.controlarmObstacleStop());
+                showToast("前脚掌向下停止");
                 break;
             case R.id.tv_foot_back_bottom:
                 showToast("后脚掌向下停止");
@@ -530,6 +497,7 @@ public class MainActivity extends BaseActivity implements UDPAcceptReceiver.UDPA
 
     private void startTasgAvtivity() {
         JumpItent.jump(MainActivity.this, TaskActivity.class);
+//        JumpItent.jump(MainActivity.this, MyActivity.class);
     }
 
     public void initLocal() {

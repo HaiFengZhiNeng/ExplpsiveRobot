@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class SocketManager {
 
     public final static int SEND_PORT = 8808;
-    public final static int RECEIVE_PORT = 12556;
+    public final static int RECEIVE_PORT = 12526;
 
     private String mAddress;
 

@@ -1,6 +1,10 @@
 package com.example.superEod.udp;
 
+import android.content.Intent;
 import android.text.TextUtils;
+
+import com.example.superEod.SuperApp;
+import com.example.superEod.base.Constants;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -39,6 +43,10 @@ public class UDPSendRunnable implements Runnable {
             }
             DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, mAddress, mPort);
             mServer.send(sendPacket);
+
+            Intent intent = new Intent(Constants.SEND_TAG);
+            intent.putExtra("sendMsg", mMsg);
+            SuperApp.getInstance().sendBroadcast(intent);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/content"
     tools:context="com.example.explosiverobot.activity.TaskActivity">
 
     <RelativeLayout
@@ -286,7 +287,7 @@
                     <RadioGroup
                         android:id="@+id/rg_tele"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
@@ -297,8 +298,7 @@
                             android:id="@+id/rb_tele1"
                             style="@style/CustomRadioBtn"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
                             android:checked="true"
                             android:text="摄像机1" />
 
@@ -306,24 +306,21 @@
                             android:id="@+id/rb_tele2"
                             style="@style/CustomRadioBtn"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
                             android:text="摄像机2" />
 
                         <RadioButton
                             android:id="@+id/rb_tele3"
                             style="@style/CustomRadioBtn"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
                             android:text="摄像机3" />
 
                         <RadioButton
                             android:id="@+id/rb_tele4"
                             style="@style/CustomRadioBtn"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
                             android:text="摄像机4" />
                     </RadioGroup>
 

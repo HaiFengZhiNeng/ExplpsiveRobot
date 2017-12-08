@@ -137,12 +137,12 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="l"/>
+            android:text="g"/>
         <Button
             android:id="@+id/btn_h"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="l"/>
+            android:text="h"/>
     </LinearLayout>
 </LinearLayout>

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.explosiverobot.base.config.AppConstants;
 import com.example.explosiverobot.service.BridgeService;
 import com.example.explosiverobot.service.UdpService;
+import com.example.explosiverobot.util.AndroidBug54971Workaround;
 
 import butterknife.ButterKnife;
 
@@ -33,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(getContentViewId());
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content));
         ButterKnife.bind(this);
         init(savedInstanceState);
         initData();

@@ -12,154 +12,270 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-            <TextView
-                style="@style/my_text"
-                android:text="越障臂"
-                />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="越障臂" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="前"
-                />
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <TextView
-                android:id="@+id/y1"
-                style="@style/my_text"
-                android:text="上" />
+                <TextView
+                    style="@style/my_text"
+                    android:text="前" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/y7"
-                style="@style/my_text"
-                android:text="下" />
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center">
 
+                <TextView
+                    android:id="@+id/y1"
+                    style="@style/my_text"
+                    android:text="上" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/y7"
+                    style="@style/my_text"
+                    android:text="下" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="后"
-                />
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <TextView
-                android:id="@+id/y3"
-                style="@style/my_text"
-                android:text="上" />
+                <TextView
+                    style="@style/my_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="后" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/y9"
-                style="@style/my_text"
-                android:text="下" />
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center">
 
+                <TextView
+                    android:id="@+id/y3"
+                    style="@style/my_text"
+                    android:text="上" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/y9"
+                    style="@style/my_text"
+                    android:text="下" />
+            </RelativeLayout>
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="前灯"/>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <ToggleButton
-                android:id="@+id/ff"
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/main_toggle"
-                android:checked="false"
-                android:textOff=""
-                android:textOn="" />
+                <TextView
+                    style="@style/my_text"
+                    android:text="前灯" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:id="@+id/ff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/main_toggle"
+                    android:checked="false"
+                    android:textOff=""
+                    android:textOn="" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="后灯"/>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <ToggleButton
-                android:id="@+id/rr"
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/main_toggle"
-                android:checked="false"
-                android:textOff=""
-                android:textOn="" />
+                <TextView
+                    style="@style/my_text"
+                    android:text="后灯" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:id="@+id/rr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/main_toggle"
+                    android:checked="false"
+                    android:textOff=""
+                    android:textOn="" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="ZZ"/>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <ToggleButton
-                android:id="@+id/zz"
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/main_toggle"
-                android:checked="false"
-                android:textOff=""
-                android:textOn="" />
+                <TextView
+                    style="@style/my_text"
+                    android:text="ZZ" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:id="@+id/zz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/main_toggle"
+                    android:checked="false"
+                    android:textOff=""
+                    android:textOn="" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="XX"/>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <ToggleButton
-                android:id="@+id/xx"
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/main_toggle"
-                android:checked="false"
-                android:textOff=""
-                android:textOn="" />
+                <TextView
+                    style="@style/my_text"
+                    android:text="XX" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:id="@+id/xx"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/main_toggle"
+                    android:checked="false"
+                    android:textOff=""
+                    android:textOn="" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/my_text"
-                android:text="CC"/>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <ToggleButton
-                android:id="@+id/cc"
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/main_toggle"
-                android:checked="false"
-                android:textOff=""
-                android:textOn="" />
+                <TextView
+                    style="@style/my_text"
+                    android:text="CC" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center">
+
+                <ToggleButton
+                    android:id="@+id/cc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/main_toggle"
+                    android:checked="false"
+                    android:gravity="center_vertical"
+                    android:textOff=""
+                    android:textOn="" />
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

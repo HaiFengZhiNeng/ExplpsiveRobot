@@ -25,7 +25,7 @@ public class Tele {
 
     private String did3 = "VSTA347062EGDGD";
     private String user3 = "admin";
-    private String pwd3 = "12345678";
+    private String pwd3 = "egdgd123";
 
     private String user4 = "admin";
     private String pwd4 = "888888";

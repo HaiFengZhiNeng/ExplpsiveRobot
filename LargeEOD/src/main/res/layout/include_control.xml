@@ -17,51 +17,52 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="3"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_weight="1">
+            android:paddingRight="10dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="基座"
                 android:textColor="@color/color_white"
                 android:textSize="10sp" />
 
-            <com.example.explosiverobot.view.weiget.TouchTextView
-                android:id="@+id/ttv_base_clockwise"
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="顺时针"
-                android:textSize="12sp"
-                android:layout_margin="10dp"
-                android:textColor="@color/color_white"
-                android:gravity="center"
-                />
+                android:gravity="center">
 
-            <com.example.explosiverobot.view.weiget.TouchTextView
-                android:id="@+id/ttv_base_counter"
+                <com.example.explosiverobot.view.weiget.TouchTextView
+                    android:id="@+id/ttv_base_clockwise"
+                    style="@style/controlBtn"
+                    android:text="顺时针" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="逆时针"
-                android:textSize="12sp"
-                android:layout_margin="10dp"
-                android:textColor="@color/color_white"
-                android:gravity="center" />
+                android:gravity="center">
+
+                <com.example.explosiverobot.view.weiget.TouchTextView
+                    android:id="@+id/ttv_base_counter"
+                    style="@style/controlBtn"
+                    android:text="逆时针" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="3"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_weight="1">
+            android:paddingRight="10dp">
 
             <TextView
                 android:id="@+id/textView"
@@ -69,77 +70,96 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="转头"
                 android:textColor="@color/color_white"
                 android:textSize="10sp" />
 
-            <com.example.explosiverobot.view.weiget.TouchTextView
-                android:id="@+id/ttv_head_clockwise"
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="顺时针"
-                android:textSize="12sp"
-                android:layout_margin="10dp"
-                android:textColor="@color/color_white"
-                android:gravity="center" />
+                android:gravity="center">
 
-            <com.example.explosiverobot.view.weiget.TouchTextView
-                android:id="@+id/ttv_head_counter"
+                <com.example.explosiverobot.view.weiget.TouchTextView
+                    android:id="@+id/ttv_head_clockwise"
+                    style="@style/controlBtn"
+                    android:text="顺时针" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="逆时针"
-                android:textSize="12sp"
-                android:layout_margin="10dp"
-                android:textColor="@color/color_white"
-                android:gravity="center" />
+                android:gravity="center">
+
+                <com.example.explosiverobot.view.weiget.TouchTextView
+                    android:id="@+id/ttv_head_counter"
+                    style="@style/controlBtn"
+                    android:text="逆时针" />
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="3"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_weight="1">
+            android:paddingRight="10dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="机械爪"
                 android:textColor="@color/color_white"
                 android:textSize="10sp" />
 
-            <com.example.explosiverobot.view.weiget.TouchTextView
-                android:id="@+id/ttv_grab_clockwise"
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="顺时针"
-                android:textSize="12sp"
-                android:layout_margin="10dp"
-                android:textColor="@color/color_white"
-                android:gravity="center" />
+                android:gravity="center">
 
-            <com.example.explosiverobot.view.weiget.TouchTextView
-                android:id="@+id/ttv_grab_counter"
+                <com.example.explosiverobot.view.weiget.TouchTextView
+                    android:id="@+id/ttv_grab_clockwise"
+                    style="@style/controlBtn"
+                    android:text="顺时针" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="逆时针"
-                android:textSize="12sp"
-                android:layout_margin="10dp"
+                android:gravity="center">
+
+                <com.example.explosiverobot.view.weiget.TouchTextView
+                    android:id="@+id/ttv_grab_counter"
+                    style="@style/controlBtn"
+                    android:text="逆时针" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text=""
                 android:textColor="@color/color_white"
-                android:gravity="center" />
+                android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
-
 
 
 </RelativeLayout>

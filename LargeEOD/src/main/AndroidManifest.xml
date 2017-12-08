@@ -85,6 +85,7 @@
         <activity
             android:name=".activity.AddActionActivity"
             android:theme="@style/dialog_activity" />
+        <activity android:name=".activity.MyActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

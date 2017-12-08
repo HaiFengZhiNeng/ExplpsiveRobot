@@ -11,8 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.explosiverobot.base.config.AppConstants;
-import com.example.explosiverobot.udp.NetClient;
 import com.example.explosiverobot.listener.OnListenerUDPServer;
+import com.example.explosiverobot.udp.NetClient;
 import com.example.explosiverobot.udp.SocketManager;
 import com.example.explosiverobot.udp.UdpReceiver;
 import com.seabreeze.log.Print;
@@ -54,6 +54,7 @@ public class UdpService extends Service implements OnListenerUDPServer {
 
         client.registerUdpServer(new UdpReceiver(this));
         SocketManager.getInstance().setUdpIp("192.168.1.102");
+//        SocketManager.getInstance().setUdpIp("192.168.0.54");
         sendLocal("udp connect");
 
         mUdpSendReceiver = new UdpSendReceiver();

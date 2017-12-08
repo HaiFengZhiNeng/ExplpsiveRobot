@@ -2,6 +2,7 @@ package com.example.superEod;
 
 import android.app.Application;
 
+import com.example.superEod.util.CrashHandler;
 import com.seabreeze.log.Print;
 import com.seabreeze.log.inner.ConsoleTree;
 import com.seabreeze.log.inner.FileTree;
@@ -24,6 +25,9 @@ public class SuperApp extends Application {
         super.onCreate();
 
         instance = this;
+
+        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(getApplicationContext());
 
         if(BuildConfig.DEBUG){
             Print.getLogConfig().configAllowLog(true)

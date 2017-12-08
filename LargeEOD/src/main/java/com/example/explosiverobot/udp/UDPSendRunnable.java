@@ -38,7 +38,7 @@ public class UDPSendRunnable implements Runnable {
                 }
             }
             DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, mAddress, mPort);
-            mServer.send(sendPacket);
+//            mServer.send(sendPacket);
 
         } catch (Exception e) {
             e.printStackTrace();

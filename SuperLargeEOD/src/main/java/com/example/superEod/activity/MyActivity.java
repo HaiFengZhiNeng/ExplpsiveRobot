@@ -1,5 +1,7 @@
 package com.example.superEod.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.opengl.GLSurfaceView;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.superEod.R;
+import com.example.superEod.base.Constants;
 import com.example.superEod.base.activity.BaseActivity;
 import com.example.superEod.base.config.AppConstants;
 import com.example.superEod.base.config.ContentCommon;
@@ -73,6 +76,8 @@ public class MyActivity extends BaseActivity implements
     CircleViewByImage controlCircleView;
     @BindView(R.id.tv_camera_state)
     TextView tvCameraState;
+    @BindView(R.id.tv_send_tag)
+    TextView tvSendTag;
     @BindView(R.id.re_drive)
     RelativeLayout reDrive;
     @BindView(R.id.re_control)
@@ -354,6 +359,9 @@ public class MyActivity extends BaseActivity implements
         IntentFilter intentFilter = new IntentFilter(AppConstants.UDP_ACCEPT_ACTION);
         mLbmManager.registerReceiver(mUdpAcceptReceiver, intentFilter);
 
+        IntentFilter intentFilter1 = new IntentFilter(Constants.SEND_TAG);
+        registerReceiver(mSendBroadcastReceiver, intentFilter1);
+
         connectIpcamera();
     }
 
@@ -371,6 +379,7 @@ public class MyActivity extends BaseActivity implements
         stopIpcamera();
         super.onDestroy();
         mLbmManager.unregisterReceiver(mUdpAcceptReceiver);
+        unregisterReceiver(mSendBroadcastReceiver);
         sendBroadcast(new Intent(AppConstants.NET_LOONGGG_EXITAPP));
     }
 
@@ -712,4 +721,13 @@ public class MyActivity extends BaseActivity implements
     }
 
 
+    private BroadcastReceiver mSendBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(Constants.SEND_TAG)){
+                String msg = intent.getStringExtra("sendMsg");
+                tvSendTag.setText(msg);
+            }
+        }
+    };
 }

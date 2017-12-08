@@ -12,4 +12,6 @@ public class Constants {
     public static int lenghtMin = 2;
     public static String just = "0";
     public static String loss = "1";
+
+    public static final String SEND_TAG = "send_tag";
 }
